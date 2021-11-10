@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Model", "MiniShop.Model\MiniShop.Model.csproj", "{8B6E131A-0C39-4B40-AEB6-31BC6EB6FC8B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Dto", "MiniShop.Dto\MiniShop.Dto.csproj", "{AC732AEC-86F3-4C84-A85D-568DB4D6BD00}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.IServices", "MiniShop.IServices\MiniShop.IServices.csproj", "{D635ED75-2174-4300-AC2D-9CBC54679A98}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Services", "MiniShop.Services\MiniShop.Services.csproj", "{681D35FF-3A7E-4907-9D38-1FC31A33F138}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Api", "MiniShop.Api\MiniShop.Api.csproj", "{97BB8FB3-C56E-447B-A84E-CB30C4BF58C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Mvc", "MiniShop.Mvc\MiniShop.Mvc.csproj", "{D1D4A17F-5F25-4391-844F-232397B0C80A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniShop.Ids", "MiniShop.Ids\MiniShop.Ids.csproj", "{1D99237F-36B2-43F8-BCED-0A9716CFF64D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B6E131A-0C39-4B40-AEB6-31BC6EB6FC8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B6E131A-0C39-4B40-AEB6-31BC6EB6FC8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B6E131A-0C39-4B40-AEB6-31BC6EB6FC8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B6E131A-0C39-4B40-AEB6-31BC6EB6FC8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC732AEC-86F3-4C84-A85D-568DB4D6BD00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC732AEC-86F3-4C84-A85D-568DB4D6BD00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC732AEC-86F3-4C84-A85D-568DB4D6BD00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC732AEC-86F3-4C84-A85D-568DB4D6BD00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D635ED75-2174-4300-AC2D-9CBC54679A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D635ED75-2174-4300-AC2D-9CBC54679A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D635ED75-2174-4300-AC2D-9CBC54679A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D635ED75-2174-4300-AC2D-9CBC54679A98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{681D35FF-3A7E-4907-9D38-1FC31A33F138}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{681D35FF-3A7E-4907-9D38-1FC31A33F138}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{681D35FF-3A7E-4907-9D38-1FC31A33F138}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{681D35FF-3A7E-4907-9D38-1FC31A33F138}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97BB8FB3-C56E-447B-A84E-CB30C4BF58C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97BB8FB3-C56E-447B-A84E-CB30C4BF58C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97BB8FB3-C56E-447B-A84E-CB30C4BF58C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97BB8FB3-C56E-447B-A84E-CB30C4BF58C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1D4A17F-5F25-4391-844F-232397B0C80A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1D4A17F-5F25-4391-844F-232397B0C80A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1D4A17F-5F25-4391-844F-232397B0C80A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1D4A17F-5F25-4391-844F-232397B0C80A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D99237F-36B2-43F8-BCED-0A9716CFF64D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D99237F-36B2-43F8-BCED-0A9716CFF64D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D99237F-36B2-43F8-BCED-0A9716CFF64D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D99237F-36B2-43F8-BCED-0A9716CFF64D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5DAAD49-4A1B-4981-9482-D4CC3B181719}
+	EndGlobalSection
+EndGlobal

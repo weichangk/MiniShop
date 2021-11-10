@@ -1,0 +1,50 @@
+{
+  "Shops": [
+    {
+      "Id": 1,
+      "Name": "alice shop",
+      "Contacts": "alice",
+      "Phone": "18888888888",
+      "Email": "AliceSmith@email.com",
+      "Address": "shenzhen",
+      "CreateDate": "2021-11-11",
+      "ValidDate": "2021-11-11"
+    }
+  ],
+  "Items": [
+    {
+      "Id": "",
+      "ShopId": "308660dc-ae51-480f-824d-7dca6714c3e2",
+      "CategorieId": "1",
+      "Code": "8888888888888",
+      "Name": "iphone18"
+    }
+  ],
+  "Categories": [
+    {
+      "Id": "1",
+      "ShopId": "308660dc-ae51-480f-824d-7dca6714c3e2",
+      "Name": "ÊÖ»ú"
+    }
+  ]
+}
+
+
+
+
+
+        [Required]
+        [MaxLength(32)]
+        public string Password { get; set; }
+        [MaxLength(32)]
+        public string ConfirmPassword { get; set; }
+        [Required]
+        [MaxLength(64)]
+        public string Address { get; set; }
+        [Required]
+        public DateTime ValidDate { get; set; }
+        [Required]
+        public DateTime CreateDate { get; set; }
+
+
+
