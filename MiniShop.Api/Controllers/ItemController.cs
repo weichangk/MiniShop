@@ -30,7 +30,7 @@ namespace MiniShop.Api.Controllers
             _itemService = itemService;
         }
 
-        [HttpGet("{shopId}", Name = "GetShopByShopId")]
+        [HttpGet("{shopId}", Name = "GetItemByShopId")]
         public async Task<IActionResult> GetItemByShopId(int shopId)
         {
             var items = await _itemService.Select(i => i.ShopId == shopId).ToListAsync();

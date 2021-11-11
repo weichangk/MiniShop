@@ -1,30 +1,24 @@
-﻿using System;
+﻿using MiniShop.Model.Enums;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace MiniShop.Model
 {
-    public class Shop
+    public class User
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Required]
+        public int ShopId { get; set; }
         [MaxLength(32)]
         public string Name { get; set; }
-        [Required]
-        [MaxLength(32)]
-        public string Contacts { get; set; }
-        [Required]
         [MaxLength(32)]
         public string Phone { get; set; }
         [MaxLength(32)]
         public string Email { get; set; }
-        [MaxLength(64)]
-        public string Address { get; set; }
-        [Required]
-        public DateTime ValidDate { get; set; }
-        [Required]
-        public DateTime CreateDate { get; set; }
+        public EnumRole Role { get; set; }
     }
 }

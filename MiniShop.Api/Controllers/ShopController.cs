@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MiniShop.Api.Services;
+using MiniShop.Dto;
+using MiniShop.Model;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,7 +28,7 @@ namespace MiniShop.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetShops()
         {
-            var shops = await _shopService.Select(t => t.Id >= 1).ToListAsync();
+            var shops = await _shopService.Select(s=> s.Id >= 1).ToListAsync();
             if (shops == null || shops.Count() <= 0)
             {
                 return NotFound("没有找到商店数据");
@@ -38,15 +39,25 @@ namespace MiniShop.Api.Controllers
         [HttpGet("{shopId}", Name = "GetShopByShopId")]
         public async Task<IActionResult> GetShopByShopId(int shopId)
         {
-            var shop = await _shopService.Select(t => t.Id == shopId).FirstOrDefaultAsync();
+            var shop = await _shopService.Select(s => s.Id == shopId).FirstOrDefaultAsync();
             if (shop == null)
             {
-                return NotFound($"没有找到商店{shopId}数据");
+                return NotFound($"没有找到商店{shopId}");
             }
             return Ok(shop);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateShop([FromBody] ShopCreateDto shopCreateDto)
+        {
+            var shop = _mapper.Map<Shop>(shopCreateDto);
+            shop.CreateDate = DateTime.Now;
+            shop.ValidDate = DateTime.Now.AddDays(1);
 
+            var newShop = _shopService.Insert(shop);
+            await _shopService.SaveAsync();
+            return CreatedAtRoute("GetShopByShopId", new { shopId = shop.Id }, shop);
+        }
 
     }
 }

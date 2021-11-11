@@ -3,9 +3,9 @@ using MiniShop.Model;
 
 namespace MiniShop.Api.Services
 {
-    public class ShopService : BaseService<Shop>, IShopService
+    public class UserService : BaseService<User>, IUserService
     {
-        public ShopService(AppDbContext context)
+        public UserService(AppDbContext context)
         {
             _context = context;
         }
