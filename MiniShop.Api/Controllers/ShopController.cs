@@ -8,6 +8,7 @@ using MiniShop.Api.Services;
 using MiniShop.Dto;
 using MiniShop.Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,7 +34,8 @@ namespace MiniShop.Api.Controllers
             {
                 return NotFound("没有找到商店数据");
             }
-            return Ok(shops);
+            var shopInfos = _mapper.Map<IEnumerable<ShopInfoDto>>(shops);
+            return Ok(shopInfos);
         }
 
         [HttpGet("{shopId}", Name = "GetShopByShopId")]

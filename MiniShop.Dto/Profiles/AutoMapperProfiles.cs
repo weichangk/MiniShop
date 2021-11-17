@@ -3,9 +3,9 @@ using MiniShop.Model;
 
 namespace MiniShop.Dto.Profiles
 {
-    public class ShopProfile : Profile
+    public class AutoMapperProfiles : Profile
     {
-        public ShopProfile()
+        public AutoMapperProfiles()
         {
             CreateMap<Shop, ShopInfoDto>();
             CreateMap<ShopCreateDto, Shop>();

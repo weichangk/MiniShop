@@ -53,6 +53,24 @@ namespace MiniShop.Ids
                     AllowOfflineAccess = true,
                     AllowedScopes = { "openid", "profile", "scope2" }
                 },
+
+                new Client
+                {
+                    ClientId = "MiniShopMvcId",
+                    ClientName = "MiniShopMvcClient",
+                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                    ClientSecrets = { new Secret("MiniShopMvcClientSecret".Sha256()) },
+                    RedirectUris = { "https://localhost:5003/signin-oidc" },
+                    FrontChannelLogoutUri = "https://localhost:5003/signout-oidc",
+                    PostLogoutRedirectUris = { "https://localhost:5003/signout-callback-oidc" },
+                    AllowOfflineAccess = true,
+                    AllowedScopes = 
+                    { 
+                        "openid", 
+                        "profile", 
+                        "scope2"
+                    }
+                }
             };
     }
 }

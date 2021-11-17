@@ -64,7 +64,9 @@ namespace MiniShop.Api
             //)
             ;
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            //Ìí¼ÓAutoMapper
+            services.AddAutoMapper(typeof(MiniShop.Dto.Profiles.AutoMapperProfiles).Assembly);
 
             services.AddScoped<IShopService, ShopService>();
             services.AddScoped<IUserService, UserService>();
