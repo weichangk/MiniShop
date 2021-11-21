@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using MiniShop.Ids.Models;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace IdentityServerHost.Quickstart.UI
@@ -78,6 +79,11 @@ namespace IdentityServerHost.Quickstart.UI
             // the user clicked the "cancel" button
             if (button != "login")
             {
+                if (button == "register")
+                {
+                    return Redirect("~/Account/Register");
+                }
+
                 if (context != null)
                 {
                     // if the user cancels, send a result back into IdentityServer as if they 
@@ -208,6 +214,46 @@ namespace IdentityServerHost.Quickstart.UI
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model, string button)
+        {
+            if (ModelState.IsValid)
+            {
+                //将数据从RegisterViewModel赋值到ApplicationUser
+                var user = new ApplicationUser
+                {
+                    UserName = model.Username,
+                    Email = model.Email,
+                };
+                //将用户数据存储在AspNetUsers数据库表中
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                //如果有任何错误，将它们添加到ModelState对象中
+                //将由验证摘要标记助手显示到视图中
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                result = await _userManager.AddClaimsAsync(user, new Claim[] { new Claim(JwtClaimTypes.Role, "ShopManager") });
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+                if (result.Succeeded)
+                {
+                    ModelState.AddModelError(string.Empty, "注册成功请登录");
+                }
+
+            }
+
+            return View(model);
+        }
 
         /*****************************************/
         /* helper APIs for the AccountController */
