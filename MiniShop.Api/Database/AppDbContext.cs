@@ -27,23 +27,24 @@ namespace MiniShop.Api.Database
 
         private void SeedData(ModelBuilder modelBuilder)
         {
+            Guid shopId = Guid.NewGuid();
             Shop shop = new Shop
             {
-                Id = 1,
+                Id = shopId,
                 Name="Alice Shop",
                 Contacts="alice",
                 Phone="18888888888",
                 Email="AliceSmith@shop.com",
                 Address="shenzhen",
                 CreateDate= DateTime.Parse("2021-11-11"),
-                ValidDate = DateTime.Parse("2021-11-11"),
+                ValidDate = DateTime.Parse("2099-11-11"),
             };
             modelBuilder.Entity<Shop>().HasData(shop);
 
             User user = new User
             {
                 Id = 1,
-                ShopId = 1,
+                ShopId = shopId,
                 Name = "alice",
                 Phone = "18888888888",
                 Email = "AliceSmith@shop.com",

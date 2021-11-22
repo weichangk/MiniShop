@@ -217,11 +217,17 @@ namespace IdentityServerHost.Quickstart.UI
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            RegisterViewModel model = new RegisterViewModel();
+            return View(model);
         }
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model, string button)
         {
+            if (button == "login")
+            {
+                return Redirect("~/Account/Login");
+            }
+
             if (ModelState.IsValid)
             {
                 //将数据从RegisterViewModel赋值到ApplicationUser
@@ -247,7 +253,7 @@ namespace IdentityServerHost.Quickstart.UI
 
                 if (result.Succeeded)
                 {
-                    ModelState.AddModelError(string.Empty, "注册成功请登录");
+                    model.RegisterSucceeded = true;
                 }
 
             }

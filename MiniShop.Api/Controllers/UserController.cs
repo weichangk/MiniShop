@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using MiniShop.Api.Services;
 using MiniShop.Dto;
 using MiniShop.Model;
+using MiniShop.Model.Enums;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,6 +24,25 @@ namespace MiniShop.Api.Controllers
             _mapper = mapper;
             _userService = userService;
             _shopService = shopService;
+        }
+
+        [HttpGet("UserLogin/{userName}/{phone}/{email}/{role}", Name = "UserLogin")]
+        public async Task<IActionResult> UserLogin(string userName, string phone, string email, string role)
+        {
+            User user = await _userService.UserExist(userName);
+            if (user == null)
+            {
+                if (role.Equals(EnumRole.ShopManager.ToString()))
+                {
+                    user = _userService.CreateShopManagerUser(userName, phone, email);
+                    await _userService.SaveAsync();
+                }
+                else
+                {
+                    return NotFound("用户不存在");
+                }
+            }
+            return Ok(user);
         }
 
         [HttpGet]
@@ -58,7 +79,7 @@ namespace MiniShop.Api.Controllers
         }
 
         [HttpPost("{shopId}")]
-        public async Task<IActionResult> CreateShop(int shopId, [FromBody] UserCreateDto userCreateDto)
+        public async Task<IActionResult> CreateShop(Guid shopId, [FromBody] UserCreateDto userCreateDto)
         {
             var shop = await _shopService.Select(s => s.Id == shopId).FirstOrDefaultAsync();
             if (shop == null)

@@ -31,7 +31,7 @@ namespace MiniShop.Api.Controllers
         }
 
         [HttpGet("{shopId}", Name = "GetItemByShopId")]
-        public async Task<IActionResult> GetItemByShopId(int shopId)
+        public async Task<IActionResult> GetItemByShopId(Guid shopId)
         {
             var items = await _itemService.Select(i => i.ShopId == shopId).ToListAsync();
             if (items == null || items.Count <= 0)
@@ -42,7 +42,7 @@ namespace MiniShop.Api.Controllers
         }
 
         [HttpGet("{shopId}/{categorieId}", Name = "GetItemByShopIdAndCategorieId")]
-        public async Task<IActionResult> GetItemByShopIdAndCategorieId(int shopId, int categorieId)
+        public async Task<IActionResult> GetItemByShopIdAndCategorieId(Guid shopId, int categorieId)
         {
             var items = await _itemService.Select(i => i.ShopId == shopId && i.CategorieId.Equals(categorieId)).ToListAsync();
             if (items == null)

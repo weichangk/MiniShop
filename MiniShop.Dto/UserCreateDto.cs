@@ -1,4 +1,5 @@
 ﻿using MiniShop.Model.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MiniShop.Dto
@@ -6,7 +7,7 @@ namespace MiniShop.Dto
     public class UserCreateDto
     {
         [Required]
-        public int ShopId { get; set; }
+        public Guid ShopId { get; set; }
         [MaxLength(32)]
         public string Name { get; set; }
         [Required]

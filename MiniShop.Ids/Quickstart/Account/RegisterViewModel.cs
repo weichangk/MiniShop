@@ -18,5 +18,7 @@ namespace IdentityServerHost.Quickstart.UI
         [DataType(DataType.Password)]
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
+
+        public bool RegisterSucceeded { get; set; }
     }
 }

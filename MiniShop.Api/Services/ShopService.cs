@@ -9,5 +9,10 @@ namespace MiniShop.Api.Services
         {
             _context = context;
         }
+
+        public void CreateShopDefaultInfo(Shop shop)
+        {
+            _context.Set<Shop>().Add(shop);
+        }
     }
 }

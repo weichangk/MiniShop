@@ -33,8 +33,15 @@
                         <input type="password" class="form-control" placeholder="ConfirmPassword" asp-for="ConfirmPassword" autocomplete="off">
                     </div>
 
-                    <button type="submit" class="btn btn-primary" name="button" value="register">Register</button>
-                    <button class="btn btn-link" name="button" value="login">Login</button>
+                    @if (Model.RegisterSucceeded)
+                    {
+                        <button type="submit" class="btn btn-primary" name="button" value="login">Registration successful, please log in</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary" name="button" value="register">Register</button>
+                    }
+
                 </form>
             </div>
         </div>

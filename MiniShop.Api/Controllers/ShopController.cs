@@ -29,7 +29,7 @@ namespace MiniShop.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetShops()
         {
-            var shops = await _shopService.Select(s=> s.Id >= 1).ToListAsync();
+            var shops = await _shopService.Select(s=> s.Id != null).ToListAsync();
             if (shops == null || shops.Count() <= 0)
             {
                 return NotFound("没有找到商店数据");
@@ -39,7 +39,7 @@ namespace MiniShop.Api.Controllers
         }
 
         [HttpGet("{shopId}", Name = "GetShopByShopId")]
-        public async Task<IActionResult> GetShopByShopId(int shopId)
+        public async Task<IActionResult> GetShopByShopId(Guid shopId)
         {
             var shop = await _shopService.Select(s => s.Id == shopId).FirstOrDefaultAsync();
             if (shop == null)

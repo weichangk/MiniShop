@@ -10,7 +10,7 @@ namespace MiniShop.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public int ShopId { get; set; }
+        public Guid ShopId { get; set; }
         [Required]
         [MaxLength(32)]
         public string Name { get; set; }
