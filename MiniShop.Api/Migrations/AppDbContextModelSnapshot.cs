@@ -28,8 +28,8 @@ namespace MiniShop.Api.Migrations
                         .HasColumnType("varchar(32) CHARACTER SET utf8mb4")
                         .HasMaxLength(32);
 
-                    b.Property<int>("ShopId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ShopId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -39,8 +39,8 @@ namespace MiniShop.Api.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "�ֻ�",
-                            ShopId = 1
+                            Name = "手机",
+                            ShopId = new Guid("2cc9e247-b8ea-43fe-b085-17877cfa8473")
                         });
                 });
 
@@ -63,8 +63,8 @@ namespace MiniShop.Api.Migrations
                         .HasColumnType("varchar(32) CHARACTER SET utf8mb4")
                         .HasMaxLength(32);
 
-                    b.Property<int>("ShopId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ShopId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -77,15 +77,15 @@ namespace MiniShop.Api.Migrations
                             CategorieId = 1,
                             Code = "8888888888888",
                             Name = "iphone18",
-                            ShopId = 1
+                            ShopId = new Guid("2cc9e247-b8ea-43fe-b085-17877cfa8473")
                         });
                 });
 
             modelBuilder.Entity("MiniShop.Model.Shop", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Address")
                         .HasColumnType("varchar(64) CHARACTER SET utf8mb4")
@@ -123,14 +123,14 @@ namespace MiniShop.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("2cc9e247-b8ea-43fe-b085-17877cfa8473"),
                             Address = "shenzhen",
                             Contacts = "alice",
                             CreateDate = new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "AliceSmith@shop.com",
                             Name = "Alice Shop",
                             Phone = "18888888888",
-                            ValidDate = new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            ValidDate = new DateTime(2099, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -155,8 +155,8 @@ namespace MiniShop.Api.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.Property<int>("ShopId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ShopId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -170,7 +170,7 @@ namespace MiniShop.Api.Migrations
                             Name = "alice",
                             Phone = "18888888888",
                             Role = 0,
-                            ShopId = 1
+                            ShopId = new Guid("2cc9e247-b8ea-43fe-b085-17877cfa8473")
                         });
                 });
 #pragma warning restore 612, 618

@@ -54,7 +54,15 @@ namespace MiniShop.Api.Database
 
             var seedDataJson = File.ReadAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/Database/SeedData.json");
             SeedDataModel seedDataModel = JsonConvert.DeserializeObject<SeedDataModel>(seedDataJson);
+            foreach (var item in seedDataModel.Categories)
+            {
+                item.ShopId = shopId;
+            }
             modelBuilder.Entity<Categorie>().HasData(seedDataModel.Categories);
+            foreach (var item in seedDataModel.Items)
+            {
+                item.ShopId = shopId;
+            }
             modelBuilder.Entity<Item>().HasData(seedDataModel.Items);
         }
     }

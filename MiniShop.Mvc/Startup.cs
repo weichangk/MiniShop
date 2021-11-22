@@ -59,6 +59,9 @@ namespace MiniShop.Mvc
                 config.Scope.Clear();
                 config.Scope.Add(OidcConstants.StandardScopes.OpenId);
                 config.Scope.Add(OidcConstants.StandardScopes.Profile);
+                config.Scope.Add(OidcConstants.StandardScopes.Email);
+                config.Scope.Add(OidcConstants.StandardScopes.Phone);
+                config.Scope.Add(OidcConstants.StandardScopes.Address);
                 config.Scope.Add(OidcConstants.StandardScopes.OfflineAccess);
                 //config.Scope.Add("rc.scope");
                 //config.Scope.Add("ApiOne");
