@@ -64,11 +64,12 @@ namespace MiniShop.Ids
                 ClientName = "MiniShopMvcClient",
                 AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                 ClientSecrets = { new Secret("MiniShopMvcClientSecret".Sha256()) },
-                RedirectUris = { "https://localhost:5003/signin-oidc" },
-                FrontChannelLogoutUri = "https://localhost:5003/signout-oidc",
-                PostLogoutRedirectUris = { "https://localhost:5003/signout-callback-oidc" },
+                RedirectUris = { "http://localhost:5003/signin-oidc" },
+                FrontChannelLogoutUri = "http://localhost:5003/signout-oidc",
+                PostLogoutRedirectUris = { "http://localhost:5003/signout-callback-oidc" },
                 AllowOfflineAccess = true,
                 AlwaysIncludeUserClaimsInIdToken = true,
+
                 AllowedScopes = 
                 { 
                     IdentityServerConstants.StandardScopes.OpenId,

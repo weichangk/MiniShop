@@ -8,15 +8,12 @@ using System.Threading.Tasks;
 
 namespace MiniShop.Mvc.Controllers
 {
-    public class ShopController : Controller
+    public class ShopController : BaseController
     {
-        private readonly ILogger<ShopController> _logger;
         public readonly IShopApi _shopApi;
 
-
-        public ShopController(ILogger<ShopController> logger, IShopApi shopApi)
+        public ShopController(ILogger<ShopController> logger, IShopApi shopApi) : base(logger)
         {
-            _logger = logger;
             _shopApi = shopApi;
         }
         [HttpGet]
