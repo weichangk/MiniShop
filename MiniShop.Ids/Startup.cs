@@ -52,10 +52,9 @@ namespace MiniShop.Ids
             })
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
+                //.AddInMemoryApiResources(Config.ApiResources)
                 .AddInMemoryClients(Config.Clients)
-                .AddAspNetIdentity<ApplicationUser>()
-                //.AddProfileService<IdentityServer4.AspNetIdentity.ProfileService<ApplicationUser>>()
-                ;
+                .AddAspNetIdentity<ApplicationUser>();
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();

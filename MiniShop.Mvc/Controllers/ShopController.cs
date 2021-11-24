@@ -18,7 +18,7 @@ namespace MiniShop.Mvc.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> Index()
-        {
+        {        
             var result = await _shopApi.GetShops();
             return View(result);
         }

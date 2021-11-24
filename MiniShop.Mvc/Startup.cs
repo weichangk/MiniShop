@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using MiniShop.Mvc.Code;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -28,6 +29,8 @@ namespace MiniShop.Mvc
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<ILoginInfo, LoginInfo>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -70,10 +73,16 @@ namespace MiniShop.Mvc
                 //config.Scope.Add("ApiTwo");
                 //config.Scope.Add("offline_access");
                 config.Scope.Add("MiniShopMvc.role");
+                //config.Scope.Add("MiniShop.Api.Scope1");
 
             });
 
             services.ConfigureNonBreakingSameSiteCookies();
+
+            services.Configure<CookiePolicyOptions>(option =>
+            {
+                option.CheckConsentNeeded = context => false;
+            });
 
             services.AddHttpClient();
 

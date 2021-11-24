@@ -1,3 +1,4 @@
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -32,7 +33,7 @@ namespace MiniShop.Api
             services.AddControllers(setupAction =>
             {
                 setupAction.ReturnHttpNotAcceptable = true;
-            })
+            })    
             .AddNewtonsoftJson(setupAction => {
                 setupAction.SerializerSettings.ContractResolver =
                     new CamelCasePropertyNamesContractResolver();
@@ -64,6 +65,16 @@ namespace MiniShop.Api
             //)
             ;
 
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            .AddIdentityServerAuthentication(options =>
+            {
+                options.Authority = "http://localhost:5001";
+                options.ApiName = "MiniShop.Api";
+                options.RequireHttpsMetadata = false;
+                //options.ApiSecret = "MiniShop.Api.Secret";
+            });
+
+
             //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             //Ìí¼ÓAutoMapper
             services.AddAutoMapper(typeof(MiniShop.Dto.Profiles.AutoMapperProfiles).Assembly);
@@ -84,6 +95,8 @@ namespace MiniShop.Api
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

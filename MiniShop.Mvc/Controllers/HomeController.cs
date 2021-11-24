@@ -46,7 +46,7 @@ namespace MiniShop.Mvc.Controllers
             if (jwtRole == null) jwtRole = " ";
 
             var result = await _userApi.UserLogin(jwtPreferredUserName, jwtPhoneNumber, jwtEmail, jwtRole);
-            int minutes = 60 * 24;
+            int minutes = 60 * 6;
             SetCookies(LoginUserId, result.Id.ToString(), minutes);
             SetCookies(LoginUserShopId, result.ShopId.ToString(), minutes);
             SetCookies(LoginUserName, result.Name.ToString(), minutes);
@@ -60,6 +60,8 @@ namespace MiniShop.Mvc.Controllers
             TempData[LoginUserPhone] = result.Phone;
             TempData[LoginUserEmail] = result.Email;
             TempData[LoginUserRole] = result.Role;
+
+            //Cookie保存马上GetCookies()不能获取到值。。
 
             return View();
         }
