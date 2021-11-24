@@ -17,6 +17,9 @@ namespace MiniShop.Api.Services
 
         public User CreateShopManagerUser(string userName, string phone, string email)
         {
+            if (phone == null) phone = "";
+            if (email == null) email = "";
+
             Guid shopId = Guid.NewGuid();
             User user = new User
             {

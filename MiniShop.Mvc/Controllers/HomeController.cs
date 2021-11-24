@@ -34,6 +34,17 @@ namespace MiniShop.Mvc.Controllers
             var jwtPhoneNumber = userClaims.FirstOrDefault(s => s.Type == JwtClaimTypes.PhoneNumber)?.Value;
             var jwtEmail = userClaims.FirstOrDefault(s => s.Type == JwtClaimTypes.Email)?.Value;
             var jwtRole = userClaims.FirstOrDefault(s => s.Type == JwtClaimTypes.Role)?.Value;
+
+            if (jwtPreferredUserName == null)
+            { 
+                //
+            }
+
+            //防止null值时url中出现//导致接口无法匹配，使用 " "代替null值，才能成功传到api那边且参数为null
+            if (jwtPhoneNumber == null) jwtPhoneNumber = " ";
+            if (jwtEmail == null) jwtEmail = " ";
+            if (jwtRole == null) jwtRole = " ";
+
             var result = await _userApi.UserLogin(jwtPreferredUserName, jwtPhoneNumber, jwtEmail, jwtRole);
             int minutes = 60 * 24;
             SetCookies(LoginUserId, result.Id.ToString(), minutes);
