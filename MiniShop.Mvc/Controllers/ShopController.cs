@@ -10,7 +10,7 @@ namespace MiniShop.Mvc.Controllers
 {
     public class ShopController : BaseController
     {
-        public readonly IShopApi _shopApi;
+        private readonly IShopApi _shopApi;
 
         public ShopController(ILogger<ShopController> logger, IShopApi shopApi) : base(logger)
         {

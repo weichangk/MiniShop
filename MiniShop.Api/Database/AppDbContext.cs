@@ -32,7 +32,7 @@ namespace MiniShop.Api.Database
             {
                 Id = shopId,
                 Name="Alice Shop",
-                Contacts="alice",
+                Contacts= "alice",
                 Phone="18888888888",
                 Email="AliceSmith@shop.com",
                 Address="shenzhen",

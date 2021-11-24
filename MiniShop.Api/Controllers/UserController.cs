@@ -26,10 +26,10 @@ namespace MiniShop.Api.Controllers
             _shopService = shopService;
         }
 
-        [HttpGet("UserLogin/{userName}/{phone}/{email}/{role}", Name = "UserLogin")]
+        [HttpGet("UserLogin/{userName}/{phone?}/{email?}/{role?}")]
         public async Task<IActionResult> UserLogin(string userName, string phone, string email, string role)
         {
-            User user = await _userService.UserExist(userName);
+            User user = _userService.UserExist(userName).Result;
             if (user == null)
             {
                 if (role.Equals(EnumRole.ShopManager.ToString()))

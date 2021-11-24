@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 using System.Collections.Generic;
@@ -18,6 +19,10 @@ namespace MiniShop.Ids
             new IdentityResources.Phone(),
             new IdentityResources.Email(),
             new IdentityResources.Address(),
+            new IdentityResource(
+                name: "MiniShopMvc.role",
+                displayName: "MiniShopMvc role",
+                userClaims: new[] { JwtClaimTypes.Role }),
         };
 
         public static IEnumerable<ApiScope> ApiScopes =>
@@ -67,8 +72,9 @@ namespace MiniShop.Ids
                 RedirectUris = { "http://localhost:5003/signin-oidc" },
                 FrontChannelLogoutUri = "http://localhost:5003/signout-oidc",
                 PostLogoutRedirectUris = { "http://localhost:5003/signout-callback-oidc" },
-                AllowOfflineAccess = true,
                 AlwaysIncludeUserClaimsInIdToken = true,
+                RequireConsent = false,
+                AllowOfflineAccess = true,
 
                 AllowedScopes = 
                 { 
@@ -77,6 +83,7 @@ namespace MiniShop.Ids
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.Phone,
                     IdentityServerConstants.StandardScopes.Address,
+                    "MiniShopMvc.role",
                 }
             }
         };

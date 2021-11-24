@@ -57,14 +57,6 @@ namespace MiniShop.Mvc
                 // but the id token is smaller !
                 config.GetClaimsFromUserInfoEndpoint = true;
 
-                //config.ClaimActions.MapUniqueJsonKey("role", "role");
-
-                config.TokenValidationParameters = new TokenValidationParameters
-                {
-                    //NameClaimType = JwtClaimTypes.GivenName,
-                    RoleClaimType = JwtClaimTypes.Role
-                };
-
                 // configure scope
                 config.Scope.Clear();
                 config.Scope.Add(OidcConstants.StandardScopes.OpenId);
@@ -77,6 +69,7 @@ namespace MiniShop.Mvc
                 //config.Scope.Add("ApiOne");
                 //config.Scope.Add("ApiTwo");
                 //config.Scope.Add("offline_access");
+                config.Scope.Add("MiniShopMvc.role");
 
             });
 

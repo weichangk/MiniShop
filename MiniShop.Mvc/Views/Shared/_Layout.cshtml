@@ -34,9 +34,12 @@
             <ul class="navbar-nav ml-auto">
 
                 <!-- Logout -->
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Logout</a>
-                </li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item d-none d-sm-inline-block">
+                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                    </li>
+                }
 
                 <!-- Notifications Dropdown Menu -->
                 <li class="nav-item dropdown">

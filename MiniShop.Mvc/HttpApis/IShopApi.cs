@@ -9,7 +9,7 @@ namespace MiniShop.Mvc.HttpApis
     [JsonReturn]
     public interface IShopApi : IHttpApi
     {
-        [HttpGet("/api/shop")]
+        [HttpGet("/api/Shop")]
         ITask<List<ShopInfoDto>> GetShops();
 
     }

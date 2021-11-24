@@ -4,6 +4,8 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
+
+<h1>Token Info</h1>
 <h2>Access Token</h2>
 <p>@ViewData["accessToken"]</p>
 
@@ -13,6 +15,7 @@
 <h2>Refresh Token</h2>
 <p>@ViewData["refreshToken"]</p>
 
+<h1>Claims Info</h1>
 <dl>
     @foreach (var claim in User.Claims)
     {
@@ -20,3 +23,22 @@
         <dd>@claim.Value</dd>
     }
 </dl>
+
+<h1>LoginUser Info</h1>
+<h2>LoginUserId</h2>
+<p>@TempData["LoginUserId"]</p>
+
+<h2>LoginUserShopId</h2>
+<p>@TempData["LoginUserShopId"]</p>
+
+<h2>LoginUserName</h2>
+<p>@TempData["LoginUserName"]</p>
+
+<h2>LoginUserPhone</h2>
+<p>@TempData["LoginUserPhone"]</p>
+
+<h2>LoginUserEmail</h2>
+<p>@TempData["LoginUserEmail"]</p>
+
+<h2>LoginUserRole</h2>
+<p>@TempData["LoginUserRole"]</p>
