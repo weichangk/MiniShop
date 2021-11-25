@@ -71,7 +71,7 @@ namespace MiniShop.Api
                 options.Authority = "http://localhost:5001";
                 options.ApiName = "MiniShop.Api";
                 options.RequireHttpsMetadata = false;
-                //options.ApiSecret = "MiniShop.Api.Secret";
+                options.ApiSecret = "MiniShop.Api.Secret";
             });
 
 

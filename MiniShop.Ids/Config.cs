@@ -33,15 +33,15 @@ namespace MiniShop.Ids
             new ApiScope("MiniShop.Api.Scope1"),
         };
 
-        //public static IEnumerable<ApiResource> ApiResources =>
-        //new ApiResource[]
-        //{
-        //    new ApiResource("MiniShop.Api", "MiniShop Api")
-        //    {
-        //        ApiSecrets = { new Secret("MiniShop.Api.Secret".Sha256()) },
-        //        Scopes = { "MiniShop.Api.Scope1"},
-        //    }
-        //};
+        public static IEnumerable<ApiResource> ApiResources =>
+        new ApiResource[]
+        {
+            new ApiResource("MiniShop.Api", "MiniShop Api")
+            {
+                ApiSecrets = { new Secret("MiniShop.Api.Secret".Sha256()) },
+                Scopes = { "MiniShop.Api.Scope1"},
+            }
+        };
 
         public static IEnumerable<Client> Clients =>
         new Client[]
@@ -86,6 +86,7 @@ namespace MiniShop.Ids
                 AlwaysIncludeUserClaimsInIdToken = true,
                 RequireConsent = false,
                 AllowOfflineAccess = true,
+                AccessTokenLifetime = 120,
 
                 AllowedScopes = 
                 { 
