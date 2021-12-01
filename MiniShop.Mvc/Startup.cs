@@ -29,6 +29,9 @@ namespace MiniShop.Mvc
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // π”√Session
+            services.AddSession();
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ILoginInfo, LoginInfo>();
 
@@ -40,7 +43,9 @@ namespace MiniShop.Mvc
                 options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 
             })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, config => {
+                config.ExpireTimeSpan = TimeSpan.FromMilliseconds(5);
+            })
             .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, config => {
                 config.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 config.Authority = "http://localhost:5001/";
@@ -73,7 +78,7 @@ namespace MiniShop.Mvc
                 //config.Scope.Add("ApiTwo");
                 //config.Scope.Add("offline_access");
                 config.Scope.Add("MiniShopMvc.role");
-                //config.Scope.Add("MiniShop.Api.Scope1");
+                config.Scope.Add("MiniShop.Api.Scope1");
 
             });
 
@@ -127,6 +132,8 @@ namespace MiniShop.Mvc
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

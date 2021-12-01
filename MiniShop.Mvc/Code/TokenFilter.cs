@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApiClient;
 using WebApiClient.Attributes;
 using WebApiClient.Contexts;
 
@@ -21,7 +22,7 @@ namespace MiniShop.Mvc.Code
             try
             {
                 var _loginInfo = context.GetService<ILoginInfo>();
-                context.RequestMessage.Headers.Add("Token", _loginInfo.AccessToken);
+                context.RequestMessage.Headers.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {_loginInfo.AccessToken}");
             }
             catch (System.Exception)
             {

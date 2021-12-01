@@ -103,13 +103,12 @@ namespace MiniShop.Mvc.Controllers
             // 获取身份认证的结果，包含当前的pricipal和properties
             var currentAuthenticateResult = HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme).Result;
 
-            //创建 Claim 对象将用户信息存储在 Claim 类型的字符串键值对中，
-            //将 Claim 对象传入 ClaimsIdentity 中，用来构造一个 ClaimsIdentity 对象
+            //创建 Claim 对象将用户信息存储在 Claim 类型的字符串键值对中，将 Claim 对象传入 ClaimsIdentity 中，用来构造一个 ClaimsIdentity 对象
+            //将 AccessToken RefreshToken ExpiresIn 信息作为Claim 对象追加到 ClaimsIdentity 中，可共过滤器油 LoginInfo IHttpContextAccessor 获取
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
             identity.AddClaim(new Claim("AccessToken", jwt.AccessToken, ClaimValueTypes.String));
             identity.AddClaim(new Claim("RefreshToken", jwt.RefreshToken, ClaimValueTypes.String));
             identity.AddClaim(new Claim("ExpiresIn", jwt.ExpiresIn.ToString(), ClaimValueTypes.Integer32));
-
             currentAuthenticateResult.Principal.AddIdentity(identity);
 
             //调用 HttpContext.SignInAsync 方法，传入上面创建的 ClaimsPrincipal 对象，完成用户登录
@@ -131,9 +130,11 @@ namespace MiniShop.Mvc.Controllers
             //    //AllowRefresh = true,
             //    RedirectUri = "/Home/index"
             //});
+
+            //currentAuthenticateResult.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(3);
+            //currentAuthenticateResult.Properties.IsPersistent = true;
             // 登录
-            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-               currentAuthenticateResult.Principal, currentAuthenticateResult.Properties);
+            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,currentAuthenticateResult.Principal, currentAuthenticateResult.Properties);
 
             //如果当前 Http 请求本来登录了用户 A，现在调用 HttpContext.SignInAsync 方法登录用户 B，那么相当于注销用户 A，登录用户 B
         }

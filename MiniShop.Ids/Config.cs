@@ -87,7 +87,7 @@ namespace MiniShop.Ids
                 RequireConsent = false,
                 AllowOfflineAccess = true,
                 AccessTokenLifetime = 120,
-
+                
                 AllowedScopes = 
                 { 
                     IdentityServerConstants.StandardScopes.OpenId,
