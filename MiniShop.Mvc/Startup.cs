@@ -1,16 +1,12 @@
 using IdentityModel;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using MiniShop.Mvc.Code;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -29,23 +25,14 @@ namespace MiniShop.Mvc
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // π”√Session
-            services.AddSession();
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<ILoginInfo, LoginInfo>();
-
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-
             })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, config => {
-                config.ExpireTimeSpan = TimeSpan.FromMilliseconds(5);
-            })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, config => {
                 config.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 config.Authority = "http://localhost:5001/";
@@ -55,11 +42,6 @@ namespace MiniShop.Mvc
                 config.ResponseType = "code";
                 config.RequireHttpsMetadata = false;
                 //config.SignedOutCallbackPath = "/Home/Index";
-
-                //// configure cookie claim mapping
-                //config.ClaimActions.DeleteClaim("amr");
-                //config.ClaimActions.DeleteClaim("s_hash");
-                //config.ClaimActions.MapUniqueJsonKey("RawCoding.Grandma", "rc.garndma");
 
                 // two trips to load claims in to the cookie
                 // but the id token is smaller !
@@ -73,10 +55,6 @@ namespace MiniShop.Mvc
                 config.Scope.Add(OidcConstants.StandardScopes.Phone);
                 config.Scope.Add(OidcConstants.StandardScopes.Address);
                 config.Scope.Add(OidcConstants.StandardScopes.OfflineAccess);
-                //config.Scope.Add("rc.scope");
-                //config.Scope.Add("ApiOne");
-                //config.Scope.Add("ApiTwo");
-                //config.Scope.Add("offline_access");
                 config.Scope.Add("MiniShopMvc.role");
                 config.Scope.Add("MiniShop.Api.Scope1");
 
@@ -132,8 +110,6 @@ namespace MiniShop.Mvc
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

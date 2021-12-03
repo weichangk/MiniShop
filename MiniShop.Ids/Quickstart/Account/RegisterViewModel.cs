@@ -20,5 +20,7 @@ namespace IdentityServerHost.Quickstart.UI
         public string ConfirmPassword { get; set; }
 
         public bool RegisterSucceeded { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

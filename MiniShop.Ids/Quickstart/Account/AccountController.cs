@@ -81,7 +81,7 @@ namespace IdentityServerHost.Quickstart.UI
             {
                 if (button == "register")
                 {
-                    return Redirect("~/Account/Register");
+                    return Redirect($"~/Account/Register?ReturnUrl={model.ReturnUrl}");
                 }
 
                 if (context != null)
@@ -215,17 +215,26 @@ namespace IdentityServerHost.Quickstart.UI
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(string returnUrl)
         {
-            RegisterViewModel model = new RegisterViewModel();
+            RegisterViewModel model = new RegisterViewModel
+            {
+                ReturnUrl = returnUrl,
+            };
             return View(model);
         }
+        [HttpGet]
+        public IActionResult RegisterToLogin(RegisterViewModel model)
+        {
+            return Redirect($"~/Account/Login?ReturnUrl={model.ReturnUrl}");
+        }
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model, string button)
         {
             if (button == "login")
             {
-                return Redirect("~/Account/Login");
+                return Redirect($"~/Account/Login?ReturnUrl={model.ReturnUrl}");
             }
 
             if (ModelState.IsValid)

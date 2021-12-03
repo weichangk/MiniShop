@@ -72,6 +72,7 @@ namespace MiniShop.Api
                 options.ApiName = "MiniShop.Api";
                 options.RequireHttpsMetadata = false;
                 options.ApiSecret = "MiniShop.Api.Secret";
+                //options.JwtValidationClockSkew = TimeSpan.FromSeconds(0);//Ê±¼äÆ«ÒÆ
             });
 
 

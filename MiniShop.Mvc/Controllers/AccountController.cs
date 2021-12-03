@@ -25,12 +25,6 @@ namespace MiniShop.Mvc.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-            DeleteCookies(LoginUserId);
-            DeleteCookies(LoginUserShopId);
-            DeleteCookies(LoginUserName);
-            DeleteCookies(LoginUserPhone);
-            DeleteCookies(LoginUserEmail);
-            DeleteCookies(LoginUserRole);
         }
     }
 }
