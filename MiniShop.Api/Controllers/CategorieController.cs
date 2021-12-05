@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MiniShop.Api.Services;
+using MiniShop.IServices;
 using System;
 
 namespace MiniShop.Api.Controllers

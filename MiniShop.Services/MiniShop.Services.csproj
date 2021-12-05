@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MiniShop.IServices\MiniShop.IServices.csproj" />
+    <ProjectReference Include="..\MiniShop.Orm\MiniShop.Orm.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MiniShop.Api.Database;
-using MiniShop.Api.Services;
+using MiniShop.IServices;
+using MiniShop.Orm;
+using MiniShop.Services;
 using Newtonsoft.Json.Serialization;
-using System;
 
 namespace MiniShop.Api
 {
@@ -27,7 +27,7 @@ namespace MiniShop.Api
         {
             services.AddDbContext<AppDbContext>(option =>
             {
-                option.UseMySql(Configuration["DbContext:MiniShopDBMySqlConnectionString"]);
+                option.UseMySql(Configuration["DbContext:MiniShopDBMySqlConnectionString"], option => option.MigrationsAssembly("MiniShop.Api"));
             });
 
             services.AddControllers(setupAction =>
@@ -78,7 +78,7 @@ namespace MiniShop.Api
 
             //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             //Ìí¼ÓAutoMapper
-            services.AddAutoMapper(typeof(MiniShop.Dto.Profiles.AutoMapperProfiles).Assembly);
+            services.AddAutoMapper(typeof(Dto.Profiles.AutoMapperProfiles).Assembly);
 
             services.AddScoped<IShopService, ShopService>();
             services.AddScoped<IUserService, UserService>();

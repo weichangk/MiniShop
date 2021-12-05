@@ -1,12 +1,10 @@
 ﻿using MiniShop.Model;
 using System.Collections.Generic;
 
-namespace MiniShop.Api.Database
+namespace MiniShop.Orm
 {
     public class SeedDataModel
     {
-        public List<Shop> Shops { get; set; }
-        public List<User> Users { get; set; }
         public List<Item> Items { get; set; }
         public List<Categorie> Categories { get; set; }
     }

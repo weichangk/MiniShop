@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MiniShop.Api.Services;
 using MiniShop.Dto;
+using MiniShop.IServices;
 using MiniShop.Model;
 using MiniShop.Model.Enums;
 using System;
@@ -26,15 +26,15 @@ namespace MiniShop.Api.Controllers
             _shopService = shopService;
         }
 
-        [HttpGet("UserLogin/{userName}/{phone}/{email}/{role}")]
-        public async Task<IActionResult> UserLogin(string userName, string phone, string email, string role)
+        [HttpGet("CreateDefaultShopAndUser/{userName}/{phone}/{email}/{role}")]
+        public async Task<IActionResult> CreateDefaultShopAndUser(string userName, string phone, string email, string role)
         {
             User user = _userService.UserExist(userName).Result;
             if (user == null)
             {
                 if (role != null && role.Equals(EnumRole.ShopManager.ToString()))
                 {
-                    user = _userService.CreateShopManagerUser(userName, phone, email);
+                    user = _userService.CreateDefaultShopAndUser(userName, phone, email);
                     await _userService.SaveAsync();
                 }
                 else

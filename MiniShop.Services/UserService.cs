@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MiniShop.Api.Database;
+using MiniShop.IServices;
 using MiniShop.Model;
 using MiniShop.Model.Enums;
+using MiniShop.Orm;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace MiniShop.Api.Services
+namespace MiniShop.Services
 {
     public class UserService : BaseService<User>, IUserService
     {
@@ -15,12 +15,13 @@ namespace MiniShop.Api.Services
             _context = context;
         }
 
-        public User CreateShopManagerUser(string userName, string phone, string email)
+        public User CreateDefaultShopAndUser(string userName, string phone, string email)
         {
             if (phone == null) phone = "";
             if (email == null) email = "";
 
             Guid shopId = Guid.NewGuid();
+            DateTime dateTime = DateTime.Now;
             User user = new User
             {
                 ShopId = shopId,
@@ -29,8 +30,18 @@ namespace MiniShop.Api.Services
                 Email = email,
                 Role = EnumRole.ShopManager,
             };
-
+            Shop shop = new Shop
+            {
+                Id = shopId,
+                Name = $"{userName} Shop",
+                Contacts = userName,
+                Phone = phone,
+                Email = email,
+                CreateDate = dateTime,
+                ValidDate = dateTime.AddDays(7),
+            };
             _context.Set<User>().Add(user);
+            _context.Set<Shop>().Add(shop);
             return user;
         }
 

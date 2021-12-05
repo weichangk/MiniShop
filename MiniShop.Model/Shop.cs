@@ -13,7 +13,6 @@ namespace MiniShop.Model
         [Required]
         [MaxLength(32)]
         public string Contacts { get; set; }
-        [Required]
         [MaxLength(32)]
         public string Phone { get; set; }
         [MaxLength(32)]

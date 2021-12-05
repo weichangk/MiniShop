@@ -18,7 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MiniShop.Dto\MiniShop.Dto.csproj" />
-    <ProjectReference Include="..\MiniShop.Model\MiniShop.Model.csproj" />
+    <ProjectReference Include="..\MiniShop.IServices\MiniShop.IServices.csproj" />
+    <ProjectReference Include="..\MiniShop.Services\MiniShop.Services.csproj" />
   </ItemGroup>
 
 

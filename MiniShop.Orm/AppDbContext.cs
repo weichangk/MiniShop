@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace MiniShop.Api.Database
+namespace MiniShop.Orm
 {
     public class AppDbContext : DbContext
     {
@@ -21,7 +21,7 @@ namespace MiniShop.Api.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            SeedData(modelBuilder);
+            //SeedData(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }
 
@@ -31,12 +31,12 @@ namespace MiniShop.Api.Database
             Shop shop = new Shop
             {
                 Id = shopId,
-                Name="Alice Shop",
-                Contacts= "alice",
-                Phone="18888888888",
-                Email="AliceSmith@shop.com",
-                Address="shenzhen",
-                CreateDate= DateTime.Parse("2021-11-11"),
+                Name = "weick shop",
+                Contacts = "weick",
+                Phone = "18276743761",
+                Email = "18276743761@163.com",
+                Address = "shenzhen",
+                CreateDate = DateTime.Parse("2021-11-11"),
                 ValidDate = DateTime.Parse("2099-11-11"),
             };
             modelBuilder.Entity<Shop>().HasData(shop);
@@ -45,14 +45,14 @@ namespace MiniShop.Api.Database
             {
                 Id = 1,
                 ShopId = shopId,
-                Name = "alice",
-                Phone = "18888888888",
-                Email = "AliceSmith@shop.com",
+                Name = "weick",
+                Phone = "18276743761",
+                Email = "18276743761@163.com",
                 Role = EnumRole.ShopManager,
             };
             modelBuilder.Entity<User>().HasData(user);
 
-            var seedDataJson = File.ReadAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/Database/SeedData.json");
+            var seedDataJson = File.ReadAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/SeedData.json");
             SeedDataModel seedDataModel = JsonConvert.DeserializeObject<SeedDataModel>(seedDataJson);
             foreach (var item in seedDataModel.Categories)
             {

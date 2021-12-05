@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace MiniShop.Api.Services
+namespace MiniShop.IServices
 {
     public interface IBaseService<T> where T : class
     {

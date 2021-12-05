@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MiniShop.Api.Database;
+using MiniShop.Orm;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace MiniShop.Api.Services
+namespace MiniShop.Services
 {
     public abstract class BaseService<T> where T : class
     {

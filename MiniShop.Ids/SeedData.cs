@@ -36,13 +36,14 @@ namespace MiniShop.Ids
                     context.Database.Migrate();
 
                     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                    var alice = userMgr.FindByNameAsync("alice").Result;
+                    var alice = userMgr.FindByNameAsync("weick").Result;
                     if (alice == null)
                     {
                         alice = new ApplicationUser
                         {
-                            UserName = "alice",
-                            Email = "AliceSmith@shop.com",
+                            UserName = "weick",
+                            PhoneNumber = "18276743761",
+                            Email = "18276743761@163.com",
                             EmailConfirmed = true,
                         };
                         var result = userMgr.CreateAsync(alice, "Pass123$").Result;
@@ -53,19 +54,19 @@ namespace MiniShop.Ids
 
                         result = userMgr.AddClaimsAsync(alice, new Claim[]{
                             new Claim(JwtClaimTypes.Role, "ShopManager"),
-                            new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                            new Claim(JwtClaimTypes.GivenName, "Alice"),
-                            new Claim(JwtClaimTypes.FamilyName, "Smith"),
+                            //new Claim(JwtClaimTypes.Name, "weick wei"),
+                            //new Claim(JwtClaimTypes.GivenName, "weick"),
+                            //new Claim(JwtClaimTypes.FamilyName, "wei"),
                         }).Result;
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);
                         }
-                        Log.Debug("alice created");
+                        Log.Debug("weick created");
                     }
                     else
                     {
-                        Log.Debug("alice already exists");
+                        Log.Debug("weick already exists");
                     }
 
                 }

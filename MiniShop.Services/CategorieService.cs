@@ -1,7 +1,8 @@
-﻿using MiniShop.Api.Database;
+﻿using MiniShop.IServices;
 using MiniShop.Model;
+using MiniShop.Orm;
 
-namespace MiniShop.Api.Services
+namespace MiniShop.Services
 {
     public class CategorieService : BaseService<Categorie>, ICategorieService
     {

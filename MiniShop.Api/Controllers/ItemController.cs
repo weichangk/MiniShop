@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MiniShop.Api.Services;
 using MiniShop.Dto;
+using MiniShop.IServices;
 using MiniShop.Model;
 using System;
 using System.Threading.Tasks;

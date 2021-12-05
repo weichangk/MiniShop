@@ -82,7 +82,7 @@ namespace MiniShop.Mvc.Controllers
                 if (jwtPhoneNumber == null) jwtPhoneNumber = " ";
                 if (jwtEmail == null) jwtEmail = " ";
                 if (jwtRole == null) jwtRole = " ";
-                var result = await _userApi.UserLogin(jwtPreferredUserName, jwtPhoneNumber, jwtEmail, jwtRole);
+                var result = await _userApi.CreateDefaultShopAndUser(jwtPreferredUserName, jwtPhoneNumber, jwtEmail, jwtRole);
 
                 var info = HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme).Result;
                 var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);

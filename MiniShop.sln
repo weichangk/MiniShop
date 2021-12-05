@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31129.286
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Model", "MiniShop.Model\MiniShop.Model.csproj", "{8B6E131A-0C39-4B40-AEB6-31BC6EB6FC8B}"
 EndProject
@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Api", "MiniShop.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Mvc", "MiniShop.Mvc\MiniShop.Mvc.csproj", "{D1D4A17F-5F25-4391-844F-232397B0C80A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniShop.Ids", "MiniShop.Ids\MiniShop.Ids.csproj", "{1D99237F-36B2-43F8-BCED-0A9716CFF64D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Ids", "MiniShop.Ids\MiniShop.Ids.csproj", "{1D99237F-36B2-43F8-BCED-0A9716CFF64D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniShop.Orm", "MiniShop.Orm\MiniShop.Orm.csproj", "{754876C8-A3CB-4E5F-B20C-D33E98B9FB24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{1D99237F-36B2-43F8-BCED-0A9716CFF64D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D99237F-36B2-43F8-BCED-0A9716CFF64D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D99237F-36B2-43F8-BCED-0A9716CFF64D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{754876C8-A3CB-4E5F-B20C-D33E98B9FB24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{754876C8-A3CB-4E5F-B20C-D33E98B9FB24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{754876C8-A3CB-4E5F-B20C-D33E98B9FB24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{754876C8-A3CB-4E5F-B20C-D33E98B9FB24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

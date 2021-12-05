@@ -1,9 +1,9 @@
 ﻿using MiniShop.Model;
 
-namespace MiniShop.Api.Services
+namespace MiniShop.IServices
 {
     public interface IShopService : IBaseService<Shop>
     {
-        void CreateShopDefaultInfo(Shop shop);
+
     }
 }

@@ -1,6 +1,6 @@
 ﻿using MiniShop.Model;
 
-namespace MiniShop.Api.Services
+namespace MiniShop.IServices
 {
     public interface ICategorieService : IBaseService<Categorie>
     {
