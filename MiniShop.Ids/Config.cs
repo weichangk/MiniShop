@@ -86,7 +86,7 @@ namespace MiniShop.Ids
                 AlwaysIncludeUserClaimsInIdToken = true,
                 RequireConsent = false,
                 AllowOfflineAccess = true,
-                AccessTokenLifetime = 600,
+                AccessTokenLifetime = 3600,
                 
                 AllowedScopes = 
                 { 

@@ -5,7 +5,7 @@
 
 <p>Use this page to detail your site's privacy policy.</p>
 
-<h1>Token Info</h1>
+@*<h1>Token Info</h1>
 <h2>Access Token</h2>
 <p>@ViewData["accessToken"]</p>
 
@@ -13,7 +13,7 @@
 <p>@ViewData["idToken"]</p>
 
 <h2>Refresh Token</h2>
-<p>@ViewData["refreshToken"]</p>
+<p>@ViewData["refreshToken"]</p>*@
 
 <h1>Claims Info</h1>
 <dl>
@@ -25,21 +25,33 @@
 </dl>
 
 
-<h1>LoginInfos</h1>
-<h2>LoginInfos.Id</h2>
-<p>@ViewData["LoginInfos.Id"]</p>
+@*<h1>LoginInfo</h1>
+<h2>LoginIdToken</h2>
+<p>@ViewData["LoginIdToken"]</p>
 
-<h2>LoginInfos.ShopId</h2>
-<p>@ViewData["LoginInfos.ShopId"]</p>
+<h2>LoginAccessToken</h2>
+<p>@ViewData["LoginAccessToken"]</p>
 
-<h2>LoginInfos.Name</h2>
-<p>@ViewData["LoginInfos.Name"]</p>
+<h2>LoginRefreshToken</h2>
+<p>@ViewData["LoginRefreshToken"]</p>
 
-<h2>LoginInfos.Phone</h2>
-<p>@ViewData["LoginInfos.Phone"]</p>
+<h2>LoginExpiresAt</h2>
+<p>@ViewData["LoginExpiresAt"]</p>
 
-<h2>LoginInfos.Email</h2>
-<p>@ViewData["LoginInfos.Email"]</p>
+<h2>LoginId</h2>
+<p>@ViewData["LoginId"]</p>
 
-<h2>LoginInfos.Role</h2>
-<p>@ViewData["LoginInfos.Role"]</p>
+<h2>LoginShopId</h2>
+<p>@ViewData["LoginShopId"]</p>
+
+<h2>LoginName</h2>
+<p>@ViewData["LoginName"]</p>
+
+<h2>LoginPhone</h2>
+<p>@ViewData["LoginPhone"]</p>
+
+<h2>LoginEmail</h2>
+<p>@ViewData["LoginEmail"]</p>
+
+<h2>LoginRole</h2>
+<p>@ViewData["LoginRole"]</p>*@

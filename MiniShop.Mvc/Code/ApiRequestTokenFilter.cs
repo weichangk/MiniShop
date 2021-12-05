@@ -18,7 +18,8 @@ namespace MiniShop.Mvc.Code
             }
             try
             {
-                context.RequestMessage.Headers.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {LoginInfos.AccessToken}");
+                var _loginInfo = context.GetService<ILoginInfo>();
+                context.RequestMessage.Headers.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {_loginInfo.LoginAccessToken}");
             }
             catch (System.Exception)
             {

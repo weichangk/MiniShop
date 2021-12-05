@@ -81,7 +81,8 @@ namespace IdentityServerHost.Quickstart.UI
             {
                 if (button == "register")
                 {
-                    return Redirect($"~/Account/Register?ReturnUrl={model.ReturnUrl}");
+                    var url = System.Web.HttpUtility.UrlEncode(model.ReturnUrl);  //utf-8 编码
+                    return Redirect($"~/Account/Register?ReturnUrl={url}");
                 }
 
                 if (context != null)
@@ -219,14 +220,9 @@ namespace IdentityServerHost.Quickstart.UI
         {
             RegisterViewModel model = new RegisterViewModel
             {
-                ReturnUrl = returnUrl,
+                ReturnUrl = returnUrl
             };
             return View(model);
-        }
-        [HttpGet]
-        public IActionResult RegisterToLogin(RegisterViewModel model)
-        {
-            return Redirect($"~/Account/Login?ReturnUrl={model.ReturnUrl}");
         }
 
         [HttpPost]
@@ -234,7 +230,8 @@ namespace IdentityServerHost.Quickstart.UI
         {
             if (button == "login")
             {
-                return Redirect($"~/Account/Login?ReturnUrl={model.ReturnUrl}");
+                var url = System.Web.HttpUtility.UrlEncode(model.ReturnUrl);  //utf-8 编码
+                return Redirect($"~/Account/Login?returnUrl={url}");
             }
 
             if (ModelState.IsValid)

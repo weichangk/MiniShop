@@ -36,12 +36,10 @@
                     @if (Model.RegisterSucceeded)
                     {
                         <button type="submit" name="button" value="login">Registration successful, please log in</button>
-
                     }
                     else
                     {
-                        @*<button class="btn btn-link"  name="button" value="register" asp-controller="Account" asp-action="RegisterToLogin">Register</button>*@
-                        <a class="nav-link active" asp-area="" asp-controller="Account" asp-action="RegisterToLogin"></a>
+                        <button type="submit" name="button" value="register">Register</button>
                     }
 
                 </form>
