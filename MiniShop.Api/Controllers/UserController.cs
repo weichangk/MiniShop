@@ -42,7 +42,8 @@ namespace MiniShop.Api.Controllers
                     return NotFound("用户不存在");
                 }
             }
-            return Ok(user);
+            var userInfo = _mapper.Map<UserInfoDto>(user);
+            return Ok(userInfo);
         }
 
         [HttpGet]
@@ -88,7 +89,7 @@ namespace MiniShop.Api.Controllers
             }
             var user = _mapper.Map<User>(userCreateDto);
             user.ShopId = shopId;
-            user.Role = Model.Enums.EnumRole.Admin;
+            user.Role = EnumRole.Admin;
             var newUser = _userService.Insert(user);
             await _userService.SaveAsync();
             return CreatedAtRoute("GetUserByUserId", new { userId = newUser.Id }, newUser);

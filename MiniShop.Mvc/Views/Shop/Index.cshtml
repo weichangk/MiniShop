@@ -1,12 +1,9 @@
-﻿@model IEnumerable<ShopInfoDto>
+﻿@model ShopDto
 @{
     ViewData["Title"] = "Shop Page";
 }
 
 <div class="text-center">
-    @foreach (var item in @Model)
-    {
-        <h4>点名 : @item.Name</h4>
-        <h4>手机 : @item.Phone</h4>
-    }
+        <h4>点名 : @Model.Name</h4>
+        <h4>手机 : @Model.Phone</h4>
 </div>

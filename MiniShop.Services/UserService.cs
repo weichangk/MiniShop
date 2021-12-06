@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MiniShop.IServices;
 using MiniShop.Model;
 using MiniShop.Model.Enums;
@@ -10,7 +11,7 @@ namespace MiniShop.Services
 {
     public class UserService : BaseService<User>, IUserService
     {
-        public UserService(AppDbContext context)
+        public UserService(AppDbContext context, ILogger<UserService> logger) : base(logger)
         {
             _context = context;
         }

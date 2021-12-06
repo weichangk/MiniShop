@@ -1,4 +1,4 @@
-﻿using MiniShop.Model;
+﻿using MiniShop.Dto;
 using WebApiClient;
 using WebApiClient.Attributes;
 
@@ -8,6 +8,6 @@ namespace MiniShop.Mvc.HttpApis
     public interface IUserApi : IHttpApi
     {
         [HttpGet("/api/User/CreateDefaultShopAndUser/{userName}/{phone}/{email}/{role}")]
-        ITask<User> CreateDefaultShopAndUser(string userName, string phone, string email, string role);
+        ITask<UserInfoDto> CreateDefaultShopAndUser(string userName, string phone, string email, string role);
     }
 }

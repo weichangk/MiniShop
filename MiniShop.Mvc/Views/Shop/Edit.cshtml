@@ -1,0 +1,46 @@
+﻿@model ShopDto
+@{
+    ViewData["Title"] = "Shop Page";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <form enctype="multipart/form-data" method="post" asp-action="Save">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group form-inline my-sm-1">
+                <label asp-for="Id" class="control-label col-sm-3"></label>
+                <input asp-for="Id" class="form-control col-sm-9" style="background-color:white;" readonly />
+                <span asp-validation-for="Id" class="text-danger offset-sm-3 my-sm-1"></span>
+            </div>
+            <div class="form-group form-inline my-sm-1">
+                <label asp-for="Name" class="control-label col-sm-3"></label>
+                <input asp-for="Name" class="form-control col-sm-9" placeholder="请输入商店名" />
+                <span asp-validation-for="Name" class="text-danger offset-sm-3 my-sm-1"></span>
+            </div>
+            <div class="form-group form-inline my-sm-1">
+                <label asp-for="Contacts" class="control-label col-sm-3"></label>
+                <input asp-for="Contacts" class="form-control col-sm-9" placeholder="请输入联系人" />
+                <span asp-validation-for="Contacts" class="text-danger offset-sm-3 my-sm-1"></span>
+            </div>
+            <div class="form-group form-inline my-sm-1">
+                <label asp-for="Phone" class="control-label col-sm-3"></label>
+                <input asp-for="Phone" class="form-control col-sm-9" placeholder="请输入手机号" />
+                <span asp-validation-for="Phone" class="text-danger offset-sm-3 my-sm-1"></span>
+            </div>
+            <div class="form-group form-inline my-sm-1">
+                <label asp-for="Email" class="control-label col-sm-3"></label>
+                <input asp-for="Email" class="form-control col-sm-9" placeholder="请输入邮箱" />
+                <span asp-validation-for="Email" class="text-danger offset-sm-3 my-sm-1"></span>
+            </div>
+            <div class="form-group form-inline my-sm-1">
+                <label asp-for="Address" class="control-label col-sm-3"></label>
+                <input asp-for="Address" class="form-control col-sm-9" placeholder="请输入地址" />
+                <span asp-validation-for="Address" class="text-danger offset-sm-3 my-sm-1"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="保存" class="btn btn-primary offset-sm-3" />
+            </div>
+
+        </form>
+    </div>
+</div>

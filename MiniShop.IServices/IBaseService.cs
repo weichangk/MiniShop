@@ -12,7 +12,7 @@ namespace MiniShop.IServices
         IQueryable<T> Select(Expression<Func<T, bool>> whereLambda);
         IQueryable<T> SelectPage<s>(int pageIndex, int pageSize, out int totalCount, Expression<Func<T, bool>> whereLambda, Expression<Func<T, s>> orderbyLambda, bool isAsc);
         bool Delete(T model);
-        bool Update(T model);
+        T Update(T model);
         T Insert(T model);
     }
 }

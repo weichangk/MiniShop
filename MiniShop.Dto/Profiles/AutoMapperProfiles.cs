@@ -7,8 +7,8 @@ namespace MiniShop.Dto.Profiles
     {
         public AutoMapperProfiles()
         {
-            CreateMap<Shop, ShopInfoDto>();
-            CreateMap<ShopCreateDto, Shop>();
+            CreateMap<Shop, ShopDto>();
+            CreateMap<ShopDto, Shop>();
         }
     }
 }

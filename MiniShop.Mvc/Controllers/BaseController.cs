@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiClient.Contexts;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -17,7 +18,6 @@ namespace MiniShop.Mvc.Controllers
     public class BaseController : Controller
     {
         protected readonly ILogger<BaseController> _logger;
-
         public BaseController(ILogger<BaseController> logger)
         {
             _logger = logger;

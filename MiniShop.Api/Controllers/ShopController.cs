@@ -8,11 +8,13 @@ using MiniShop.IServices;
 using MiniShop.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MiniShop.Api.Controllers
 {
+    [Description("商店信息")]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
@@ -26,39 +28,43 @@ namespace MiniShop.Api.Controllers
             _shopService = shopService;
         }
 
+        [Description("获取所有商店")]
         [HttpGet]
         public async Task<IActionResult> GetShops()
         {
+            _logger.LogDebug("获取所有商店");
             var shops = await _shopService.Select(s=> s.Id != null).ToListAsync();
             if (shops == null || shops.Count() <= 0)
             {
                 return NotFound("没有找到商店数据");
             }
-            var shopInfos = _mapper.Map<IEnumerable<ShopInfoDto>>(shops);
+            var shopInfos = _mapper.Map<IEnumerable<ShopDto>>(shops);
             return Ok(shopInfos);
         }
 
-        [HttpGet("{shopId}", Name = "GetShopByShopId")]
+        [Description("根据商店ID，返回商店信息")]
+        [HttpGet("{shopId}")]
         public async Task<IActionResult> GetShopByShopId(Guid shopId)
         {
+            _logger.LogDebug($"根据商店ID:{shopId}获取指定部门");
             var shop = await _shopService.Select(s => s.Id == shopId).FirstOrDefaultAsync();
             if (shop == null)
             {
                 return NotFound($"没有找到商店{shopId}");
             }
-            return Ok(shop);
+            var shopInfo = _mapper.Map<ShopDto>(shop);
+            return Ok(shopInfo);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateShop([FromBody] ShopCreateDto shopCreateDto)
+        [Description("修改商店")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateShop([FromBody] ShopDto shopDto)
         {
-            var shop = _mapper.Map<Shop>(shopCreateDto);
-            shop.CreateDate = DateTime.Now;
-            shop.ValidDate = DateTime.Now.AddDays(1);
-
-            var newShop = _shopService.Insert(shop);
+            _logger.LogDebug("修改商店");
+            var shop = _mapper.Map<Shop>(shopDto);
+            _shopService.Update(shop);
             await _shopService.SaveAsync();
-            return CreatedAtRoute("GetShopByShopId", new { shopId = shop.Id }, shop);
+            return Ok(shopDto);
         }
 
     }

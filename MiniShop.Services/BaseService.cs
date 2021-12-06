@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MiniShop.Orm;
 using System;
 using System.Linq;
@@ -9,8 +10,13 @@ namespace MiniShop.Services
 {
     public abstract class BaseService<T> where T : class
     {
+        protected readonly ILogger<BaseService<T>> _logger;
         protected AppDbContext _context;
 
+        public BaseService(ILogger<BaseService<T>> logger)
+        {
+            _logger = logger;
+        }
         public bool Save()
         {
             return (_context.SaveChanges() >= 0);
@@ -31,6 +37,7 @@ namespace MiniShop.Services
         {
             if (model == null)
             {
+                _logger.LogError($"error：{typeof(T)} Insert failed");
                 throw new ArgumentNullException(nameof(model));
             }
             _context.Set<T>().Add(model);
@@ -57,14 +64,15 @@ namespace MiniShop.Services
             return temp;
         }
 
-        public bool Update(T model)
+        public T Update(T model)
         {
             if (model == null)
             {
+                _logger.LogError($"error：{typeof(T)} Update failed");
                 throw new ArgumentNullException(nameof(model));
             }
             _context.Entry<T>(model).State = EntityState.Modified;
-            return true;
+            return model;
         }
     }
 }

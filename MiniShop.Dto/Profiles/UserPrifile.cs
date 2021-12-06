@@ -8,6 +8,7 @@ namespace MiniShop.Dto.Profiles
         public UserPrifile()
         {
             CreateMap<UserCreateDto, User>();
+            CreateMap<User, UserInfoDto>();
         }
     }
 }
