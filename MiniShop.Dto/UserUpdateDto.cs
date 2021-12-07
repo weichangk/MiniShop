@@ -1,10 +1,12 @@
 ﻿using MiniShop.Model.Enums;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace MiniShop.Dto
 {
-    public class UserCreateDto
+    public class UserUpdateDto
     {
         [Display(Name = "商店ID")]
         [Required(ErrorMessage = "{0},不能为空")]
@@ -22,13 +24,5 @@ namespace MiniShop.Dto
         [Display(Name = "角色")]
         [Required(ErrorMessage = "{0},不能为空")]
         public EnumRole Role { get; set; }
-        [DataType(DataType.Password)]
-        [Display(Name = "密码")]
-        [StringLength(11, ErrorMessage = "{0},不能小于{2}，最长{1}", MinimumLength = 6)]
-        public string Password { get; set; }
-        [DataType(DataType.Password)]
-        [Display(Name = "确认密码")]
-        [Compare("PassWord", ErrorMessage = "密码和确认密码不匹配")]
-        public string ConfirmPassword { get; set; }
     }
 }
