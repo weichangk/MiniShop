@@ -29,6 +29,14 @@ namespace MiniShop.Mvc.HttpApis
         ITask<IEnumerable<UserInfoDto>> GetUsersByShopId(Guid shopId);
 
         /// <summary>
+        /// 根据商店ID和分页条件获取所有用户
+        /// </summary>
+        /// <param name="shopId"></param>
+        /// <returns></returns>
+        [HttpGet("/api/User?pageIndex={pageIndex}&pageSize={pageSize}&shopId={shopId}")]
+        ITask<IEnumerable<UserInfoDto>> GetPageUsersByShopId(int pageIndex, int pageSize, Guid shopId);
+        
+        /// <summary>
         /// 根据用户ID获取用户
         /// </summary>
         /// <param name="userId"></param>
@@ -44,5 +52,13 @@ namespace MiniShop.Mvc.HttpApis
         /// <returns></returns>
         [HttpPost("/api/User/{shopId}")]
         ITask<UserInfoDto> CreateShop(Guid shopId, [JsonContent] UserCreateDto model);
+
+        /// <summary>
+        /// 根据用户ID删除用户
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpDelete("/api/User/{userId}")]
+        ITask<UserInfoDto> DeleteUserByUserId(int userId);
     }
 }

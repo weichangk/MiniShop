@@ -46,7 +46,6 @@ namespace MiniShop.Services
             return user;
         }
 
-
         public Task<User> UserExist(string userName)
         {
             var user = _context.Users.FirstOrDefaultAsync(u => u.Name.Equals(userName));

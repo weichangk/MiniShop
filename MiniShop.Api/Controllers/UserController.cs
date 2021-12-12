@@ -9,6 +9,7 @@ using MiniShop.Model.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -79,6 +80,20 @@ namespace MiniShop.Api.Controllers
             return Ok(usersInfo);
         }
 
+        [Description("根据商店ID和分页条件获取所有用户")]
+        [HttpGet("{pageIndex}/{pageSize}/{shopId}")]
+        public async Task<IActionResult> GetPageUsersByShopId([Required] int pageIndex, int pageSize, Guid shopId)
+        {
+            _logger.LogDebug($"根据商店ID:{shopId} 分页条件:pageIndex{pageIndex} pageSize{pageSize} 获取用户");
+            var users = await _userService.SelectPage<Guid>(pageIndex, pageSize, out int p, u => u.ShopId.Equals(shopId), u => u.ShopId, true).ToListAsync();
+            if (users == null || users.Count() <= 0)
+            {
+                return NotFound($"根据商店ID:{shopId} 分页条件:pageIndex{pageIndex} pageSize{pageSize} 没有找到用户");
+            }
+            var usersInfo = _mapper.Map<IEnumerable<UserInfoDto>>(users);
+            return Ok(usersInfo);
+        }
+
         [Description("根据用户ID获取用户")]
         [HttpGet("{userId}", Name = "GetUserByUserId")]
         public async Task<IActionResult> GetUserByUserId(int userId)
@@ -91,6 +106,7 @@ namespace MiniShop.Api.Controllers
             }
             return Ok(user);
         }
+
 
         [Description("在指定商店ID下创建用户")]
         [HttpPost("{shopId}")]
@@ -108,6 +124,21 @@ namespace MiniShop.Api.Controllers
             var newUser = _userService.Insert(user);
             await _userService.SaveAsync();
             return CreatedAtRoute("GetUserByUserId", new { userId = newUser.Id }, newUser);
+        }
+
+        [Description("根据用户ID删除用户")]
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteUserByUserId([Required]int userId)
+        {
+            _logger.LogDebug($"根据用户ID:{userId} 删除用户");
+            var user = _userService.Select(s => s.Id == userId).FirstOrDefault();
+            if (user == null)
+            {
+                return NotFound($"没有找到用户ID:{userId}");
+            }
+            _userService.Delete(user);
+            await _userService.SaveAsync();
+            return Ok();
         }
     }
 }

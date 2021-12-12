@@ -31,9 +31,8 @@ namespace MiniShop.Mvc.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _shopApi.UpdateShop(model);
-
             }
-            return View("Edit");
+            return View("Edit", model);
         }
     }
 }

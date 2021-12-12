@@ -7,5 +7,6 @@ namespace MiniShop.IServices
     {
         Task<User> UserExist(string userName);
         User CreateDefaultShopAndUser(string userName, string phone, string email);
+
     }
 }
