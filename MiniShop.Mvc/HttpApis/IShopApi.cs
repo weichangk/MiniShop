@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using WebApiClient;
 using WebApiClient.Attributes;
+using yrjw.ORM.Chimp.Result;
 
 namespace MiniShop.Mvc.HttpApis
 {
@@ -13,25 +14,18 @@ namespace MiniShop.Mvc.HttpApis
     public interface IShopApi : IHttpApi
     {
         /// <summary>
-        /// 获取所有商店
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("/api/Shop")]
-        ITask<List<ShopDto>> GetShops();
-
-        /// <summary>
         /// 根据商店ID，返回商店信息
         /// </summary>
         /// <param name="shopId"></param>
         /// <returns></returns>
         [HttpGet("/api/Shop/{shopId}")]
-        ITask<ShopDto> GetShopByShopId(Guid shopId);
+        ITask<ResultModel<ShopDto>> QueryAsync(Guid shopId);
 
         /// <summary>
         /// 修改商店
         /// </summary>
         /// <returns></returns>
         [HttpPut("/api/Shop")]
-        ITask<ShopDto> UpdateShop([JsonContent] ShopDto model);
+        ITask<ResultModel<ShopDto>> UpdateAsync([JsonContent] ShopDto model);
     }
 }

@@ -79,7 +79,7 @@ namespace MiniShop.Mvc.Controllers
                 if (jwtPhoneNumber == null) jwtPhoneNumber = " ";
                 if (jwtEmail == null) jwtEmail = " ";
                 if (jwtRole == null) jwtRole = " ";
-                var result = await _userApi.CreateDefaultShopAndUser(jwtPreferredUserName, jwtPhoneNumber, jwtEmail, jwtRole);
+                var result = await _userApi.GetLoginInfoOrShopManagerFirstRegister(jwtPreferredUserName, jwtRole, jwtPhoneNumber, jwtEmail);
 
                 var info = HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme).Result;
                 var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -92,16 +92,18 @@ namespace MiniShop.Mvc.Controllers
                 identity.AddClaim(new Claim("LoginRefreshToken", refreshToken, ClaimValueTypes.String));
                 var expiresAt = HttpContext.GetTokenAsync("expires_at").Result;
                 identity.AddClaim(new Claim("LoginExpiresAt", expiresAt, ClaimValueTypes.String));
-                identity.AddClaim(new Claim("LoginId", result.Id.ToString(), ClaimValueTypes.String));
-                identity.AddClaim(new Claim("LoginShopId", result.ShopId.ToString(), ClaimValueTypes.String));
-                identity.AddClaim(new Claim("LoginName", result.Name, ClaimValueTypes.String));
-                identity.AddClaim(new Claim("LoginPhone", result.Phone, ClaimValueTypes.String));
-                identity.AddClaim(new Claim("LoginEmail", result.Email, ClaimValueTypes.String));
-                identity.AddClaim(new Claim("LoginRole", result.Role.ToString(), ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginId", result.Data.Id.ToString(), ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginShopId", result.Data.ShopId.ToString(), ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginName", result.Data.Name, ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginPhone", result.Data.Phone, ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginEmail", result.Data.Email, ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginRole", result.Data.Role.ToString(), ClaimValueTypes.String));
 
+                //追加会导致重复
                 //info.Principal.AddIdentity(identity);          
                 //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, info.Principal, info.Properties);
 
+                //使用新的new ClaimsPrincipal(identity)代替
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), info.Properties);
 
             }

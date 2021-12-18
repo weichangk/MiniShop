@@ -1,78 +1,218 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Cache.MemoryCache;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MiniShop.Orm;
+using MiniShop.IServices;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
+using yrjw.ORM.Chimp;
+using yrjw.ORM.Chimp.Result;
 
 namespace MiniShop.Services
 {
-    public abstract class BaseService<T> where T : class
+    public class BaseService<TEntity, TEntityDTO, TKey> : IBaseService<TEntity, TEntityDTO, TKey> where TEntityDTO : class where TEntity : Model.EntityBase<TKey>, new() where TKey : struct
     {
-        protected readonly ILogger<BaseService<T>> _logger;
-        protected AppDbContext _context;
+        protected readonly ILogger<BaseService<TEntity, TEntityDTO, TKey>> _logger;
+        protected readonly Lazy<IMapper> _mapper;
+        protected readonly Lazy<ICacheHandler> _cacheHandler;
 
-        public BaseService(ILogger<BaseService<T>> logger)
+        /// <summary>
+        /// TEntity仓储
+        /// </summary>
+        protected readonly Lazy<IRepository<TEntity>> _repository;
+        /// <summary>
+        /// 工作单元
+        /// </summary>
+        public IUnitOfWork UnitOfWork { get; }
+
+        public BaseService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<BaseService<TEntity, TEntityDTO, TKey>> logger,
+           Lazy<IRepository<TEntity>> repository)
         {
             _logger = logger;
-        }
-        public bool Save()
-        {
-            return (_context.SaveChanges() >= 0);
-        }
-
-        public async Task<bool> SaveAsync()
-        {
-            return (await _context.SaveChangesAsync() >= 0);
+            _mapper = mapper;
+            UnitOfWork = unitOfWork;
+            this._repository = repository;
         }
 
-        public bool Delete(T model)
+        public BaseService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<BaseService<TEntity, TEntityDTO, TKey>> logger, Lazy<ICacheHandler> cacheHandler,
+            Lazy<IRepository<TEntity>> repository)
         {
-            _context.Entry<T>(model).State = EntityState.Deleted;
-            return true;
+            _logger = logger;
+            _mapper = mapper;
+            _cacheHandler = cacheHandler;
+            UnitOfWork = unitOfWork;
+            this._repository = repository;
         }
 
-        public T Insert(T model)
+        public virtual async Task<IResultModel> GetByIdAsync(TKey id)
         {
-            if (model == null)
+            var info = await _repository.Value.GetByIdAsync(id);
+            return ResultModel.Success(_mapper.Value.Map<TEntityDTO>(info));
+        }
+
+        public virtual async Task<IResultModel> GetListAllAsync(bool isDescending = false)
+        {
+            if (isDescending)
             {
-                _logger.LogError($"error：{typeof(T)} Insert failed");
-                throw new ArgumentNullException(nameof(model));
+                var Descendinglist = await _repository.Value.TableNoTracking.OrderByDescending(k => k.Id).ProjectTo<TEntityDTO>(_mapper.Value.ConfigurationProvider).ToListAsync();
+                return ResultModel.Success(Descendinglist);
             }
-            _context.Set<T>().Add(model);
-            return model;
+            var list = await _repository.Value.TableNoTracking.OrderBy(k => k.Id).ProjectTo<TEntityDTO>(_mapper.Value.ConfigurationProvider).ToListAsync();
+            return ResultModel.Success(list);
         }
 
-        public IQueryable<T> Select(Expression<Func<T, bool>> whereLambda)
+        public virtual async Task<IResultModel> InsertAsync(TEntityDTO model)
         {
-            return _context.Set<T>().Where<T>(whereLambda);
+            var entity = _mapper.Value.Map<TEntity>(model);
+            await _repository.Value.InsertAsync(entity);
+
+            if (await UnitOfWork.SaveChangesAsync() > 0)
+            {
+                return ResultModel.Success(_mapper.Value.Map<TEntityDTO>(entity));
+            }
+            _logger.LogError($"error：Insert Save failed");
+            return ResultModel.Failed("error：Insert Save failed", 500);
         }
 
-        public IQueryable<T> SelectPage<s>(int pageIndex, int pageSize, out int totalCount, Expression<Func<T, bool>> whereLambda, Expression<Func<T, s>> orderbyLambda, bool isAsc)
+        public virtual async Task<IResultModel> UpdateAsync(TEntityDTO model)
         {
-            var temp = _context.Set<T>().Where<T>(whereLambda);
-            totalCount = temp.Count();
-            if (isAsc)
+            //主键判断
+            var entity = await _repository.Value.GetByIdAsync(((dynamic)model).Id);
+            if (entity == null)
             {
-                temp = temp.OrderBy<T, s>(orderbyLambda).Skip<T>((pageIndex - 1) * pageSize).Take<T>(pageSize);
+                _logger.LogError($"error：entity Id {((dynamic)model).Id} does not exist");
+                return ResultModel.NotExists;
             }
-            else
+            _mapper.Value.Map(model, entity);
+            _repository.Value.Update(entity);
+
+            if (await UnitOfWork.SaveChangesAsync() > 0)
             {
-                temp = temp.OrderByDescending<T, s>(orderbyLambda).Skip<T>((pageIndex - 1) * pageSize).Take<T>(pageSize);
+                return ResultModel.Success(entity);
             }
-            return temp;
+            _logger.LogError($"error：Update Save failed");
+            return ResultModel.Failed("error：Update Save failed", 500);
         }
 
-        public T Update(T model)
+        public virtual async Task<IResultModel> UpdateAsync(IEnumerable<TEntityDTO> models)
         {
-            if (model == null)
+            var entitys = new List<TEntity>();
+            foreach (var model in models)
             {
-                _logger.LogError($"error：{typeof(T)} Update failed");
-                throw new ArgumentNullException(nameof(model));
+                //主键判断
+                var entity = await _repository.Value.GetByIdAsync(((dynamic)model).Id);
+                if (entity == null)
+                {
+                    _logger.LogError($"error：entity Id {((dynamic)model).Id} does not exist");
+                    return ResultModel.NotExists;
+                }
+                entitys.Add(entity);
             }
-            _context.Entry<T>(model).State = EntityState.Modified;
-            return model;
+            _repository.Value.Update(entitys);
+
+            if (await UnitOfWork.SaveChangesAsync() > 0)
+            {
+                return ResultModel.Success();
+            }
+            _logger.LogError($"error：Updates Save failed");
+            return ResultModel.Failed("error：Updates Save failed", 500);
+        }
+
+        public virtual async Task<IResultModel> DeleteAsync(TKey id)
+        {
+            //主键判断
+            var entity = await _repository.Value.GetByIdAsync(id);
+            if (entity == null)
+            {
+                _logger.LogError($"error：entity Id：{id} does not exist");
+                return ResultModel.NotExists;
+            }
+            //判断模型是否拥有软删除字段
+            if (entity is Model.EntityBaseNoDeleted<TKey>)
+            {
+                _logger.LogError($"error：not inheritance for EntityBaseNoDeleted");
+                return ResultModel.Failed("error：not inheritance for EntityBaseNoDeleted", 500);
+            }
+            //软删除
+            if (entity.Deleted == 0)
+            {
+                entity.Deleted = 1;
+                _repository.Value.Update(entity);
+            }
+            if (await UnitOfWork.SaveChangesAsync() > 0)
+            {
+                return ResultModel.Success();
+            }
+            _logger.LogError($"error：Delete failed");
+            return ResultModel.Failed("error：Delete failed", 500);
+        }
+
+        public virtual async Task<IResultModel> DeleteAsync(IList<TKey> ids)
+        {
+            foreach (var id in ids)
+            {
+                //主键判断
+                var entity = await _repository.Value.GetByIdAsync(id);
+                if (entity == null)
+                {
+                    _logger.LogError($"error：entity Id：{id} does not exist");
+                    return ResultModel.NotExists;
+                }
+                //软删除
+                if (entity.Deleted == 0)
+                {
+                    entity.Deleted = 1;
+                    _repository.Value.Update(entity);
+                }
+            }
+            if (await UnitOfWork.SaveChangesAsync() > 0)
+            {
+                return ResultModel.Success();
+            }
+            _logger.LogError($"error：Delete failed");
+            return ResultModel.Failed("error：Delete failed", 500);
+        }
+
+        public virtual async Task<IResultModel> RemoveAsync(TKey id)
+        {
+            //主键判断
+            var entity = await _repository.Value.GetByIdAsync(id);
+            if (entity == null)
+            {
+                _logger.LogError($"error：entity Id：{id} does not exist");
+                return ResultModel.NotExists;
+            }
+            _repository.Value.Delete(entity);
+            if (await UnitOfWork.SaveChangesAsync() > 0)
+            {
+                return ResultModel.Success();
+            }
+            _logger.LogError($"error：Remove failed");
+            return ResultModel.Failed("error：Remove failed", 500);
+        }
+
+        public virtual async Task<IResultModel> RemoveAsync(IList<TKey> ids)
+        {
+            foreach (var id in ids)
+            {
+                //主键判断
+                var entity = await _repository.Value.GetByIdAsync(id);
+                if (entity == null)
+                {
+                    _logger.LogError($"error：entity Id：{id} does not exist");
+                    return ResultModel.NotExists;
+                }
+                _repository.Value.Delete(entity);
+            }
+            if (await UnitOfWork.SaveChangesAsync() > 0)
+            {
+                return ResultModel.Success();
+            }
+            _logger.LogError($"error：Remove failed");
+            return ResultModel.Failed("error：Remove failed", 500);
         }
     }
 }

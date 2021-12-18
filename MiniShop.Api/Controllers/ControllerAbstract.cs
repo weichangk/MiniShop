@@ -5,10 +5,20 @@ using System.Web;
 
 namespace MiniShop.Api.Controllers
 {
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class ControllerAbstract : ControllerBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly ILogger<ControllerAbstract> _logger;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logger"></param>
         public ControllerAbstract(ILogger<ControllerAbstract> logger)
         {
             _logger = logger;

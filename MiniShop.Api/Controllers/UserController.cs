@@ -1,144 +1,119 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniShop.Dto;
 using MiniShop.IServices;
-using MiniShop.Model;
-using MiniShop.Model.Enums;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
+using yrjw.ORM.Chimp.Result;
 
 namespace MiniShop.Api.Controllers
 {
+    /// <summary>
+    /// 用户信息控制器
+    /// </summary>
     [Description("用户信息")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerAbstract
     {
-        private readonly IMapper _mapper;
-        private readonly IUserService _userService;
-        private readonly IShopService _shopService;
-        public UserController(ILogger<ControllerAbstract> logger, IMapper mapper, IUserService userService, IShopService shopService) : base(logger)
+        private readonly Lazy<IUserService> _userService;
+
+        /// <summary>
+        /// 用户信息控制器
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="userService"></param>
+        public UserController(ILogger<ControllerAbstract> logger, Lazy<IUserService> userService) : base(logger)
         {
-            _mapper = mapper;
             _userService = userService;
-            _shopService = shopService;
         }
 
-        [Description("首次登录创建默认商店和用户信息")]
-        [HttpGet("CreateDefaultShopAndUser/{userName}/{phone}/{email}/{role}")]
-        public async Task<IActionResult> CreateDefaultShopAndUser(string userName, string phone, string email, string role)
+        /// <summary>
+        /// 获取登录用户信息或店长角色信息首次注册
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="role"></param>
+        /// <param name="phone"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [Description("获取登录用户信息或店长角色信息首次注册")]
+        [Parameters(name = "userName", param = "用户名")]
+        [Parameters(name = "role", param = "角色")]
+        [Parameters(name = "phone", param = "手机号")]
+        [Parameters(name = "email", param = "邮箱")]
+        [HttpGet("GetLoginInfoOrShopManagerFirstRegister/{userName}/{role}/{phone}/{email}")]
+        public async Task<IResultModel> GetLoginInfoOrShopManagerFirstRegister(string userName, string role, string phone, string email)
         {
-            User user = _userService.UserExist(userName).Result;
-            if (user == null)
-            {
-                if (role != null && role.Equals(EnumRole.ShopManager.ToString()))
-                {
-                    _logger.LogDebug("首次登录创建默认商店和用户信息");
-                    user = _userService.CreateDefaultShopAndUser(userName, phone, email);
-                    await _userService.SaveAsync();
-                }
-                else
-                {
-                    return NotFound("用户不存在");
-                }
-            }
-            var userInfo = _mapper.Map<UserInfoDto>(user);
-            return Ok(userInfo);
+            _logger.LogDebug($"获取登录用户信息或店长角色信息首次注册");
+            return await _userService.Value.GetLoginInfoOrShopManagerFirstRegister(userName, role, phone, email);
         }
 
-        [Description("获取所有用户")]
-        [HttpGet]
-        public async Task<IActionResult> GetUsers()
-        {
-            _logger.LogDebug("获取所有用户");
-            var users = await _userService.Select(u => u.Id >= 1).ToListAsync();
-            if (users == null || users.Count() <= 0)
-            {
-                return NotFound("没有找到用户数据");
-            }
-            var usersInfo = _mapper.Map<IEnumerable<UserInfoDto>>(users);
-            return Ok(usersInfo);
-        }
-
+        /// <summary>
+        /// 根据商店ID获取所有用户
+        /// </summary>
+        /// <param name="shopId"></param>
+        /// <returns></returns>
         [Description("根据商店ID获取所有用户")]
+        [OperationId("获取用户列表")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "shopId", param = "商店ID")]
         [HttpGet("{shopId}")]
-        public async Task<IActionResult> GetUsersByShopId(Guid shopId)
+        public async Task<IResultModel> Query(Guid shopId)
         {
-            _logger.LogDebug($"根据商店ID:{shopId}获取所有用户");
-            var users = await _userService.Select(u => u.ShopId.Equals(shopId)).ToListAsync();
-            if (users == null || users.Count() <= 0)
-            {
-                return NotFound($"商店:{shopId}没有找到用户数据");
-            }
-            var usersInfo = _mapper.Map<IEnumerable<UserInfoDto>>(users);
-            return Ok(usersInfo);
+            _logger.LogDebug($"根据商店ID {shopId} 获取所有用户");
+            return await _userService.Value.GetUsersByShopId(shopId);
         }
 
+        /// <summary>
+        /// 根据商店ID和分页条件获取所有用户
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="shopId"></param>
+        /// <returns></returns>
         [Description("根据商店ID和分页条件获取所有用户")]
+        [OperationId("获取用户分页列表")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "pageIndex", param = "索引页")]
+        [Parameters(name = "pageSize", param = "单页条数")]
+        [Parameters(name = "shopId", param = "商店ID")]
         [HttpGet("{pageIndex}/{pageSize}/{shopId}")]
-        public async Task<IActionResult> GetPageUsersByShopId([Required] int pageIndex, int pageSize, Guid shopId)
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId)
         {
             _logger.LogDebug($"根据商店ID:{shopId} 分页条件:pageIndex{pageIndex} pageSize{pageSize} 获取用户");
-            var users = await _userService.SelectPage<Guid>(pageIndex, pageSize, out int p, u => u.ShopId.Equals(shopId), u => u.ShopId, true).ToListAsync();
-            if (users == null || users.Count() <= 0)
-            {
-                return NotFound($"根据商店ID:{shopId} 分页条件:pageIndex{pageIndex} pageSize{pageSize} 没有找到用户");
-            }
-            var usersInfo = _mapper.Map<IEnumerable<UserInfoDto>>(users);
-            return Ok(usersInfo);
+            return await _userService.Value.GetPageUsersByShopId(pageIndex, pageSize, shopId);
         }
 
+        /// <summary>
+        /// 根据用户ID获取用户
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [Description("根据用户ID获取用户")]
-        [HttpGet("{userId}", Name = "GetUserByUserId")]
-        public async Task<IActionResult> GetUserByUserId(int userId)
+        [OperationId("获取用户")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "userId", param = "用户ID")]
+        [HttpGet("{userId}")]
+        public async Task<IResultModel> Query(int userId)
         {
             _logger.LogDebug($"根据用户ID:{userId}获取用户");
-            var user = await _userService.Select(u => u.Id.Equals(userId)).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                return NotFound($"没有找到用户:{userId}");
-            }
-            return Ok(user);
+            return await _userService.Value.GetByIdAsync(userId);
         }
 
-
-        [Description("在指定商店ID下创建用户")]
-        [HttpPost("{shopId}")]
-        public async Task<IActionResult> CreateShop(Guid shopId, [FromBody] UserCreateDto userCreateDto)
+        /// <summary>
+        /// 添加用户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Description("添加用户，成功后返回当前用户信息")]
+        [OperationId("添加用户")]
+        [HttpPost]
+        public async Task<IResultModel> Add([FromBody]UserDto model)
         {
-            _logger.LogDebug($"在指定商店ID:{shopId}下创建用户");
-            var shop = await _shopService.Select(s => s.Id == shopId).FirstOrDefaultAsync();
-            if (shop == null)
-            {
-                return NotFound($"没有找到商店:{shopId}");
-            }
-            var user = _mapper.Map<User>(userCreateDto);
-            user.ShopId = shopId;
-            user.Role = EnumRole.Admin;
-            var newUser = _userService.Insert(user);
-            await _userService.SaveAsync();
-            return CreatedAtRoute("GetUserByUserId", new { userId = newUser.Id }, newUser);
-        }
-
-        [Description("根据用户ID删除用户")]
-        [HttpDelete("{userId}")]
-        public async Task<IActionResult> DeleteUserByUserId([Required]int userId)
-        {
-            _logger.LogDebug($"根据用户ID:{userId} 删除用户");
-            var user = _userService.Select(s => s.Id == userId).FirstOrDefault();
-            if (user == null)
-            {
-                return NotFound($"没有找到用户ID:{userId}");
-            }
-            _userService.Delete(user);
-            await _userService.SaveAsync();
-            return Ok();
+            _logger.LogDebug("添加用户");
+            return await _userService.Value.InsertAsync(model);
         }
     }
 }

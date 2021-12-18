@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MiniShop.Dto
 {
-    public class CategorieCreateDto
+    public class CategorieDto
     {
         [Required]
         public Guid ShopId { get; set; }

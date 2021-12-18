@@ -1,15 +1,19 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using MiniShop.Dto;
 using MiniShop.IServices;
 using MiniShop.Model;
-using MiniShop.Orm;
+using System;
+using yrjw.ORM.Chimp;
 
 namespace MiniShop.Services
 {
-    public class ItemService : BaseService<Item>, IItemService
+    public class ItemService : BaseService<Item, ItemDto, int>, IItemService, IDependency
     {
-        public ItemService(AppDbContext context, ILogger<ItemService> logger) : base(logger)
+        public ItemService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<ItemService> logger,
+            Lazy<IRepository<Item>> _repository) : base(mapper, unitOfWork, logger, _repository)
         {
-            _context = context;
+
         }
     }
 }

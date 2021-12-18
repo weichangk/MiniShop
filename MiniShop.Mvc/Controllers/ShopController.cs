@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CommonTools.Core.Helper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniShop.Dto;
 using MiniShop.Mvc.HttpApis;
@@ -21,8 +22,12 @@ namespace MiniShop.Mvc.Controllers
         {
             var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
             Guid loginShopId = Guid.Parse(id);
-            var result = await _shopApi.GetShopByShopId(loginShopId);
-            return View(result);
+            var result = await _shopApi.QueryAsync(loginShopId);
+            if (!result.Success)
+            {
+                return View();
+            }
+            return View(result.Data);
         }
 
         [HttpPost]
@@ -30,7 +35,22 @@ namespace MiniShop.Mvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _shopApi.UpdateShop(model);
+                var result = await _shopApi.UpdateAsync(model);
+                if (result.Success)
+                {
+                    //return RedirectToAction("ShowMsg", "Home", new { msg = "修改成功", json = JsonHelper.SerializeJSON(result.Data) });
+                }
+                else
+                {
+                    if (result.Errors.Count > 0)
+                    {
+                        ModelState.AddModelError(result.Errors[0].Id, result.Errors[0].Msg);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("error", result.Msg);
+                    }
+                }
             }
             return View("Edit", model);
         }

@@ -117,7 +117,7 @@
 
 				table.render({
 					elem: '#user-table',
-					url: 'GetPageUsersByShopId',
+					url: 'GetPagedList',
 					page: true,
 					cols: cols,
 					skin: 'line',
@@ -161,8 +161,9 @@
 						type: 2,
 						title: '新增',
 						shade: 0.1,
-						area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'400px'],
-						content: MODULE_PATH + 'add.html'
+						area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'500px'],
+						content: '/User/Create'
+						//content: MODULE_PATH + 'add.html'
 					});
 				}
 

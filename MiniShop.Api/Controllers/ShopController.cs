@@ -9,63 +9,62 @@ using MiniShop.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using yrjw.ORM.Chimp.Result;
 
 namespace MiniShop.Api.Controllers
 {
+    /// <summary>
+    /// 商店信息控制器
+    /// </summary>
     [Description("商店信息")]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ShopController : ControllerAbstract
     {
-        private readonly IMapper _mapper;
-        private readonly IShopService _shopService;
-        public ShopController(ILogger<ControllerAbstract> logger, IMapper mapper, IShopService shopService) : base(logger)
+        private readonly Lazy<IShopService> _shopService;
+
+        /// <summary>
+        /// 商店信息控制器
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="shopService"></param>
+        public ShopController(ILogger<ControllerAbstract> logger, Lazy<IShopService> shopService) : base(logger)
         {
-            _mapper = mapper;
             _shopService = shopService;
         }
 
-        [Description("获取所有商店")]
-        [HttpGet]
-        public async Task<IActionResult> GetShops()
-        {
-            _logger.LogDebug("获取所有商店");
-            var shops = await _shopService.Select(s=> s.Id != null).ToListAsync();
-            if (shops == null || shops.Count() <= 0)
-            {
-                return NotFound("没有找到商店数据");
-            }
-            var shopInfos = _mapper.Map<IEnumerable<ShopDto>>(shops);
-            return Ok(shopInfos);
-        }
-
-        [Description("根据商店ID，返回商店信息")]
+        /// <summary>
+        /// 根据商店ID获取商店
+        /// </summary>
+        /// <param name="shopId"></param>
+        /// <returns></returns>
+        [Description("根据商店ID获取商店")]
+        [OperationId("获取商店")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name ="shopId", param = "商店ID")]
         [HttpGet("{shopId}")]
-        public async Task<IActionResult> GetShopByShopId(Guid shopId)
+        public async Task<IResultModel> Query([Required] Guid shopId)
         {
-            _logger.LogDebug($"根据商店ID:{shopId}获取指定部门");
-            var shop = await _shopService.Select(s => s.Id == shopId).FirstOrDefaultAsync();
-            if (shop == null)
-            {
-                return NotFound($"没有找到商店{shopId}");
-            }
-            var shopInfo = _mapper.Map<ShopDto>(shop);
-            return Ok(shopInfo);
+            _logger.LogDebug($"根据商店ID {shopId }获取商店");
+            return await _shopService.Value.GetByIdAsync(shopId);
         }
 
-        [Description("修改商店")]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Description("修改商店，成功后返回当前商店信息")]
+        [OperationId("修改商店")]
         [HttpPut]
-        public async Task<IActionResult> UpdateShop([FromBody] ShopDto shopDto)
+        public async Task<IResultModel> Update([FromBody] ShopDto model)
         {
             _logger.LogDebug("修改商店");
-            var shop = _mapper.Map<Shop>(shopDto);
-            _shopService.Update(shop);
-            await _shopService.SaveAsync();
-            return Ok(shopDto);
+            return await _shopService.Value.UpdateAsync(model);
         }
-
     }
 }

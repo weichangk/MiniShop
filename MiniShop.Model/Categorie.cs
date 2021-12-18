@@ -4,15 +4,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
 {
-    public class Categorie
+    [Table("Categorie")]
+    public class Categorie : EntityBaseNoDeleted
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        /// <summary>
+        /// 商品Id
+        /// </summary>
         [Required]
         public Guid ShopId { get; set; }
+
+        /// <summary>
+        /// 类别名称
+        /// </summary>
         [Required]
-        [MaxLength(32)]
         public string Name { get; set; }
     }
 }

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using WebApiClient;
 using WebApiClient.Attributes;
+using yrjw.ORM.Chimp;
+using yrjw.ORM.Chimp.Result;
 
 namespace MiniShop.Mvc.HttpApis
 {
@@ -10,15 +12,15 @@ namespace MiniShop.Mvc.HttpApis
     public interface IUserApi : IHttpApi
     {
         /// <summary>
-        /// 首次登录创建默认商店和用户信息
+        /// 获取登录用户信息或店长角色信息首次注册
         /// </summary>
         /// <param name="userName"></param>
         /// <param name="phone"></param>
         /// <param name="email"></param>
         /// <param name="role"></param>
         /// <returns></returns>
-        [HttpGet("/api/User/CreateDefaultShopAndUser/{userName}/{phone}/{email}/{role}")]
-        ITask<UserInfoDto> CreateDefaultShopAndUser(string userName, string phone, string email, string role);
+        [HttpGet("/api/User/GetLoginInfoOrShopManagerFirstRegister/{userName}/{role}/{phone}/{email}")]
+        ITask<ResultModel<UserDto>> GetLoginInfoOrShopManagerFirstRegister(string userName, string role, string phone, string email);
 
         /// <summary>
         /// 根据商店ID获取所有用户
@@ -26,39 +28,30 @@ namespace MiniShop.Mvc.HttpApis
         /// <param name="shopId"></param>
         /// <returns></returns>
         [HttpGet("/api/User?shopId={shopId}")]
-        ITask<IEnumerable<UserInfoDto>> GetUsersByShopId(Guid shopId);
+        ITask<IEnumerable<UserDto>> QueryAsync(Guid shopId);
 
         /// <summary>
         /// 根据商店ID和分页条件获取所有用户
         /// </summary>
         /// <param name="shopId"></param>
         /// <returns></returns>
-        [HttpGet("/api/User?pageIndex={pageIndex}&pageSize={pageSize}&shopId={shopId}")]
-        ITask<IEnumerable<UserInfoDto>> GetPageUsersByShopId(int pageIndex, int pageSize, Guid shopId);
-        
+        //[HttpGet("/api/User?pageIndex={pageIndex}&pageSize={pageSize}&shopId={shopId}")]
+        [HttpGet("/api/User/{pageIndex}/{pageSize}/{shopId}")]
+        ITask<ResultModel<PagedList<UserDto>>> GetPagedListAsync(int pageIndex, int pageSize, Guid shopId);
+
         /// <summary>
         /// 根据用户ID获取用户
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("/api/User?userId={userId}")]
-        ITask<IEnumerable<UserInfoDto>> GetUserByUserId(int userId);
+        ITask<IEnumerable<UserDto>> QueryAsync(int userId);
 
-        /// <summary>
-        /// 在指定商店ID下创建用户
-        /// </summary>
-        /// <param name="shopId"></param>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost("/api/User/{shopId}")]
-        ITask<UserInfoDto> CreateShop(Guid shopId, [JsonContent] UserCreateDto model);
+        [HttpPost("/api/User")]
+        ITask<ResultModel<UserDto>> AddAsync([JsonContent]UserDto model);
 
-        /// <summary>
-        /// 根据用户ID删除用户
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        [HttpDelete("/api/User/{userId}")]
-        ITask<UserInfoDto> DeleteUserByUserId(int userId);
+        [HttpPut("/api/User")]
+        ITask<ResultModel<UserDto>> UpdateAsync([JsonContent] UserDto model);
+        
     }
 }

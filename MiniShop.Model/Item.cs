@@ -4,20 +4,42 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
 {
-    public class Item
+    [Table("Item")]
+    public class Item : EntityBaseNoDeleted
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        /// <summary>
+        /// 商店Id
+        /// </summary>
         [Required]
         public Guid ShopId { get; set; }
-        [ForeignKey("CategorieId")]
+
+        /// <summary>
+        /// 类别Id
+        /// </summary>
         public int CategorieId { get; set; }
+
+        /// <summary>
+        /// 类别
+        /// </summary>
+        [ForeignKey("CategorieId")]
+        public virtual Categorie Categorie { get; set; }
+
+        /// <summary>
+        /// 商品条码
+        /// </summary>
         [Required]
-        [MaxLength(32)]
         public string Code { get; set; }
+
+        /// <summary>
+        /// 商品名称
+        /// </summary>
         [Required]
-        [MaxLength(32)]
         public string Name { get; set; }
+
+        /// <summary>
+        /// 商品价格
+        /// </summary>
+        [Required]
+        public decimal Price { get; set; }
     }
 }

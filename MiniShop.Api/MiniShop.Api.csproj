@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,11 +15,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.2.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MiniShop.Dto\MiniShop.Dto.csproj" />
-    <ProjectReference Include="..\MiniShop.IServices\MiniShop.IServices.csproj" />
+    <ProjectReference Include="..\CommonTools.Core\CommonTools.Core.csproj" />
+    <ProjectReference Include="..\Logging.Serilog\Logging.Serilog.csproj" />
     <ProjectReference Include="..\MiniShop.Services\MiniShop.Services.csproj" />
   </ItemGroup>
 

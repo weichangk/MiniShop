@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cache.MemoryCache\Cache.MemoryCache.csproj" />
     <ProjectReference Include="..\MiniShop.IServices\MiniShop.IServices.csproj" />
-    <ProjectReference Include="..\MiniShop.Orm\MiniShop.Orm.csproj" />
   </ItemGroup>
 
 </Project>

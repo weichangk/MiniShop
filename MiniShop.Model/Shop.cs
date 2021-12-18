@@ -1,27 +1,48 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
 {
-    public class Shop
+    [Table("Shop")]
+    public class Shop : EntityBase<Guid>
     {
-        [Key]
-        public Guid Id { get; set; }
+        /// <summary>
+        /// 商店名称
+        /// </summary>
         [Required]
-        [MaxLength(32)]
         public string Name { get; set; }
-        [Required]
-        [MaxLength(32)]
+
+        /// <summary>
+        /// 商店联系人
+        /// </summary>
         public string Contacts { get; set; }
-        [MaxLength(32)]
+
+        /// <summary>
+        /// 电话
+        /// </summary>
         public string Phone { get; set; }
-        [MaxLength(32)]
+
+        /// <summary>
+        /// 邮箱
+        /// </summary>
         public string Email { get; set; }
-        [MaxLength(64)]
+
+        /// <summary>
+        /// 地址
+        /// </summary>
         public string Address { get; set; }
+
+        /// <summary>
+        /// 有效期
+        /// </summary>
         [Required]
-        public DateTime ValidDate { get; set; }
-        [Required]
-        public DateTime CreateDate { get; set; }
+        public DateTime ValidDate { get; set; } = DateTime.Now;
+
+        ////通过override重写，标记NotMapped特性排除基类属性，不生成表字段
+        //[NotMapped]
+        //public override DateTime CreatedTime { get => base.CreatedTime; set => base.CreatedTime = value; }
+        //[NotMapped]
+        //public override string OperatorName { get => base.OperatorName; set => base.OperatorName = value; }
     }
 }

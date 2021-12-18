@@ -1,8 +1,6 @@
-﻿using MiniShop.Model.Enums;
+﻿using MiniShop.Model;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace MiniShop.Dto
 {
