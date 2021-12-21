@@ -19,15 +19,18 @@ namespace MiniShop.Api.Controllers
     public class UserController : ControllerAbstract
     {
         private readonly Lazy<IUserService> _userService;
+        private readonly Lazy<ICreateUserService> _createUserService;
 
         /// <summary>
         /// 用户信息控制器
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="userService"></param>
-        public UserController(ILogger<ControllerAbstract> logger, Lazy<IUserService> userService) : base(logger)
+        /// <param name="createUserService"></param>
+        public UserController(ILogger<ControllerAbstract> logger, Lazy<IUserService> userService, Lazy<ICreateUserService> createUserService) : base(logger)
         {
             _userService = userService;
+            _createUserService = createUserService;
         }
 
         /// <summary>
@@ -103,6 +106,21 @@ namespace MiniShop.Api.Controllers
         }
 
         /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Description("通过指定用户ID删除当前用用户")]
+        [OperationId("删除用户")]
+        [Parameters(name = "id", param = "用户ID")]
+        [HttpDelete("{id}")]
+        public async Task<IResultModel> Delete([Required] int id)
+        {
+            _logger.LogDebug("删除用户");
+            return await _userService.Value.RemoveAsync(id);
+        }
+
+        /// <summary>
         /// 添加用户
         /// </summary>
         /// <param name="model"></param>
@@ -110,10 +128,24 @@ namespace MiniShop.Api.Controllers
         [Description("添加用户，成功后返回当前用户信息")]
         [OperationId("添加用户")]
         [HttpPost]
-        public async Task<IResultModel> Add([FromBody]UserDto model)
+        public async Task<IResultModel> Add([FromBody]UserCreateDto model)
         {
             _logger.LogDebug("添加用户");
-            return await _userService.Value.InsertAsync(model);
+            return await _createUserService.Value.InsertAsync(model);
+        }
+
+        /// <summary>
+        /// 修改用户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Description("修改用户，成功后返回当前用户信息")]
+        [OperationId("修改用户")]
+        [HttpPut]
+        public async Task<IResultModel> Update([FromBody] UserCreateDto model)
+        {
+            _logger.LogDebug("修改用户");
+            return await _createUserService.Value.UpdateAsync(model);
         }
     }
 }

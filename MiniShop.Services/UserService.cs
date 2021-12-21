@@ -6,6 +6,7 @@ using MiniShop.Dto;
 using MiniShop.IServices;
 using MiniShop.Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using yrjw.ORM.Chimp;
@@ -92,4 +93,15 @@ namespace MiniShop.Services
             return ResultModel.Success(list);
         }
     }
+
+
+    public class CreateUserService : BaseService<User, UserCreateDto, int>, ICreateUserService, IDependency
+    {
+        public CreateUserService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<CreateUserService> logger,
+            Lazy<IRepository<User>> _repository) : base(mapper, unitOfWork, logger, _repository)
+        {
+
+        }
+    }
+
 }

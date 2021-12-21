@@ -47,11 +47,13 @@ namespace MiniShop.Mvc.HttpApis
         [HttpGet("/api/User?userId={userId}")]
         ITask<IEnumerable<UserDto>> QueryAsync(int userId);
 
+        [HttpDelete("/api/User/{id}")]
+        ITask<ResultModel<UserDto>> DeleteAsync(int id);
+
         [HttpPost("/api/User")]
-        ITask<ResultModel<UserDto>> AddAsync([JsonContent]UserDto model);
+        ITask<ResultModel<UserCreateDto>> AddAsync([JsonContent]UserCreateDto model);
 
         [HttpPut("/api/User")]
-        ITask<ResultModel<UserDto>> UpdateAsync([JsonContent] UserDto model);
-        
+        ITask<ResultModel<UserCreateDto>> UpdateAsync([JsonContent] UserCreateDto model);
     }
 }

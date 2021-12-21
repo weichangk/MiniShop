@@ -32,32 +32,23 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var model = new UserDto();
-            var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-            Guid loginShopId = Guid.Parse(id);
-            model.ShopId = loginShopId;
-            return View(model);
+            return View();
         }
 
-        //表单提交，保存用户信息，id=0 添加，id>0 修改
+        //保存添加用户信息
         [HttpPost]
-        public async Task<IActionResult> SaveAsync(UserDto model)
+        public async Task<IActionResult> SaveAddAsync([FromBody] UserCreateDto model)      
         {
             if (ModelState.IsValid)
             {
                 IResultModel result;
-                if (model.Id == 0)
-                {
-                    result = await _userApi.AddAsync(model);
-                }
-                else
-                {
-                    result = await _userApi.UpdateAsync(model);
-                }
+                var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
+                Guid loginShopId = Guid.Parse(id);
+                model.ShopId = loginShopId;
+                result = await _userApi.AddAsync(model);
                 if (result.Success)
                 {
-                    //var _msg = model.Id == 0 ? "添加成功！" : "修改成功！";
-                    //return RedirectToAction("ShowMsg", "Home", new { msg = _msg });
+                    return Json(new Result() { success = result.Success, msg = result.Msg });
                 }
                 else
                 {
@@ -71,12 +62,7 @@ namespace MiniShop.Mvc.Controllers
                     }
                 }
             }
-
-            if (model.Id == 0)
-            {
-                return View("Create", model);
-            }
-            return View("Edit", model);
+            return View("Create", model);
         }
 
         //Layui数据表格异步获取展示列表数据
@@ -104,11 +90,16 @@ namespace MiniShop.Mvc.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteUserByUserId(int userId)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            ////var result =  await _userApi.DeleteUserByUserId(userId);
-            return Ok();
-            //return Json(new Result() { success = result.Success, msg = result.Msg });
+            var result = await _userApi.DeleteAsync(id);
+            return Json(new Result() { success = result.Success, msg = result.Msg });
         }
+    }
+
+    public class Person
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

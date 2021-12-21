@@ -34,4 +34,9 @@ namespace MiniShop.IServices
         /// <returns></returns>
         Task<IResultModel> GetPageUsersByShopId(int pageIndex, int pageSize, Guid shopId);
     }
+
+    public interface ICreateUserService : IBaseService<User, UserCreateDto, int>
+    { 
+
+    }
 }

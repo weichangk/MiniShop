@@ -111,6 +111,12 @@
 							title: '角色',
 							field: 'role',
 							align: 'center'
+						},
+						{
+							title: '操作',
+							toolbar: '#user-bar',
+							align: 'center',
+							width: 130
 						}
 					]
 				]
@@ -162,8 +168,7 @@
 						title: '新增',
 						shade: 0.1,
 						area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'500px'],
-						content: '/User/Create'
-						//content: MODULE_PATH + 'add.html'
+						content: '/User/Create',
 					});
 				}
 
@@ -185,7 +190,7 @@
 						layer.close(index);
 						let loading = layer.load();
 						$.ajax({
-							url: "DeleteUserByUserId/" + obj.data['id'],
+							url: "/User/Delete/" + obj.data['id'],
 							dataType: 'json',
 							type: 'delete',
 							success: function(result) {

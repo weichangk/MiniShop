@@ -12,6 +12,10 @@ namespace MiniShop.Dto.Profiles
 
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
+            CreateMap<UserCreateDto, User>()
+                .ForMember(d => d.Role, opt => opt.MapFrom(i => i.RoleName));
+            CreateMap<User, UserCreateDto>()
+                .ForMember(d => d.RoleName, opt => opt.MapFrom(i => i.Role));
 
             CreateMap<Categorie, CategorieDto>();
             CreateMap<CategorieDto, Categorie>();
