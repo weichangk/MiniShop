@@ -4,21 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
 {
+    /// <summary>
+    /// 用户
+    /// </summary>
     [Table("User")]
     public class User : EntityBase<int>
     {
-        /// <summary>
-        /// 商店Id
-        /// </summary>
-        [Required]
-        public Guid ShopId { get; set; }
-
-        /// <summary>
-        /// 用户名
-        /// </summary>
-        [Required]
-        public string Name { get; set; }
-
         /// <summary>
         /// 手机号
         /// </summary>
@@ -38,7 +29,12 @@ namespace MiniShop.Model
         /// 角色描述
         /// </summary>
         [NotMapped]
-        public string RoleName => Role.ToDescription();
+        public string RoleDes => Role.ToDescription();
+
+        /// <summary>
+        /// 是否启用
+        /// </summary>
+        public bool Enable { get; set; } = true;
 
         ////通过override重写，标记NotMapped特性排除基类属性，不生成表字段
         //[NotMapped]

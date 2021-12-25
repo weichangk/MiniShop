@@ -1,20 +1,16 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
 {
+    /// <summary>
+    /// 商店
+    /// </summary>
     [Table("Shop")]
     public class Shop : EntityBase<Guid>
     {
         /// <summary>
-        /// 商店名称
-        /// </summary>
-        [Required]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 商店联系人
+        /// 联系人
         /// </summary>
         public string Contacts { get; set; }
 
@@ -36,7 +32,6 @@ namespace MiniShop.Model
         /// <summary>
         /// 有效期
         /// </summary>
-        [Required]
         public DateTime ValidDate { get; set; } = DateTime.Now;
 
         ////通过override重写，标记NotMapped特性排除基类属性，不生成表字段

@@ -23,5 +23,11 @@ namespace MiniShop.Dto
 
         [Display(Name = "角色")]
         public EnumRole Role { get; set; }
+
+        [Display(Name = "角色描述")]
+        public string RoleDes { get; set; }
+
+        [Display(Name = "是否启用")]
+        public bool Enable { get; set; }
     }
 }

@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace MiniShop.Model
 {
     /// <summary>
-    /// 商品类别
+    /// 商品单位
     /// </summary>
-    [Table("Categorie")]
-    public class Categorie : EntityBaseNoDeleted
+    [Table("Unit")]
+    public class Unit : EntityBaseNoDeleted
     {
 
     }

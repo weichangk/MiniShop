@@ -38,6 +38,17 @@ namespace MiniShop.Model
     {
         [Key]
         public TKey Id { get; set; }
+
+        /// <summary>
+        /// 商店Id
+        /// </summary>
+        public Guid ShopId { get; set; }
+
+        /// <summary>
+        /// 名称
+        /// </summary>
+        public string Name { get; set; }
+
         /// <summary>
         /// 创建时间
         /// </summary>

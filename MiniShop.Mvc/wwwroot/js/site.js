@@ -1,4 +1,20 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿
+function nullableEmailCheck(emailStr) {
+    var pattern = /^([\.a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+    if (emailStr != "" && !pattern.test(emailStr)) {
+        return false;
+    } else {
+        return true;
+    }
+}
 
-// Write your JavaScript code.
+function nullablePhoneCheck(phoneStr) {
+    var pattern = /^1\d{10}$/;
+    if (phoneStr != "" && !pattern.test(phoneStr)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+

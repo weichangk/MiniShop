@@ -13,7 +13,7 @@
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api-docs",
-      //"launchUrl": "weatherforecast",
+      // "launchUrl": "weatherforecast",
       "applicationUrl": "http://localhost:5002",
       "environmentVariables": {
         // 开发环境

@@ -64,7 +64,9 @@
 		    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 		</script>
 
-
+		<script type="text/html" id="user-enable">
+			<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.enable== true ? 'checked' : '' }} />
+		</script>
 
 		<script src="~/component/layui/layui.js"></script>
 		<script src="~/component/pear/pear.js"></script>
@@ -88,11 +90,6 @@
 							width: 100
 						},
 						{
-							title: '商店ID',
-							field: 'shopId',
-							align: 'center'
-						},
-						{
 							title: '用户名',
 							field: 'name',
 							align: 'center',
@@ -109,8 +106,14 @@
 						},
 						{
 							title: '角色',
-							field: 'role',
+							field: 'roleDes',
 							align: 'center'
+						},
+						{
+							title: '启用',
+							field: 'enable',
+							align: 'center',
+							templet: '#user-enable'
 						},
 						{
 							title: '操作',
@@ -160,7 +163,9 @@
 					return false;
 				});
 
-
+				form.on('switch(user-enable)', function(obj) {
+					layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+				});
 
 				window.add = function() {
 					layer.open({

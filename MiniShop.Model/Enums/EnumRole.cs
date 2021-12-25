@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MiniShop.Model
 {
+    /// <summary>
+    /// 角色
+    /// </summary>
     public enum EnumRole
     {
         [Description("店长")]
