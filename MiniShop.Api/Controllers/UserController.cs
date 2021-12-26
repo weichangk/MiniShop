@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using yrjw.ORM.Chimp.Result;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace MiniShop.Api.Controllers
 {
@@ -20,6 +21,7 @@ namespace MiniShop.Api.Controllers
     {
         private readonly Lazy<IUserService> _userService;
         private readonly Lazy<ICreateUserService> _createUserService;
+        private readonly Lazy<IUpdateUserService> _updateUserService;
 
         /// <summary>
         /// 用户信息控制器
@@ -27,10 +29,13 @@ namespace MiniShop.Api.Controllers
         /// <param name="logger"></param>
         /// <param name="userService"></param>
         /// <param name="createUserService"></param>
-        public UserController(ILogger<ControllerAbstract> logger, Lazy<IUserService> userService, Lazy<ICreateUserService> createUserService) : base(logger)
+        /// <param name="updateUserService"></param>
+        public UserController(ILogger<ControllerAbstract> logger, Lazy<IUserService> userService, Lazy<ICreateUserService> createUserService,
+        Lazy<IUpdateUserService> updateUserService) : base(logger)
         {
             _userService = userService;
             _createUserService = createUserService;
+            _updateUserService = updateUserService;
         }
 
         /// <summary>
@@ -53,21 +58,21 @@ namespace MiniShop.Api.Controllers
             return await _userService.Value.GetLoginInfoOrShopManagerFirstRegister(userName, role, phone, email);
         }
 
-        /// <summary>
-        /// 根据商店ID获取所有用户
-        /// </summary>
-        /// <param name="shopId"></param>
-        /// <returns></returns>
-        [Description("根据商店ID获取所有用户")]
-        [OperationId("获取用户列表")]
-        [ResponseCache(Duration = 0)]
-        [Parameters(name = "shopId", param = "商店ID")]
-        [HttpGet("{shopId}")]
-        public async Task<IResultModel> Query(Guid shopId)
-        {
-            _logger.LogDebug($"根据商店ID {shopId} 获取所有用户");
-            return await _userService.Value.GetUsersByShopId(shopId);
-        }
+        ///// <summary>
+        ///// 根据商店ID获取所有用户
+        ///// </summary>
+        ///// <param name="shopId"></param>
+        ///// <returns></returns>
+        //[Description("根据商店ID获取所有用户")]
+        //[OperationId("获取用户列表")]
+        //[ResponseCache(Duration = 0)]
+        //[Parameters(name = "shopId", param = "商店ID")]
+        //[HttpGet("{shopId}")]
+        //public async Task<IResultModel> Query([Required] Guid shopId)
+        //{
+        //    _logger.LogDebug($"根据商店ID {shopId} 获取所有用户");
+        //    return await _userService.Value.GetUsersByShopId(shopId);
+        //}
 
         /// <summary>
         /// 根据商店ID和分页条件获取所有用户
@@ -92,17 +97,17 @@ namespace MiniShop.Api.Controllers
         /// <summary>
         /// 根据用户ID获取用户
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         [Description("根据用户ID获取用户")]
         [OperationId("获取用户")]
         [ResponseCache(Duration = 0)]
-        [Parameters(name = "userId", param = "用户ID")]
-        [HttpGet("{userId}")]
-        public async Task<IResultModel> Query(int userId)
+        [Parameters(name = "id", param = "用户ID")]
+        [HttpGet("{id}")]
+        public async Task<IResultModel> Query([Required] int id)
         {
-            _logger.LogDebug($"根据用户ID:{userId}获取用户");
-            return await _userService.Value.GetByIdAsync(userId);
+            _logger.LogDebug($"根据用户ID:{id}获取用户");
+            return await _userService.Value.GetByIdAsync(id);
         }
 
         /// <summary>
@@ -142,10 +147,25 @@ namespace MiniShop.Api.Controllers
         [Description("修改用户，成功后返回当前用户信息")]
         [OperationId("修改用户")]
         [HttpPut]
-        public async Task<IResultModel> Update([FromBody] UserCreateDto model)
+        public async Task<IResultModel> Update([FromBody] UserUpdateDto model)
         {
             _logger.LogDebug("修改用户");
-            return await _createUserService.Value.UpdateAsync(model);
+            return await _updateUserService.Value.UpdateAsync(model);
+        }
+
+        /// <summary>
+        /// 使用JsonPatch修改用户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="patchDocument"></param>
+        /// <returns></returns>
+        [Description("使用JsonPatch修改用户，成功后返回当前用户信息")]
+        [OperationId("使用JsonPatch修改用户")]
+        [HttpPatch("{id}")]
+        public async Task<IResultModel> PatchUpdate([FromRoute]int id, [FromBody] JsonPatchDocument<UserUpdateDto> patchDocument)
+        {
+            _logger.LogDebug("使用JsonPatch修改用户");
+            return await _updateUserService.Value.PatchAsync(id, patchDocument);
         }
     }
 }

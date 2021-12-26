@@ -19,7 +19,7 @@ namespace MiniShop.Services
         private readonly Lazy<IRepository<Shop>> _shopRepository;
 
         public UserService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<UserService> logger,
-            Lazy<IRepository<User>> _repository, Lazy<IRepository<Shop>> shopRepository) : base(mapper, unitOfWork, logger, _repository)
+            Lazy<IRepository<User>> repository, Lazy<IRepository<Shop>> shopRepository) : base(mapper, unitOfWork, logger, repository)
         {
             _shopRepository = shopRepository;
         }
@@ -98,10 +98,19 @@ namespace MiniShop.Services
     public class CreateUserService : BaseService<User, UserCreateDto, int>, ICreateUserService, IDependency
     {
         public CreateUserService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<CreateUserService> logger,
-            Lazy<IRepository<User>> _repository) : base(mapper, unitOfWork, logger, _repository)
+            Lazy<IRepository<User>> repository) : base(mapper, unitOfWork, logger, repository)
         {
 
         }
     }
 
+
+    public class UpdateUserService : BaseService<User, UserUpdateDto, int>, IUpdateUserService, IDependency
+    {
+        public UpdateUserService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<UpdateUserService> logger, Lazy<IRepository<User>> repository)
+        : base(mapper, unitOfWork, logger, repository)
+        {
+            
+        }
+    }
 }

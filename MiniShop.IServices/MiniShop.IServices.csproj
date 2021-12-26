@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MiniShop.Dto\MiniShop.Dto.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="3.1.21" />
   </ItemGroup>
 
 </Project>

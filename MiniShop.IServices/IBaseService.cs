@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using yrjw.ORM.Chimp.Result;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace MiniShop.IServices
 {
@@ -37,6 +38,14 @@ namespace MiniShop.IServices
         /// <param name="model">DTO视图模型</param>
         /// <returns></returns>
         Task<IResultModel> InsertAsync(TEntityDTO model);
+
+        /// <summary>
+        /// 修改数据-JsonPacth
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        Task<IResultModel> PatchAsync(TKey id, JsonPatchDocument<TEntityDTO> patchDocument);
 
         /// <summary>
         /// 修改数据

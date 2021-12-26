@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using yrjw.ORM.Chimp;
 using yrjw.ORM.Chimp.Result;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace MiniShop.Services
 {
@@ -76,6 +77,28 @@ namespace MiniShop.Services
             _logger.LogError($"error：Insert Save failed");
             return ResultModel.Failed("error：Insert Save failed", 500);
         }
+
+        public virtual async Task<IResultModel>PatchAsync(TKey id, JsonPatchDocument<TEntityDTO> patchDocument)
+        {
+            //主键判断
+            var entity = await _repository.Value.GetByIdAsync(id);
+            if (entity == null)
+            {
+                _logger.LogError($"error：entity Id {id} does not exist");
+                return ResultModel.NotExists;
+            }
+            var modelRouteToPatch = _mapper.Value.Map<TEntityDTO>(entity);
+            patchDocument.ApplyTo(modelRouteToPatch);
+            _mapper.Value.Map(modelRouteToPatch, entity);
+            _repository.Value.Update(entity);
+
+            if (await UnitOfWork.SaveChangesAsync() > 0)
+            {
+                return ResultModel.Success(entity);
+            }
+            _logger.LogError($"error：Update Save failed");
+            return ResultModel.Failed("error：Update Save failed", 500);
+        }   
 
         public virtual async Task<IResultModel> UpdateAsync(TEntityDTO model)
         {

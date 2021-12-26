@@ -164,7 +164,7 @@
 				});
 
 				form.on('switch(user-enable)', function(obj) {
-					layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+					window.changeEnable(obj); 
 				});
 
 				window.add = function() {
@@ -182,9 +182,17 @@
 						type: 2,
 						title: '修改',
 						shade: 0.1,
-						area: ['500px', '400px'],
-						content: MODULE_PATH + 'edit.html'
+						area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'400px'],
+						content: '/User/Edit/' + obj.data['id'],
 					});
+				}
+
+				window.changeEnable = function(obj) {
+					$.ajax({
+						url: "/User/ChangeEnable?id=" + obj.value + "&enable=" + obj.elem.checked,
+						dataType: 'json',
+						type: 'patch'
+					})
 				}
 
 				window.remove = function(obj) {

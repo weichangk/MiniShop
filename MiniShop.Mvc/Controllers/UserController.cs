@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using yrjw.ORM.Chimp.Result;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -52,6 +53,7 @@ namespace MiniShop.Mvc.Controllers
                 }
                 else
                 {
+                    //错误页面待开发
                     if (result.Errors.Count > 0)
                     {
                         ModelState.AddModelError(result.Errors[0].Id, result.Errors[0].Msg);
@@ -65,6 +67,53 @@ namespace MiniShop.Mvc.Controllers
             return View("Create", model);
         }
 
+        //修改页面
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var result =  await _userApi.QueryAsync(id);
+            if (result.Success)
+            {
+                return View(result.Data);
+            }
+
+            //错误页待开发
+            return View("Edit");
+        }
+
+        //保存修改用户信息
+        [HttpPut]
+        public async Task<IActionResult> SaveEditAsync([FromBody] UserUpdateDto model)
+        {
+            if(ModelState.IsValid)
+            {
+                var doc = new JsonPatchDocument<UserUpdateDto>();
+                doc.Replace(item => item.Name, model.Name);
+                doc.Replace(item => item.Phone, model.Phone);
+                doc.Replace(item => item.Email, model.Email);
+                doc.Replace(item => item.RoleName, model.RoleName);
+                var result = await _userApi.PatchUpdateAsync(model.Id, doc);
+                if (result.Success)
+                {
+                    return Json(new Result() { success = result.Success, msg = result.Msg });
+                }
+                else
+                {
+                    //错误页面待开发
+                    if (result.Errors.Count > 0)
+                    {
+                        ModelState.AddModelError(result.Errors[0].Id, result.Errors[0].Msg);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("error", result.Msg);
+                    }
+                }
+            }
+            return View("Edit", model);
+        }
+
+
         //Layui数据表格异步获取展示列表数据
         [ResponseCache(Duration = 0)]
         [HttpGet]
@@ -75,7 +124,7 @@ namespace MiniShop.Mvc.Controllers
             var result = await _userApi.QueryAsync(loginShopId);
             if (result != null)
             {
-                return Json(new Table() { data = result, count = result.Count() });
+                return Json(new Table() { data = result.Data, count = result.Data.Total});
             }
             return Json(new Table() { data = null, count = 0 });
         }
@@ -95,11 +144,14 @@ namespace MiniShop.Mvc.Controllers
             var result = await _userApi.DeleteAsync(id);
             return Json(new Result() { success = result.Success, msg = result.Msg });
         }
-    }
 
-    public class Person
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        [HttpPatch]
+        public async Task<IActionResult> ChangeEnableAsync(int id, bool enable)
+        {
+            var doc = new JsonPatchDocument<UserUpdateDto>();
+            doc.Replace(item => item.Enable, enable);
+            var result = await _userApi.PatchUpdateAsync(id, doc);
+            return Json(new Result() { success = result.Success, msg = result.Msg });
+        }
     }
 }

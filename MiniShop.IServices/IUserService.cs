@@ -39,4 +39,9 @@ namespace MiniShop.IServices
     { 
 
     }
+
+    public interface IUpdateUserService :  IBaseService<User, UserUpdateDto, int>
+    {
+        
+    }
 }

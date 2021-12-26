@@ -5,6 +5,7 @@ using WebApiClient;
 using WebApiClient.Attributes;
 using yrjw.ORM.Chimp;
 using yrjw.ORM.Chimp.Result;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace MiniShop.Mvc.HttpApis
 {
@@ -28,7 +29,7 @@ namespace MiniShop.Mvc.HttpApis
         /// <param name="shopId"></param>
         /// <returns></returns>
         [HttpGet("/api/User?shopId={shopId}")]
-        ITask<IEnumerable<UserDto>> QueryAsync(Guid shopId);
+        ITask<ResultModel<PagedList<UserDto>>> QueryAsync(Guid shopId);
 
         /// <summary>
         /// 根据商店ID和分页条件获取所有用户
@@ -44,16 +45,40 @@ namespace MiniShop.Mvc.HttpApis
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpGet("/api/User?userId={userId}")]
-        ITask<IEnumerable<UserDto>> QueryAsync(int userId);
+        [HttpGet("/api/User/{id}")]
+        ITask<ResultModel<UserDto>> QueryAsync(int id);
 
+        /// <summary>
+        /// 根据用户id删除用户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("/api/User/{id}")]
         ITask<ResultModel<UserDto>> DeleteAsync(int id);
 
+        /// <summary>
+        /// 创建用户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("/api/User")]
         ITask<ResultModel<UserCreateDto>> AddAsync([JsonContent]UserCreateDto model);
 
+        /// <summary>
+        /// 修改用户
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut("/api/User")]
-        ITask<ResultModel<UserCreateDto>> UpdateAsync([JsonContent] UserCreateDto model);
+        ITask<ResultModel<UserUpdateDto>> UpdateAsync([JsonContent] UserUpdateDto model);
+
+        /// <summary>
+        /// 使用JsonPatch修改用户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        [HttpPatch("/api/User/{id}")]
+        ITask<ResultModel<UserDto>> PatchUpdateAsync(int id, [JsonContent] JsonPatchDocument<UserUpdateDto> doc);
     }
 }
