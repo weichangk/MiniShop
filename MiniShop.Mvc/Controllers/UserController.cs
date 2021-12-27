@@ -74,6 +74,7 @@ namespace MiniShop.Mvc.Controllers
             var result =  await _userApi.QueryAsync(id);
             if (result.Success)
             {
+                ViewBag.OptionRole = "";
                 return View(result.Data);
             }
 
@@ -82,16 +83,17 @@ namespace MiniShop.Mvc.Controllers
         }
 
         //保存修改用户信息
-        [HttpPut]
-        public async Task<IActionResult> SaveEditAsync([FromBody] UserUpdateDto model)
+        [HttpPost]
+        public async Task<IActionResult> SaveEditAsync(UserDto model)
         {
             if(ModelState.IsValid)
             {
+                var sas = ViewBag.OptionRole;
                 var doc = new JsonPatchDocument<UserUpdateDto>();
                 doc.Replace(item => item.Name, model.Name);
                 doc.Replace(item => item.Phone, model.Phone);
                 doc.Replace(item => item.Email, model.Email);
-                doc.Replace(item => item.RoleName, model.RoleName);
+                doc.Replace(item => item.RoleName, model.Role.ToString());
                 var result = await _userApi.PatchUpdateAsync(model.Id, doc);
                 if (result.Success)
                 {
