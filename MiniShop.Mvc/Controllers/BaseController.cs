@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using MiniShop.Mvc.Code;
 using System;
@@ -23,5 +24,10 @@ namespace MiniShop.Mvc.Controllers
             _logger = logger;
         }
 
+        public string ModelStateErrorMessage(ModelStateDictionary modelState)
+        {
+            var message = string.Join(" | ", modelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            return message;
+        }
     }
 }

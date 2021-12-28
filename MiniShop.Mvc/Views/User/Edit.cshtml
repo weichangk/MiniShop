@@ -100,13 +100,34 @@
         });
 
         var onSuccess = function(result){
-            if(result.success){
+            if(result.success)
+            {
                 layer.msg(result.msg,{icon:1,time:1000},function(){
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
                     parent.layui.table.reload("user-table");
                 });
-            }else{
-                layer.msg(result.msg,{icon:2,time:1000});
+            }
+            else
+            {
+                if(result.status == 400)
+                {
+                    layer.msg(result.msg, { icon: 2, time: 1000 });
+                }
+                else if(result.status == 500)
+                {
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+					parent.layer.open({
+						type: 2,
+						title: '',
+						shade: 0.1,
+						area: ['1024px','768px'],
+						content: '/Error/Error500'
+					});
+                }
+                else
+                {
+                   layer.msg(result.msg, { icon: 2, time: 1000 });
+                }
             }
         };
 

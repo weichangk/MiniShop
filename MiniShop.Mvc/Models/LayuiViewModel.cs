@@ -24,5 +24,6 @@ namespace MiniShop.Mvc.Models
         public bool success { get; set; } = true;
         public string msg { get; set; } = "成功！";
         public dynamic data { get; set; }
+        public int status { get; set; } = 200;
     }
 }
