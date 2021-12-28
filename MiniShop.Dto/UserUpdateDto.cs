@@ -24,7 +24,7 @@ namespace MiniShop.Dto
 
         [Display(Name = "角色")]
         [Required(ErrorMessage = "{0},不能为空")]
-        public string RoleName { get; set; }
+        public EnumRole Role { get; set; }
 
         [Display(Name = "是否启用状态")]
         [Required(ErrorMessage = "{0},不能为空")]

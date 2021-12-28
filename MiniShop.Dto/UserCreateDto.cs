@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MiniShop.Model;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MiniShop.Dto
@@ -24,7 +25,7 @@ namespace MiniShop.Dto
 
         [Display(Name = "角色")]
         [Required(ErrorMessage = "{0},不能为空")]
-        public string RoleName { get; set; }
+        public EnumRole Role { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "密码")]

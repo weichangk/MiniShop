@@ -9,104 +9,108 @@
 	<link rel="stylesheet" href="~/component/pear/css/pear.css" />
 </head>
 <body>
-<form class="layui-form" asp-controller="User" asp-action="SaveEdit" data-ajax="true" data-ajax-method="post" data-ajax-success="onSuccess">
-    <div class="mainBox">
-        <div class="main-container">
+    <form class="layui-form" asp-controller="User" asp-action="SaveEdit" data-ajax="true" data-ajax-method="post" data-ajax-success="onSuccess">
+        <div class="mainBox">
             <div class="main-container">
-                <input type="hidden" id="Id" name="Id" value = "@Model.Id" />
-                <input type="hidden" id="Role" name="Role" value = "@Model.Role" />
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">用户名</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="Name" value= "@Model.Name" lay-verify="required" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+                <div class="main-container">
+                    <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+                    <input type="hidden" id="Role" name="Role" value="@Model.Role" />
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" style="width: 20%">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="Name" value="@Model.Name" lay-verify="required" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+                        </div>
                     </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">手机号</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="Phone" value= "@Model.Phone" lay-verify="nullablePhone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" style="width: 20%">手机号</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="Phone" value="@Model.Phone" lay-verify="nullablePhone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
+                        </div>
                     </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">邮箱</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="Email" value= "@Model.Email" lay-verify="nullableEmail" autocomplete="off" placeholder="请输入邮箱" class="layui-input">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" style="width: 20%">邮箱</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="Email" value="@Model.Email" lay-verify="nullableEmail" autocomplete="off" placeholder="请输入邮箱" class="layui-input">
+                        </div>
                     </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">角色</label>
-                    <div class="layui-input-block">
-                        <select id="OptionRole" name="OptionRole" lay-filter="SelectRole" lay-verify="required">
-                            <option value="">请选择一个角色</option>
-                            <option value="Admin">管理员</option>
-                            <option value="Operator">操作员</option>
-                            <option value="Cashier">收银员</option>
-                        </select>
-                    </div>
+                    @* 店长角色屏蔽角色修改选择 *@
+                    @if (Model.Role != MiniShop.Model.EnumRole.ShopManager)
+                    {
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" style="width: 20%">角色</label>
+                            <div class="layui-input-block">
+                                <select id="OptionRole" name="OptionRole" lay-filter="SelectRole" lay-verify="required">
+                                    <option value="">请选择一个角色</option>
+                                    <option value="Admin">管理员</option>
+                                    <option value="Operator">操作员</option>
+                                    <option value="Cashier">收银员</option>
+                                </select>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
-    </div>
-    <div class="bottom">
-        <div class="button-container">
-            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="user-save">
-                <i class="layui-icon layui-icon-ok"></i>
-                提交
-            </button>
-            <button type="reset" class="pear-btn pear-btn-sm">
-                <i class="layui-icon layui-icon-refresh"></i>
-                重置
-            </button>
+        <div class="bottom">
+            <div class="button-container">
+                <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="user-save">
+                    <i class="layui-icon layui-icon-ok"></i>
+                    提交
+                </button>
+                <button type="reset" class="pear-btn pear-btn-sm">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </button>
+            </div>
         </div>
-    </div>
-</form>
+    </form>
 
-<script src="~/component/layui/layui.js"></script>
-<script src="~/component/pear/pear.js"></script>
-<script src="~/js/site.js"></script>
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/component/layui/layui.js"></script>
+    <script src="~/component/pear/pear.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
 
-<script>
-layui.use(['form','jquery'],function(){
-    let form = layui.form;
-    let $ = layui.jquery;
+    <script>
+        layui.use(['form','jquery'],function(){
+            let form = layui.form;
+            let $ = layui.jquery;
 
-    form.verify({
-        nullableEmail:function(value){
-            if(!nullableEmailCheck(value))
-                return '请输入正确的邮箱！';
-        },
-        nullablePhone:function(value){
-            if(!nullablePhoneCheck(value))
-                return '请输入正确的手机号！';
-        }
-    });
+            form.verify({
+                nullableEmail:function(value){
+                    if(!nullableEmailCheck(value))
+                        return '请输入正确的邮箱！';
+                },
+                nullablePhone:function(value){
+                    if(!nullablePhoneCheck(value))
+                        return '请输入正确的手机号！';
+                }
+            });
 
-    //选中当前角色
-    var value =  $('#Role').val();
-    $('#OptionRole').find("option[value="+value+"]").attr("selected",true);
-    form.render('select');
+            //选中当前角色
+            var value =  $('#Role').val();
+            $('#OptionRole').find("option[value="+value+"]").attr("selected",true);
+            form.render('select');
 
-    //选择角色更新@Model.Role
-	form.on('select(SelectRole)', function(data){
-        $('#Role').val(data.value);
-	});
+            //选择角色更新@Model.Role
+	        form.on('select(SelectRole)', function(data){
+                $('#Role').val(data.value);
+	        });
 
-});
-
-var onSuccess = function(result){
-    if(result.success){
-        layer.msg(result.msg,{icon:1,time:1000},function(){
-            parent.layer.close(parent.layer.getFrameIndex(window.name));
-            parent.layui.table.reload("user-table");
         });
-    }else{
-        layer.msg(result.msg,{icon:2,time:1000});
-    }
-};
 
-</script>
+        var onSuccess = function(result){
+            if(result.success){
+                layer.msg(result.msg,{icon:1,time:1000},function(){
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    parent.layui.table.reload("user-table");
+                });
+            }else{
+                layer.msg(result.msg,{icon:2,time:1000});
+            }
+        };
+
+    </script>
 
 </body>
 </html>

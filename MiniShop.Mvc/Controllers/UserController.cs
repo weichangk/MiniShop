@@ -33,12 +33,13 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            UserCreateDto model = new UserCreateDto { Role = Model.EnumRole.Admin, };
+            return View(model);
         }
 
         //保存添加用户信息
         [HttpPost]
-        public async Task<IActionResult> SaveAddAsync([FromBody] UserCreateDto model)      
+        public async Task<IActionResult> SaveAddAsync(UserCreateDto model)      
         {
             if (ModelState.IsValid)
             {
@@ -53,7 +54,7 @@ namespace MiniShop.Mvc.Controllers
                 }
                 else
                 {
-                    //错误页面待开发
+                    //500
                     if (result.Errors.Count > 0)
                     {
                         ModelState.AddModelError(result.Errors[0].Id, result.Errors[0].Msg);
@@ -64,6 +65,7 @@ namespace MiniShop.Mvc.Controllers
                     }
                 }
             }
+            //提交失败
             return View("Create", model);
         }
 
@@ -77,8 +79,12 @@ namespace MiniShop.Mvc.Controllers
                 ViewBag.OptionRole = "";
                 return View(result.Data);
             }
+            else
+            { 
+                //500
+            }
 
-            //错误页待开发
+            //提交失败
             return View("Edit");
         }
 
@@ -93,7 +99,7 @@ namespace MiniShop.Mvc.Controllers
                 doc.Replace(item => item.Name, model.Name);
                 doc.Replace(item => item.Phone, model.Phone);
                 doc.Replace(item => item.Email, model.Email);
-                doc.Replace(item => item.RoleName, model.Role.ToString());
+                doc.Replace(item => item.Role, model.Role);
                 var result = await _userApi.PatchUpdateAsync(model.Id, doc);
                 if (result.Success)
                 {
@@ -101,7 +107,7 @@ namespace MiniShop.Mvc.Controllers
                 }
                 else
                 {
-                    //错误页面待开发
+                    //500
                     if (result.Errors.Count > 0)
                     {
                         ModelState.AddModelError(result.Errors[0].Id, result.Errors[0].Msg);
@@ -112,48 +118,86 @@ namespace MiniShop.Mvc.Controllers
                     }
                 }
             }
+            //提交失败
             return View("Edit", model);
         }
 
 
-        //Layui数据表格异步获取展示列表数据
-        [ResponseCache(Duration = 0)]
-        [HttpGet]
-        public async Task<IActionResult> GetUserListByShopIdAsync()
-        {
-            var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-            Guid loginShopId = Guid.Parse(id);
-            var result = await _userApi.QueryAsync(loginShopId);
-            if (result != null)
-            {
-                return Json(new Table() { data = result.Data, count = result.Data.Total});
-            }
-            return Json(new Table() { data = null, count = 0 });
-        }
+        ////Layui数据表格异步获取展示列表数据
+        //[ResponseCache(Duration = 0)]
+        //[HttpGet]
+        //public async Task<IActionResult> GetUserListByShopIdAsync()
+        //{
+        //    var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
+        //    Guid loginShopId = Guid.Parse(id);
+        //    var result = await _userApi.QueryAsync(loginShopId);
+        //    if (result.Success)
+        //    {
+        //        return Json(new Table() { data = result.Data.Item, count = result == null ? 0 : result.Data.Total });
+        //    }
+        //    //500
+        //    return Json(new Table() { data = null, count = 0 });
+        //}
 
+        [ResponseCache(Duration = 0)]
         [HttpGet]
         public async Task<IActionResult> GetPagedListAsync(int page, int limit)
         {
             var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
             Guid loginShopId = Guid.Parse(id);
             var result = await _userApi.GetPagedListAsync(page, limit, loginShopId);
+            if (result.Success)
+            {
+                return Json(new Table() { data = result.Data.Item, count = result == null ? 0 : result.Data.Total });
+            }
+            //500
             return Json(new Table() { data = result.Data.Item, count = result == null ? 0 : result.Data.Total });
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await _userApi.DeleteAsync(id);
-            return Json(new Result() { success = result.Success, msg = result.Msg });
+            var userDto = await _userApi.QueryAsync(id);
+            if (userDto.Success)
+            {
+                if (userDto.Data.Role == Model.EnumRole.ShopManager)
+                {
+                    return Json(new Result() { success = false, msg = "不能删除店长" });
+                }
+                var result = await _userApi.DeleteAsync(id);
+                if (result.Success)
+                {
+                    return Json(new Result() { success = result.Success, msg = result.Msg });
+                }
+                //500
+                return Json(new Result() { success = result.Success, msg = result.Msg });
+            }
+            //500
+            return Json(new Result() { success = userDto.Success, msg = userDto.Msg });
         }
 
         [HttpPatch]
         public async Task<IActionResult> ChangeEnableAsync(int id, bool enable)
         {
-            var doc = new JsonPatchDocument<UserUpdateDto>();
-            doc.Replace(item => item.Enable, enable);
-            var result = await _userApi.PatchUpdateAsync(id, doc);
-            return Json(new Result() { success = result.Success, msg = result.Msg });
+            var userDto = await _userApi.QueryAsync(id);
+            if (userDto.Success)
+            {
+                if (userDto.Data.Role == Model.EnumRole.ShopManager)
+                {
+                    return Json(new Result() { success = false, msg = "不能禁用店长" });
+                }
+                var doc = new JsonPatchDocument<UserUpdateDto>();
+                doc.Replace(item => item.Enable, enable);
+                var result = await _userApi.PatchUpdateAsync(id, doc);
+                if (result.Success)
+                {
+                    return Json(new Result() { success = result.Success, msg = result.Msg });
+                }
+                //500
+                return Json(new Result() { success = result.Success, msg = result.Msg });
+            }
+            //500
+            return Json(new Result() { success = userDto.Success, msg = userDto.Msg });
         }
     }
 }

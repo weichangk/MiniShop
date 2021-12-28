@@ -191,7 +191,17 @@
 					$.ajax({
 						url: "/User/ChangeEnable?id=" + obj.value + "&enable=" + obj.elem.checked,
 						dataType: 'json',
-						type: 'patch'
+						type: 'patch',
+                        success: function (result) {
+                            if (result.success) {
+                                layer.msg(result.msg, { icon: 1, time: 1000 }, function () {
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                                });
+							} else {
+								layer.msg(result.msg, { icon: 2, time: 1000 });
+                                window.refresh();//暂时找不到如果屏蔽角色为店长禁止更改checked，或还原checked的办法，目前就先刷新还原吧。。
+                            }
+                        }
 					})
 				}
 
