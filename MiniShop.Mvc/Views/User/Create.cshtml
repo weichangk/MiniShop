@@ -17,7 +17,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label" style="width: 20%">用户名</label>
                     <div class="layui-input-block">
-                        <input type="text" name="Name" value="@Model.Name" lay-verify="required" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+                        <input type="text" name="Name" value="@Model.Name" lay-verify="userName" autocomplete="off" placeholder="请输入用户名" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -35,7 +35,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label" style="width: 20%">密码</label>
                     <div class="layui-input-block">
-                        <input type="password" name="PassWord" value="@Model.PassWord" lay-verify="required" autocomplete="off" placeholder="请输入密码" class="layui-input">
+                        <input type="password" name="PassWord" value="@Model.PassWord" lay-verify="pass" autocomplete="off" placeholder="请输入密码" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -94,7 +94,15 @@
                 nullablePhone: function (value) {
                     if (!nullablePhoneCheck(value))
                         return '请输入正确的手机号！';
-                }
+                },
+                userName: function (value) {
+                    if (!userNameCheck(value))
+                        return '请输入正确的用户名！4到16位（字母，数字，下划线，减号）'
+                },
+                pass: function (value) {
+                    if (!passCheck(value))
+                        return '请输入正确的密码！最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符'
+                },
             });
 
             //选中当前角色
@@ -116,22 +124,22 @@
                     parent.layui.table.reload("user-table");
                 });
             } 
-            else 
+            else
             {
-                if(result.status == 400)
-                {
-                    layer.msg(result.msg, { icon: 2, time: 1000 });
-                }
-                else if(result.status == 500)
+                if (result.status == 500)
                 {
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
-					$.ajax({
-						url: "/Error/Error500
-					})
+					parent.layer.open({
+						type: 2,
+						title: '',
+						shade: 0.1,
+                        area: ['900px', '600px'],
+						content: '/Error/Error500'
+                    });
                 }
                 else
                 {
-                   layer.msg(result.msg, { icon: 2, time: 1000 });
+                    layer.msg(result.msg, { icon: 2, time: 5000 });
                 }
             }
         };

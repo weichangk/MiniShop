@@ -38,6 +38,24 @@ namespace MiniShop.Ids
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                //最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 1;
+                options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
+
+                //options.SignIn.RequireConfirmedEmail = true;
+                //指 在帐户被锁定之前允许的失败登录的次数。默认值为 5。
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                //默认锁定时间为 15 分钟。
+                options.Lockout.DefaultLockoutTimeSpan = System.TimeSpan.FromMinutes(15);
+            });
+
             services.ConfigureNonBreakingSameSiteCookies();
 
             var builder = services.AddIdentityServer(options =>

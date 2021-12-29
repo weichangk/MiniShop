@@ -10,8 +10,7 @@ namespace MiniShop.Dto
         public int Id { get; set; }
 
         [Display(Name = "用户名")]
-        [Required(ErrorMessage = "{0},不能为空")]
-        [StringLength(32, ErrorMessage = "{0},不能大于{1}")]
+        [RegularExpression(@"^[a-zA-Z0-9_-]{4,16}$", ErrorMessage = "{0}的格式不正确，4到16位（字母，数字，下划线，减号）")]
         public string Name { get; set; }
 
         [Display(Name = "手机号")]

@@ -11,8 +11,7 @@ namespace MiniShop.Dto
         public Guid ShopId { get; set; }
 
         [Display(Name = "用户名")]
-        [Required(ErrorMessage = "{0},不能为空")]
-        [StringLength(32, ErrorMessage = "{0},不能大于{1}")]
+        [RegularExpression(@"^[a-zA-Z0-9_-]{4,16}$", ErrorMessage = "{0}的格式不正确，4到16位（字母，数字，下划线，减号）")]
         public string Name { get; set; }
 
         [Display(Name = "手机号")]
@@ -29,7 +28,7 @@ namespace MiniShop.Dto
 
         [DataType(DataType.Password)]
         [Display(Name = "密码")]
-        [StringLength(11, ErrorMessage = "{0},不能小于{2}，最长{1}", MinimumLength = 6)]
+        [RegularExpression(@"^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$", ErrorMessage = "{0}的格式不正确，最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符")]
         public string PassWord { get; set; }
 
         [DataType(DataType.Password)]

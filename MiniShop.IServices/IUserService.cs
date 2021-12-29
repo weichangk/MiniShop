@@ -33,6 +33,27 @@ namespace MiniShop.IServices
         /// <param name="shopId"></param>
         /// <returns></returns>
         Task<IResultModel> GetPageUsersByShopId(int pageIndex, int pageSize, Guid shopId);
+
+        /// <summary>
+        /// 根据用户名获取用户
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        Task<IResultModel> GetByNameAsync(string name);
+
+        /// <summary>
+        /// 根据手机号获取用户
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        Task<IResultModel> GetByPhoneAsync(string phone);
+
+        /// <summary>
+        /// 根据邮箱获取用户
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        Task<IResultModel> GetByEmailAsync(string email);
     }
 
     public interface ICreateUserService : IBaseService<User, UserCreateDto, int>

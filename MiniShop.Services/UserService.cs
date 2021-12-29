@@ -92,6 +92,27 @@ namespace MiniShop.Services
             var list = await data.ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedListAsync(pageIndex, pageSize);
             return ResultModel.Success(list);
         }
+
+        public async Task<IResultModel> GetByNameAsync(string name)
+        {
+            var data = _repository.Value.TableNoTracking.Where(s => s.Name.ToUpper() == name.ToUpper());
+            var userDto = await data.ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).FirstOrDefaultAsync();
+            return ResultModel.Success(userDto);
+        }
+
+        public async Task<IResultModel> GetByPhoneAsync(string phone)
+        {
+            var data = _repository.Value.TableNoTracking.Where(s => s.Phone == phone);
+            var userDto = await data.ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).FirstOrDefaultAsync();
+            return ResultModel.Success(userDto);
+        }
+
+        public async Task<IResultModel> GetByEmailAsync(string email)
+        {
+            var data = _repository.Value.TableNoTracking.Where(s => s.Email.ToUpper() == email.ToUpper());
+            var userDto = await data.ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).FirstOrDefaultAsync();
+            return ResultModel.Success(userDto);
+        }
     }
 
 

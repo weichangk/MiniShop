@@ -58,22 +58,6 @@ namespace MiniShop.Api.Controllers
             return await _userService.Value.GetLoginInfoOrShopManagerFirstRegister(userName, role, phone, email);
         }
 
-        ///// <summary>
-        ///// 根据商店ID获取所有用户
-        ///// </summary>
-        ///// <param name="shopId"></param>
-        ///// <returns></returns>
-        //[Description("根据商店ID获取所有用户")]
-        //[OperationId("获取用户列表")]
-        //[ResponseCache(Duration = 0)]
-        //[Parameters(name = "shopId", param = "商店ID")]
-        //[HttpGet("{shopId}")]
-        //public async Task<IResultModel> Query([Required] Guid shopId)
-        //{
-        //    _logger.LogDebug($"根据商店ID {shopId} 获取所有用户");
-        //    return await _userService.Value.GetUsersByShopId(shopId);
-        //}
-
         /// <summary>
         /// 根据商店ID和分页条件获取所有用户
         /// </summary>
@@ -108,6 +92,54 @@ namespace MiniShop.Api.Controllers
         {
             _logger.LogDebug($"根据用户ID:{id}获取用户");
             return await _userService.Value.GetByIdAsync(id);
+        }
+
+        /// <summary>
+        /// 根据用户名获取用户
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [Description("根据用户名获取用户")]
+        [OperationId("获取用户")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "name", param = "用户名")]
+        [HttpGet("QueryByName/{name}")]
+        public async Task<IResultModel> QueryByName([Required] string name)
+        {
+            _logger.LogDebug($"根据用户名:{name}获取用户");
+            return await _userService.Value.GetByNameAsync(name);
+        }
+
+        /// <summary>
+        /// 根据手机号获取用户
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        [Description("根据手机号获取用户")]
+        [OperationId("获取用户")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "phone", param = "手机号")]
+        [HttpGet("QueryByPhone/{phone}")]
+        public async Task<IResultModel> QueryByPhone([Required] string phone)
+        {
+            _logger.LogDebug($"根据手机号:{phone}获取用户");
+            return await _userService.Value.GetByPhoneAsync(phone);
+        }
+
+        /// <summary>
+        /// 根据邮箱获取用户
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [Description("根据邮箱获取用户")]
+        [OperationId("获取用户")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "email", param = "邮箱")]
+        [HttpGet("QueryByEmail/{email}")]
+        public async Task<IResultModel> QueryByEmail([Required] string email)
+        {
+            _logger.LogDebug($"根据邮箱:{email}获取用户");
+            return await _userService.Value.GetByEmailAsync(email);
         }
 
         /// <summary>

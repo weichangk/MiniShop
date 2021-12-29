@@ -7,7 +7,6 @@ using MiniShop.Mvc.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using yrjw.ORM.Chimp.Result;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Net;
 
@@ -23,6 +22,39 @@ namespace MiniShop.Mvc.Controllers
         {
             _userApi = userApi;
         }
+
+        #region private method
+        private async Task<bool> UniqueName(string name)
+        {
+            var existUser = await _userApi.QueryAsyncByName(name);
+            if (existUser.Data != null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private async Task<bool> UniquePhone(string phone)
+        {
+            var existUser = await _userApi.QueryAsyncByPhone(phone);
+            if (existUser.Data != null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private async Task<bool> UniqueEmail(string email)
+        {
+            var existUser = await _userApi.QueryAsyncByEmail(email);
+            if (existUser.Data != null)
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
+
 
         public IActionResult Index()
         {
@@ -44,11 +76,23 @@ namespace MiniShop.Mvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                IResultModel result;
+                if (! await UniqueName(model.Name))
+                {
+                    return Json(new Result() { success = false, msg = $"用户名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
+                }
+                if (!await UniquePhone(model.Phone))
+                {
+                    return Json(new Result() { success = false, msg = $"手机号：{model.Phone} 已被占用", status = (int)HttpStatusCode.BadRequest });
+                }
+                if (!await UniqueEmail(model.Email))
+                {
+                    return Json(new Result() { success = false, msg = $"邮箱：{model.Email} 已被占用", status = (int)HttpStatusCode.BadRequest });
+                }
+
                 var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
                 Guid loginShopId = Guid.Parse(id);
                 model.ShopId = loginShopId;
-                result = await _userApi.AddAsync(model);
+                var result = await _userApi.AddAsync(model);
                 return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
             }
             return Json(new Result() { success = false, msg = ModelStateErrorMessage(ModelState), status = (int)HttpStatusCode.BadRequest });
@@ -70,9 +114,26 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveEditAsync(UserDto model)
         {
-            return Json(new Result() { success = false, msg = ModelStateErrorMessage(ModelState), status = 500 });
             if (ModelState.IsValid)
             {
+                var userDto = await _userApi.QueryAsync(model.Id);
+                if (userDto.Data == null)
+                {
+                    return Json(new Result() { success = false, msg = "查找不到要修改的用户", status = (int)HttpStatusCode.NotFound });
+                }
+                if (userDto.Data.Name != model.Name && !await UniqueName(model.Name))
+                {
+                    return Json(new Result() { success = false, msg = $"用户名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
+                }
+                if (userDto.Data.Phone != model.Phone && !await UniquePhone(model.Phone))
+                {
+                    return Json(new Result() { success = false, msg = $"手机号：{model.Phone} 已被占用", status = (int)HttpStatusCode.BadRequest });
+                }
+                if (userDto.Data.Email != model.Email && !await UniqueEmail(model.Email))
+                {
+                    return Json(new Result() { success = false, msg = $"邮箱：{model.Email} 已被占用", status = (int)HttpStatusCode.BadRequest });
+                }
+
                 var doc = new JsonPatchDocument<UserUpdateDto>();
                 doc.Replace(item => item.Name, model.Name);
                 doc.Replace(item => item.Phone, model.Phone);
@@ -133,5 +194,6 @@ namespace MiniShop.Mvc.Controllers
                 return Json(new Result() { success = false, msg = "查找不到要修改的用户", status = (int)HttpStatusCode.NotFound });
             }
         }
+
     }
 }

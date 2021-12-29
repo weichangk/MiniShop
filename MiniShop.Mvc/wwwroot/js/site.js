@@ -18,3 +18,20 @@ function nullablePhoneCheck(phoneStr) {
 }
 
 
+function userNameCheck(userNameStr) {
+    var pattern = /^[a-zA-Z0-9_-]{4,16}$/;
+    if (phoneStr != "" && !pattern.test(phoneStr)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function passCheck(passStr) {
+    var pattern = /^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$/;
+    if (phoneStr != "" && !pattern.test(phoneStr)) {
+        return false;
+    } else {
+        return true;
+    }
+}

@@ -49,6 +49,30 @@ namespace MiniShop.Mvc.HttpApis
         ITask<ResultModel<UserDto>> QueryAsync(int id);
 
         /// <summary>
+        /// 根据用户名获取用户
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [HttpGet("/api/User/QueryByName/{name}")]
+        ITask<ResultModel<UserDto>> QueryAsyncByName(string name);
+
+        /// <summary>
+        /// 根据用户名获取用户
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        [HttpGet("/api/User/QueryByPhone/{phone}")]
+        ITask<ResultModel<UserDto>> QueryAsyncByPhone(string phone);
+
+        /// <summary>
+        /// 根据用户名获取用户
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [HttpGet("/api/User/QueryByEmail/{email}")]
+        ITask<ResultModel<UserDto>> QueryAsyncByEmail(string email);
+
+        /// <summary>
         /// 根据用户id删除用户
         /// </summary>
         /// <param name="id"></param>
