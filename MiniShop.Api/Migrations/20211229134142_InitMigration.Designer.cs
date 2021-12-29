@@ -9,7 +9,7 @@ using MiniShop.Model;
 namespace MiniShop.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211222142754_InitMigration")]
+    [Migration("20211229134142_InitMigration")]
     partial class InitMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -136,9 +136,6 @@ namespace MiniShop.Api.Migrations
 
                     b.Property<string>("Phone")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<Guid>("ShopId")
-                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("ValidDate")
                         .HasColumnType("datetime(6)");

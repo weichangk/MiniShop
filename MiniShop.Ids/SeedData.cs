@@ -36,17 +36,17 @@ namespace MiniShop.Ids
                     context.Database.Migrate();
 
                     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                    var alice = userMgr.FindByNameAsync("weick").Result;
+                    var alice = userMgr.FindByNameAsync("mini").Result;
                     if (alice == null)
                     {
                         alice = new ApplicationUser
                         {
-                            UserName = "weick",
+                            UserName = "mini",
                             PhoneNumber = "18276743761",
                             Email = "18276743761@163.com",
-                            EmailConfirmed = true,
+                            //EmailConfirmed = true,
                         };
-                        var result = userMgr.CreateAsync(alice, "Pass123$").Result;
+                        var result = userMgr.CreateAsync(alice, "Mini123$").Result;
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);
@@ -54,19 +54,16 @@ namespace MiniShop.Ids
 
                         result = userMgr.AddClaimsAsync(alice, new Claim[]{
                             new Claim(JwtClaimTypes.Role, "ShopManager"),
-                            //new Claim(JwtClaimTypes.Name, "weick wei"),
-                            //new Claim(JwtClaimTypes.GivenName, "weick"),
-                            //new Claim(JwtClaimTypes.FamilyName, "wei"),
                         }).Result;
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);
                         }
-                        Log.Debug("weick created");
+                        Log.Debug("mini created");
                     }
                     else
                     {
-                        Log.Debug("weick already exists");
+                        Log.Debug("mini already exists");
                     }
 
                 }

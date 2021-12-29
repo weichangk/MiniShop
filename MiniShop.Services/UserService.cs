@@ -6,7 +6,6 @@ using MiniShop.Dto;
 using MiniShop.IServices;
 using MiniShop.Model;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using yrjw.ORM.Chimp;
@@ -50,13 +49,18 @@ namespace MiniShop.Services
                     Shop shop = new Shop
                     {
                         Id = shopId,
-                        Name = $"{userName} Shop",
+                        Name = $"{userName} shop",
                         Contacts = userName,
                         Phone = phone,
                         Email = email,
                         CreatedTime = dateTime,
                         ValidDate = dateTime.AddDays(7),
                     };
+
+                    if (userName == "mini")
+                    {
+                        shop.ValidDate = dateTime.AddYears(99);
+                    }
 
                     await _repository.Value.InsertAsync(user);
                     await _shopRepository.Value.InsertAsync(shop);

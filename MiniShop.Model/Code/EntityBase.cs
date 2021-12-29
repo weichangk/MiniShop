@@ -42,12 +42,12 @@ namespace MiniShop.Model
         /// <summary>
         /// 商店Id
         /// </summary>
-        public Guid ShopId { get; set; }
+        public virtual Guid ShopId { get; set; }
 
         /// <summary>
         /// 名称
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
         /// <summary>
         /// 创建时间

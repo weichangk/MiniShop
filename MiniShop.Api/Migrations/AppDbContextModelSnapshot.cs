@@ -135,9 +135,6 @@ namespace MiniShop.Api.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("ShopId")
-                        .HasColumnType("char(36)");
-
                     b.Property<DateTime>("ValidDate")
                         .HasColumnType("datetime(6)");
 
