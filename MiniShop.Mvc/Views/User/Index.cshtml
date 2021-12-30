@@ -11,7 +11,7 @@
                 <form class="layui-form" action="">
                     <div class="layui-form-item">
                         <div class="layui-form-item layui-inline">
-                            <label class="layui-form-label">用户名</label>
+                            <label class="layui-form-label">用户</label>
                             <div class="layui-input-inline">
                                 <input type="text" name="name" placeholder="" class="layui-input">
                             </div>
@@ -235,7 +235,8 @@
                                         icon: 1,
                                         time: 1000
                                     }, function () {
-                                        obj.del();
+                                        //obj.del();
+                                        table.reload('user-table');
                                     });
                                 } else {
                                     layer.msg(result.msg, {
@@ -291,7 +292,9 @@
                 }
 
                 window.refresh = function (param) {
-                    table.reload('user-table');
+                    table.reload('user-table',{
+                        url: 'GetPageList'
+                    });
                 }
             })
         </script>

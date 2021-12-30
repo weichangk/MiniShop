@@ -286,28 +286,44 @@ namespace MiniShop.Mvc.Controllers
             {
                 name = " ";
             }
+            else
+            {
+                name = System.Web.HttpUtility.UrlEncode(name);
+            }
             if (string.IsNullOrEmpty(phone))
             {
-                name = " ";
+                phone = " ";
             }
-            switch (role)
+            else
             {
-                case "店长":
-                    role = "ShopManager";
-                    break;
-                case "管理员":
-                    role = "Admin";
-                    break;
-                case "操作员":
-                    role = "Operator";
-                    break;
-                case "收银员":
-                    role = "Cashier";
-                    break;
-                default:
-                    role = " ";
-                    break;
+                phone = System.Web.HttpUtility.UrlEncode(phone);
             }
+            if (string.IsNullOrEmpty(role))
+            {
+                role = " ";
+            }
+            else
+            {
+                switch (role)
+                {
+                    case "店长":
+                        role = "ShopManager";
+                        break;
+                    case "管理员":
+                        role = "Admin";
+                        break;
+                    case "操作员":
+                        role = "Operator";
+                        break;
+                    case "收银员":
+                        role = "Cashier";
+                        break;
+                    default:
+                        role = System.Web.HttpUtility.UrlEncode(role);
+                        break;
+                }
+            }
+
 
             var result = await _userApi.GetPageListAndWhereQueryAsync(page, limit, loginShopId, name, phone, role);
             return Json(new Table() { data = result.Data.Item, count = result == null ? 0 : result.Data.Total });
