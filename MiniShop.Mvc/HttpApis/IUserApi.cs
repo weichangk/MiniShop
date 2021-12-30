@@ -32,13 +32,21 @@ namespace MiniShop.Mvc.HttpApis
         ITask<ResultModel<PagedList<UserDto>>> QueryAsync(Guid shopId);
 
         /// <summary>
-        /// 根据商店ID和分页条件获取所有用户
+        /// 根据商店ID、分页条件获取所有用户
         /// </summary>
         /// <param name="shopId"></param>
         /// <returns></returns>
         //[HttpGet("/api/User?pageIndex={pageIndex}&pageSize={pageSize}&shopId={shopId}")]
         [HttpGet("/api/User/{pageIndex}/{pageSize}/{shopId}")]
-        ITask<ResultModel<PagedList<UserDto>>> GetPagedListAsync(int pageIndex, int pageSize, Guid shopId);
+        ITask<ResultModel<PagedList<UserDto>>> GetPageListAsync(int pageIndex, int pageSize, Guid shopId);
+
+        /// <summary>
+        /// 根据商店ID、分页条件、查询条件查询用户
+        /// </summary>
+        /// <param name="shopId"></param>
+        /// <returns></returns>
+        [HttpGet("/api/User/GetPageAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{role}")]
+        ITask<ResultModel<PagedList<UserDto>>> GetPageListAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name, string phone, string role);
 
         /// <summary>
         /// 根据用户ID获取用户
@@ -79,6 +87,14 @@ namespace MiniShop.Mvc.HttpApis
         /// <returns></returns>
         [HttpDelete("/api/User/{id}")]
         ITask<ResultModel<UserDto>> DeleteAsync(int id);
+
+        /// <summary>
+        /// 根据用户id批量删除用户
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [HttpDelete("/api/User/BatchDelete")]
+        ITask<ResultModel<UserDto>> BatchDeleteAsync([JsonContent] List<int> ids);
 
         /// <summary>
         /// 创建用户

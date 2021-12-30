@@ -35,6 +35,18 @@ namespace MiniShop.IServices
         Task<IResultModel> GetPageUsersByShopId(int pageIndex, int pageSize, Guid shopId);
 
         /// <summary>
+        /// 根据商店ID、分页条件、查询条件获取所有用户
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="shopId"></param>
+        /// <param name="name"></param>
+        /// <param name="phone"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        Task<IResultModel> GetPageUsersByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name, string phone, string role);
+
+        /// <summary>
         /// 根据用户名获取用户
         /// </summary>
         /// <param name="name"></param>

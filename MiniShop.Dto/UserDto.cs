@@ -29,5 +29,8 @@ namespace MiniShop.Dto
 
         [Display(Name = "是否启用")]
         public bool Enable { get; set; }
+
+        [Display(Name = "注册时间")]
+        public DateTime CreatedTime { get; set; }
     }
 }

@@ -184,6 +184,12 @@ namespace MiniShop.Services
                     _logger.LogError($"error：entity Id：{id} does not exist");
                     return ResultModel.NotExists;
                 }
+                //判断模型是否拥有软删除字段
+                if (entity is Model.EntityBaseNoDeleted<TKey>)
+                {
+                    _logger.LogError($"error：not inheritance for EntityBaseNoDeleted");
+                    return ResultModel.Failed("error：not inheritance for EntityBaseNoDeleted", 500);
+                }
                 //软删除
                 if (entity.Deleted == 0)
                 {

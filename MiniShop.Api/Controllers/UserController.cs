@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using yrjw.ORM.Chimp.Result;
 using Microsoft.AspNetCore.JsonPatch;
+using System.Collections.Generic;
 
 namespace MiniShop.Api.Controllers
 {
@@ -79,6 +80,32 @@ namespace MiniShop.Api.Controllers
         }
 
         /// <summary>
+        /// 根据商店ID、分页条件、查询条件获取所有用户
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="shopId"></param>
+        /// <param name="name"></param>
+        /// <param name="phone"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        [Description("根据商店ID、分页条件、查询条件获取所有用户")]
+        [OperationId("按条件获取用户分页列表")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "pageIndex", param = "索引页")]
+        [Parameters(name = "pageSize", param = "单页条数")]
+        [Parameters(name = "shopId", param = "商店ID")]
+        [Parameters(name = "name", param = "用户名")]
+        [Parameters(name = "phone", param = "手机号")]
+        [Parameters(name = "role", param = "角色")]
+        [HttpGet("GetPageAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{role}")]
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, string name, string phone, string role)
+        {
+            _logger.LogDebug($"根据商店ID:{shopId} 分页条件:pageIndex {pageIndex} pageSize {pageSize} 查询条件:name {name} phone {phone} role {role}获取用户");
+            return await _userService.Value.GetPageUsersByShopIdAndWhereQueryAsync(pageIndex, pageSize, shopId, name, phone, role);
+        }
+
+        /// <summary>
         /// 根据用户ID获取用户
         /// </summary>
         /// <param name="id"></param>
@@ -147,7 +174,7 @@ namespace MiniShop.Api.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Description("通过指定用户ID删除当前用用户")]
+        [Description("通过指定用户ID删除用户")]
         [OperationId("删除用户")]
         [Parameters(name = "id", param = "用户ID")]
         [HttpDelete("{id}")]
@@ -155,6 +182,21 @@ namespace MiniShop.Api.Controllers
         {
             _logger.LogDebug("删除用户");
             return await _userService.Value.RemoveAsync(id);
+        }
+
+        /// <summary>
+        /// 批量删除用户
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [Description("通过指定用户ID集合批量删除用户")]
+        [OperationId("批量删除用户")]
+        [Parameters(name = "ids", param = "用户ID集合")]
+        [HttpDelete("BatchDelete")]
+        public async Task<IResultModel> BatchDelete([FromBody] List<int> ids)
+        {
+            _logger.LogDebug("批量删除用户");
+            return await _userService.Value.RemoveAsync(ids);
         }
 
         /// <summary>
