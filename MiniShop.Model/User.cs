@@ -11,6 +11,17 @@ namespace MiniShop.Model
     public class User : EntityBase<int>
     {
         /// <summary>
+        /// 门店ID
+        /// </summary>
+        public int StoreId { get; set; }
+
+        /// <summary>
+        /// 门店
+        /// </summary>
+        [ForeignKey("StoreId")]
+        public virtual Store Store { get; set; }
+
+        /// <summary>
         /// 手机号
         /// </summary>
         public string Phone { get; set; }

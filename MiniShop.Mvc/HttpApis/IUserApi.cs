@@ -6,9 +6,11 @@ using WebApiClient.Attributes;
 using yrjw.ORM.Chimp;
 using yrjw.ORM.Chimp.Result;
 using Microsoft.AspNetCore.JsonPatch;
+using MiniShop.Mvc.Code;
 
 namespace MiniShop.Mvc.HttpApis
 {
+    [ApiRequestTokenFilter]
     [JsonReturn]
     public interface IUserApi : IHttpApi
     {
@@ -65,7 +67,7 @@ namespace MiniShop.Mvc.HttpApis
         ITask<ResultModel<UserDto>> QueryAsyncByName(string name);
 
         /// <summary>
-        /// 根据用户名获取用户
+        /// 根据手机获取用户
         /// </summary>
         /// <param name="phone"></param>
         /// <returns></returns>
@@ -73,7 +75,7 @@ namespace MiniShop.Mvc.HttpApis
         ITask<ResultModel<UserDto>> QueryAsyncByPhone(string phone);
 
         /// <summary>
-        /// 根据用户名获取用户
+        /// 根据邮箱获取用户
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>

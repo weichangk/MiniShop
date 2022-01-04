@@ -9,6 +9,17 @@ namespace MiniShop.Model
     public class Supplier : EntityBase<int>
     {
         /// <summary>
+        /// 门店ID
+        /// </summary>
+        public int StoreId { get; set; }
+
+        /// <summary>
+        /// 门店
+        /// </summary>
+        [ForeignKey("StoreId")]
+        public virtual Store Store { get; set; }
+
+        /// <summary>
         /// 联系人
         /// </summary>
         public string Contacts { get; set; }

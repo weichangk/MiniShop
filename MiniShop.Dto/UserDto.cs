@@ -12,6 +12,9 @@ namespace MiniShop.Dto
         [Display(Name = "商店ID")]
         public Guid ShopId { get; set; }
 
+        [Display(Name = "门店")]
+        public Store Store { get; set; }
+
         [Display(Name = "用户名")]
         public string Name { get; set; }
 

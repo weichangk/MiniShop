@@ -16,11 +16,13 @@ namespace MiniShop.Services
     public class UserService : BaseService<User, UserDto, int>, IUserService, IDependency
     {
         private readonly Lazy<IRepository<Shop>> _shopRepository;
+        private readonly Lazy<IRepository<Store>> _storeRepository;
 
         public UserService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<UserService> logger,
-            Lazy<IRepository<User>> repository, Lazy<IRepository<Shop>> shopRepository) : base(mapper, unitOfWork, logger, repository)
+            Lazy<IRepository<User>> repository, Lazy<IRepository<Shop>> shopRepository, Lazy<IRepository<Store>> storeRepository) : base(mapper, unitOfWork, logger, repository)
         {
             _shopRepository = shopRepository;
+            _storeRepository = storeRepository;
         }
 
         public async Task<IResultModel> GetLoginInfoOrShopManagerFirstRegister(string userName, string role, string phone, string email)
@@ -37,15 +39,29 @@ namespace MiniShop.Services
 
                     Guid shopId = Guid.NewGuid();
                     DateTime dateTime = DateTime.Now;
+
+                    Store store = new Store
+                    {
+                        ShopId = shopId,
+                        Name = "总部门店",
+                        Contacts = userName,
+                        Phone = phone,
+                        CreatedTime = dateTime,
+                    };
+                    await _storeRepository.Value.InsertAsync(store);
+
                     User user = new User
                     {
                         ShopId = shopId,
+                        Store = store,
                         Name = userName,
                         Phone = phone,
                         Email = email,
                         Role = EnumRole.ShopManager,
                         CreatedTime = dateTime,
                     };
+                    await _repository.Value.InsertAsync(user);
+
                     Shop shop = new Shop
                     {
                         Id = shopId,
@@ -56,14 +72,12 @@ namespace MiniShop.Services
                         CreatedTime = dateTime,
                         ValidDate = dateTime.AddDays(7),
                     };
-
                     if (userName == "mini")
                     {
                         shop.ValidDate = dateTime.AddYears(99);
                     }
-
-                    await _repository.Value.InsertAsync(user);
                     await _shopRepository.Value.InsertAsync(shop);
+
                     if (await UnitOfWork.SaveChangesAsync() > 0)
                     {
                         userDto = _mapper.Value.Map<UserDto>(user);

@@ -47,7 +47,7 @@ namespace MiniShop.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Supplier",
+                name: "Store",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -60,12 +60,11 @@ namespace MiniShop.Api.Migrations
                     OperatorName = table.Column<string>(nullable: true),
                     Contacts = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
-                    Address = table.Column<string>(nullable: true),
-                    State = table.Column<int>(nullable: false)
+                    Address = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Supplier", x => x.Id);
+                    table.PrimaryKey("PK_Store", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -83,28 +82,6 @@ namespace MiniShop.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Unit", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Deleted = table.Column<int>(nullable: false),
-                    ShopId = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    CreatedTime = table.Column<DateTime>(nullable: false),
-                    ModifiedTime = table.Column<DateTime>(nullable: false),
-                    OperatorName = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    Role = table.Column<int>(nullable: false),
-                    Enable = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -131,6 +108,64 @@ namespace MiniShop.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vip", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Supplier",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Deleted = table.Column<int>(nullable: false),
+                    ShopId = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    OperatorName = table.Column<string>(nullable: true),
+                    StoreId = table.Column<int>(nullable: false),
+                    Contacts = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    State = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Supplier", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Supplier_Store_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Store",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Deleted = table.Column<int>(nullable: false),
+                    ShopId = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    CreatedTime = table.Column<DateTime>(nullable: false),
+                    ModifiedTime = table.Column<DateTime>(nullable: false),
+                    OperatorName = table.Column<string>(nullable: true),
+                    StoreId = table.Column<int>(nullable: false),
+                    Phone = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    Role = table.Column<int>(nullable: false),
+                    Enable = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_User_Store_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Store",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,6 +226,16 @@ namespace MiniShop.Api.Migrations
                 name: "IX_Item_UnitId",
                 table: "Item",
                 column: "UnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Supplier_StoreId",
+                table: "Supplier",
+                column: "StoreId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_StoreId",
+                table: "User",
+                column: "StoreId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -215,6 +260,9 @@ namespace MiniShop.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Unit");
+
+            migrationBuilder.DropTable(
+                name: "Store");
         }
     }
 }
