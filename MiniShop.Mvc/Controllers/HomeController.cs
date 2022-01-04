@@ -93,7 +93,10 @@ namespace MiniShop.Mvc.Controllers
                 var expiresAt = HttpContext.GetTokenAsync("expires_at").Result;
                 identity.AddClaim(new Claim("LoginExpiresAt", expiresAt, ClaimValueTypes.String));
                 identity.AddClaim(new Claim("LoginId", result.Data.Id.ToString(), ClaimValueTypes.String));
-                identity.AddClaim(new Claim("LoginShopId", result.Data.ShopId.ToString(), ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginStoreId", result.Data.Store.Id.ToString(), ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginStoreName", result.Data.Store.Name.ToString(), ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginShopId", result.Data.Shop.Id.ToString(), ClaimValueTypes.String));
+                identity.AddClaim(new Claim("LoginShopName", result.Data.Shop.Name.ToString(), ClaimValueTypes.String));
                 identity.AddClaim(new Claim("LoginName", result.Data.Name, ClaimValueTypes.String));
                 identity.AddClaim(new Claim("LoginPhone", result.Data.Phone, ClaimValueTypes.String));
                 identity.AddClaim(new Claim("LoginEmail", result.Data.Email, ClaimValueTypes.String));

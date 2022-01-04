@@ -22,6 +22,12 @@ namespace MiniShop.Model
         public virtual Store Store { get; set; }
 
         /// <summary>
+        /// 商店
+        /// </summary>
+        [ForeignKey("ShopId")]
+        public virtual Shop Shop { get; set; }
+
+        /// <summary>
         /// 手机号
         /// </summary>
         public string Phone { get; set; }
