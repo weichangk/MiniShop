@@ -40,7 +40,9 @@ namespace MiniShop.Ids.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    ShopId = table.Column<Guid>(nullable: false),
+                    IsFreeze = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

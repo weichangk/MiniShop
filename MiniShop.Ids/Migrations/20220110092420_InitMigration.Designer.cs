@@ -9,7 +9,7 @@ using MiniShop.Ids.Data;
 namespace MiniShop.Ids.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220104064144_InitMigration")]
+    [Migration("20220110092420_InitMigration")]
     partial class InitMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -166,6 +166,9 @@ namespace MiniShop.Ids.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("IsFreeze")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
 
@@ -191,6 +194,9 @@ namespace MiniShop.Ids.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<Guid>("ShopId")
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");

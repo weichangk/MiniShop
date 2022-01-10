@@ -1,9 +1,4 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using IdentityModel;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MiniShop.Ids.Data;
@@ -36,29 +31,79 @@ namespace MiniShop.Ids
                     context.Database.Migrate();
 
                     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                    var alice = userMgr.FindByNameAsync("mini").Result;
-                    if (alice == null)
+                    var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                    var role = roleMgr.FindByNameAsync("ShopManager").Result;
+                    if (role == null)
                     {
-                        alice = new ApplicationUser
+                        IdentityRole IdentityRole = new IdentityRole
                         {
+                            Name = "ShopManager",
+                        };
+                        var result = roleMgr.CreateAsync(IdentityRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
+                    role = roleMgr.FindByNameAsync("Admin").Result;
+                    if (role == null)
+                    {
+                        IdentityRole IdentityRole = new IdentityRole
+                        {
+                            Name = "Admin",
+                        };
+                        var result = roleMgr.CreateAsync(IdentityRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
+                    role = roleMgr.FindByNameAsync("Cashier").Result;
+                    if (role == null)
+                    {
+                        IdentityRole IdentityRole = new IdentityRole
+                        {
+                            Name = "Cashier",
+                        };
+                        var result = roleMgr.CreateAsync(IdentityRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
+
+                    var mini = userMgr.FindByNameAsync("mini").Result;
+                    if (mini == null)
+                    {
+                        mini = new ApplicationUser
+                        {
+                            ShopId = Guid.NewGuid(),
                             UserName = "mini",
                             PhoneNumber = "18276743761",
                             Email = "18276743761@163.com",
                             //EmailConfirmed = true,
                         };
-                        var result = userMgr.CreateAsync(alice, "Mini123$").Result;
+                        var result = userMgr.CreateAsync(mini, "Mini123$").Result;
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);
                         }
 
-                        result = userMgr.AddClaimsAsync(alice, new Claim[]{
-                            new Claim(JwtClaimTypes.Role, "ShopManager"),
+                        result = userMgr.AddToRolesAsync(mini, new System.Collections.Generic.List<string>{ "ShopManager", "Admin", "Cashier" }).Result; ;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+
+                        result = userMgr.AddClaimsAsync(mini, new Claim[]{
+                            new Claim("rank", "ShopManager"),
                         }).Result;
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);
                         }
+
                         Log.Debug("mini created");
                     }
                     else
