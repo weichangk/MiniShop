@@ -4,7 +4,7 @@ using MiniShop.Dto;
 using MiniShop.IServices;
 using MiniShop.Model;
 using System;
-using yrjw.ORM.Chimp;
+using Orm.Core;
 
 namespace MiniShop.Services
 {

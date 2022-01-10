@@ -6,7 +6,7 @@ namespace MiniShop.Dto
     public class StoreDto
     {
         [Display(Name = "门店ID")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Display(Name = "商店ID")]
         public Guid ShopId { get; set; }

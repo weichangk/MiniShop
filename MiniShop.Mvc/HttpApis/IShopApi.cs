@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using WebApiClient;
 using WebApiClient.Attributes;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core.Result;
 
 namespace MiniShop.Mvc.HttpApis
 {

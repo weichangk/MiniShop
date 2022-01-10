@@ -1,4 +1,4 @@
-﻿using MiniShop.Model;
+﻿using MiniShop.Model.Enums;
 using System;
 
 namespace MiniShop.Mvc.Code

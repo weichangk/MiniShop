@@ -1,4 +1,4 @@
-﻿using yrjw.ORM.Chimp;
+﻿using Orm.Core;
 
 namespace MiniShop.Api.Config
 {

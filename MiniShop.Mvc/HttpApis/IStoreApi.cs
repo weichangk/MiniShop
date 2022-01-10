@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using WebApiClient;
 using WebApiClient.Attributes;
-using yrjw.ORM.Chimp;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core;
+using Orm.Core.Result;
 
 namespace MiniShop.Mvc.HttpApis
 {
@@ -20,7 +20,7 @@ namespace MiniShop.Mvc.HttpApis
         /// <param name="shopId"></param>
         /// <returns></returns>
         [HttpGet("/api/store?shopId={shopId}")]
-        ITask<ResultModel<PagedList<StoreDto>>> QueryAsync(Guid shopId);
+        ITask<ResultModel<PagedList<StoreDto>>> QueryByShopIdAsync(Guid shopId);
 
         /// <summary>
         /// 根据商店ID、分页条件获取所有门店
@@ -44,7 +44,7 @@ namespace MiniShop.Mvc.HttpApis
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("/api/store/{id}")]
-        ITask<ResultModel<StoreDto>> QueryAsync(int id);
+        ITask<ResultModel<StoreDto>> QueryByIdAsync(Guid id);
 
         /// <summary>
         /// 根据商店ID和门店名获取门店
@@ -61,7 +61,7 @@ namespace MiniShop.Mvc.HttpApis
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("/api/store/{id}")]
-        ITask<ResultModel<StoreDto>> DeleteAsync(int id);
+        ITask<ResultModel<StoreDto>> DeleteAsync(Guid id);
 
         /// <summary>
         /// 根据门店id批量删除门店
@@ -69,7 +69,7 @@ namespace MiniShop.Mvc.HttpApis
         /// <param name="ids"></param>
         /// <returns></returns>
         [HttpDelete("/api/store/BatchDelete")]
-        ITask<ResultModel<StoreDto>> BatchDeleteAsync([JsonContent] List<int> ids);
+        ITask<ResultModel<StoreDto>> BatchDeleteAsync([JsonContent] List<Guid> ids);
 
         /// <summary>
         /// 创建门店
@@ -94,6 +94,6 @@ namespace MiniShop.Mvc.HttpApis
         /// <param name="doc"></param>
         /// <returns></returns>
         [HttpPatch("/api/store/{id}")]
-        ITask<ResultModel<StoreDto>> PatchUpdateAsync(int id, [JsonContent] JsonPatchDocument<StoreUpdateDto> doc);
+        ITask<ResultModel<StoreDto>> PatchUpdateAsync(Guid id, [JsonContent] JsonPatchDocument<StoreUpdateDto> doc);
     }
 }

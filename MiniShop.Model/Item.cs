@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MiniShop.Model.Code;
+using MiniShop.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
@@ -7,7 +8,7 @@ namespace MiniShop.Model
     /// 商品档案
     /// </summary>
     [Table("Item")]
-    public class Item : EntityBaseNoDeleted
+    public class Item : EntityBaseNoDeletedStoreId<int>
     {
         /// <summary>
         /// 类别ID

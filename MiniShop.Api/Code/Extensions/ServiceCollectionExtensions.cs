@@ -16,6 +16,7 @@ using CommonTools.Core.Extensions;
 using MiniShop.Model;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
+using MiniShop.Model.Code;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -228,7 +229,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddORM(this IServiceCollection services, BasicSetting setting)
         {
-            if (setting.DbType == yrjw.ORM.Chimp.DbType.MYSQL)
+            if (setting.DbType == Orm.Core.DbType.MYSQL)
             {
                 //UseLazyLoadingProxies 通过延迟加载获取导航属性数据
                 services.AddChimp<AppDbContext>(opt => opt.UseLazyLoadingProxies().UseMySql(setting.ConnectionString,

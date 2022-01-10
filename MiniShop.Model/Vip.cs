@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MiniShop.Model.Code;
+using MiniShop.Model.Enums;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
@@ -7,7 +9,7 @@ namespace MiniShop.Model
     /// 会员
     /// </summary>
     [Table("Vip")]
-    public class Vip : EntityBase<int>
+    public class Vip : EntityBaseNoStoreId<int>
     {
         /// <summary>
         /// 会员类型

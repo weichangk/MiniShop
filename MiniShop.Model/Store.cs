@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace MiniShop.Model
 {
@@ -9,7 +7,7 @@ namespace MiniShop.Model
     /// 门店
     /// </summary>
     [Table("Store")]
-    public class Store : EntityBase<int>
+    public class Store : EntityBaseNoStoreId<Guid>
     {
         /// <summary>
         /// 联系人

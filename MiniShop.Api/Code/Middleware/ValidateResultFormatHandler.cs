@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core.Result;
 
 namespace MiniShop.Api.Code.Middleware
 {

@@ -8,12 +8,12 @@ using MiniShop.Model;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using yrjw.ORM.Chimp;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core;
+using Orm.Core.Result;
 
 namespace MiniShop.Services
 {
-    public class StoreService : BaseService<Store, StoreDto, int>, IStoreService, IDependency
+    public class StoreService : BaseService<Store, StoreDto, Guid>, IStoreService, IDependency
     {
         public StoreService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<StoreService> logger,
             Lazy<IRepository<Store>> _repository) : base(mapper, unitOfWork, logger, _repository)
@@ -54,7 +54,7 @@ namespace MiniShop.Services
         }
     }
 
-    public class CreateStoreService : BaseService<Store, StoreCreateDto, int>, ICreateStoreService, IDependency
+    public class CreateStoreService : BaseService<Store, StoreCreateDto, Guid>, ICreateStoreService, IDependency
     {
         public CreateStoreService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<CreateStoreService> logger,
             Lazy<IRepository<Store>> repository) : base(mapper, unitOfWork, logger, repository)
@@ -64,7 +64,7 @@ namespace MiniShop.Services
     }
 
 
-    public class UpdateStoreService : BaseService<Store, StoreUpdateDto, int>, IUpdateStoreService, IDependency
+    public class UpdateStoreService : BaseService<Store, StoreUpdateDto, Guid>, IUpdateStoreService, IDependency
     {
         public UpdateStoreService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<UpdateStoreService> logger, Lazy<IRepository<Store>> repository)
         : base(mapper, unitOfWork, logger, repository)

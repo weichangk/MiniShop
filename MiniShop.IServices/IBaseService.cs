@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core.Result;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace MiniShop.IServices

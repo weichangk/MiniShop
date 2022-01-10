@@ -42,6 +42,7 @@ namespace MiniShop.Ids.Migrations
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     ShopId = table.Column<Guid>(nullable: false),
+                    StoreId = table.Column<Guid>(nullable: false),
                     IsFreeze = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -190,6 +191,18 @@ namespace MiniShop.Ids.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_ShopId",
+                table: "AspNetUsers",
+                column: "ShopId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_StoreId",
+                table: "AspNetUsers",
+                column: "StoreId",
                 unique: true);
         }
 

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using MiniShop.Model.Code;
+using MiniShop.Model.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
 {
@@ -6,19 +8,8 @@ namespace MiniShop.Model
     /// 供应商
     /// </summary>
     [Table("Supplier")]
-    public class Supplier : EntityBase<int>
+    public class Supplier : EntityBaseNoStoreId<int>
     {
-        /// <summary>
-        /// 门店ID
-        /// </summary>
-        public int StoreId { get; set; }
-
-        /// <summary>
-        /// 门店
-        /// </summary>
-        [ForeignKey("StoreId")]
-        public virtual Store Store { get; set; }
-
         /// <summary>
         /// 联系人
         /// </summary>

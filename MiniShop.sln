@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging.Serilog", "Logging.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonTools.Core", "CommonTools.Core\CommonTools.Core.csproj", "{C1A781D5-0C2B-46F0-A8D4-349476AE37C6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orm.Core", "Orm.Core\Orm.Core.csproj", "{94655B8C-22FE-4D32-856B-F16A05966E50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{C1A781D5-0C2B-46F0-A8D4-349476AE37C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1A781D5-0C2B-46F0-A8D4-349476AE37C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1A781D5-0C2B-46F0-A8D4-349476AE37C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94655B8C-22FE-4D32-856B-F16A05966E50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94655B8C-22FE-4D32-856B-F16A05966E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94655B8C-22FE-4D32-856B-F16A05966E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94655B8C-22FE-4D32-856B-F16A05966E50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

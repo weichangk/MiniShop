@@ -2,11 +2,11 @@
 using MiniShop.Model;
 using System;
 using System.Threading.Tasks;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core.Result;
 
 namespace MiniShop.IServices
 {
-    public interface IStoreService : IBaseService<Store, StoreDto, int>
+    public interface IStoreService : IBaseService<Store, StoreDto, Guid>
     {
         /// <summary>
         /// 根据商店ID和分页条件获取门店
@@ -37,12 +37,12 @@ namespace MiniShop.IServices
         Task<IResultModel> GetByShopIdAndNameAsync(Guid shopId, string name);
     }
 
-    public interface ICreateStoreService : IBaseService<Store, StoreCreateDto, int>
+    public interface ICreateStoreService : IBaseService<Store, StoreCreateDto, Guid>
     {
 
     }
 
-    public interface IUpdateStoreService : IBaseService<Store, StoreUpdateDto, int>
+    public interface IUpdateStoreService : IBaseService<Store, StoreUpdateDto, Guid>
     {
 
     }

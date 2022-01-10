@@ -9,7 +9,7 @@ using MiniShop.Ids.Data;
 namespace MiniShop.Ids.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220110092420_InitMigration")]
+    [Migration("20220110131126_InitMigration")]
     partial class InitMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -198,6 +198,9 @@ namespace MiniShop.Ids.Migrations
                     b.Property<Guid>("ShopId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("char(36)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
 
@@ -213,6 +216,12 @@ namespace MiniShop.Ids.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasName("UserNameIndex");
+
+                    b.HasIndex("ShopId")
+                        .IsUnique();
+
+                    b.HasIndex("StoreId")
+                        .IsUnique();
 
                     b.ToTable("AspNetUsers");
                 });

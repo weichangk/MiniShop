@@ -196,6 +196,9 @@ namespace MiniShop.Ids.Migrations
                     b.Property<Guid>("ShopId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("char(36)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
 
@@ -211,6 +214,12 @@ namespace MiniShop.Ids.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasName("UserNameIndex");
+
+                    b.HasIndex("ShopId")
+                        .IsUnique();
+
+                    b.HasIndex("StoreId")
+                        .IsUnique();
 
                     b.ToTable("AspNetUsers");
                 });

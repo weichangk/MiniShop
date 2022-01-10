@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core.Result;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -63,9 +63,9 @@ namespace MiniShop.Mvc.Controllers
             return Json(new Result() { success = false, msg = ModelStateErrorMessage(ModelState), status = (int)HttpStatusCode.BadRequest });
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var result = await _storeApi.QueryAsync(id);
+            var result = await _storeApi.QueryByIdAsync(id);
             if (result.Success)
             {
                 return View(result.Data);
@@ -78,7 +78,7 @@ namespace MiniShop.Mvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var oldStoreDto = await _storeApi.QueryAsync(model.Id);
+                var oldStoreDto = await _storeApi.QueryByIdAsync(model.Id);
 
                 var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
                 Guid loginShopId = Guid.Parse(id);
@@ -111,9 +111,9 @@ namespace MiniShop.Mvc.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            var storeDto = await _storeApi.QueryAsync(id);
+            var storeDto = await _storeApi.QueryByIdAsync(id);
             if (storeDto.Data != null)
             {
                 if (storeDto.Data.Name == "总部门店")
@@ -121,7 +121,7 @@ namespace MiniShop.Mvc.Controllers
                     return Json(new Result() { success = false, msg = $"不能删除总部门店：{storeDto.Data.Name}" });
                 }
                 var loginStoreId = User.Claims.FirstOrDefault(s => s.Type == "LoginStoreId")?.Value;
-                int storeId = int.Parse(loginStoreId);
+                Guid storeId = Guid.Parse(loginStoreId);
                 if (storeDto.Data.Id == storeId)
                 {
                     return Json(new Result() { success = false, msg = $"不能删除当前登录门店：{storeDto.Data.Name}" });
@@ -140,22 +140,22 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> BatchDeleteAsync(string ids)
         {
             List<string> idsStrList = ids.Split(",").ToList();
-            List<int> idsIntList = new List<int>();
+            List<Guid> idsIntList = new List<Guid>();
             ResultModel<StoreDto> resultModel = new ResultModel<StoreDto>();
             var loginId = User.Claims.FirstOrDefault(s => s.Type == "LoginId")?.Value;
             int userId = int.Parse(loginId);
             foreach (var id in idsStrList)
             {
-                resultModel = await _storeApi.QueryAsync(int.Parse(id));
+                resultModel = await _storeApi.QueryByIdAsync(Guid.Parse(id));
                 if (resultModel.Data != null)
                 {
-                    idsIntList.Add(int.Parse(id));
+                    idsIntList.Add(Guid.Parse(id));
                     if (resultModel.Data.Name == "总部门店")
                     {
                         return Json(new Result() { success = false, msg = $"不能删除总部门店：{resultModel.Data.Name}" });
                     }
                     var loginStoreId = User.Claims.FirstOrDefault(s => s.Type == "LoginStoreId")?.Value;
-                    int storeId = int.Parse(loginStoreId);
+                    Guid storeId = Guid.Parse(loginStoreId);
                     if (resultModel.Data.Id == storeId)
                     {
                         return Json(new Result() { success = false, msg = $"不能删除当前登录门店：{resultModel.Data.Name}" });

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using MiniShop.Model;
+using MiniShop.Model.Enums;
 using System;
 using System.Globalization;
 

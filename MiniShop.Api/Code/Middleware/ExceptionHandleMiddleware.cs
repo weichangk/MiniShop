@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using CommonTools.Core.Helper;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core.Result;
 
 namespace MiniShop.Api.Code.Middleware
 {

@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using yrjw.ORM.Chimp;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core;
+using Orm.Core.Result;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace MiniShop.Services

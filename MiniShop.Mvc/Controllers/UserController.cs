@@ -12,7 +12,7 @@ using System.Net;
 using IdentityModel;
 using System.Security.Claims;
 using System.Collections.Generic;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core.Result;
 
 namespace MiniShop.Mvc.Controllers
 {

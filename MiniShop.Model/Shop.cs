@@ -7,7 +7,7 @@ namespace MiniShop.Model
     /// 商店
     /// </summary>
     [Table("Shop")]
-    public class Shop : EntityBase<Guid>
+    public class Shop : EntityBaseNoShopIdStoreId<Guid>
     {
         /// <summary>
         /// 联系人
@@ -34,8 +34,5 @@ namespace MiniShop.Model
         /// </summary>
         public DateTime ValidDate { get; set; } = DateTime.Now;
 
-        //通过override重写，标记NotMapped特性排除基类属性，不生成表字段
-        [NotMapped]
-        public override Guid ShopId { get => base.ShopId; set => base.ShopId = value; }
     }
 }

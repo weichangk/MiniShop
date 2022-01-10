@@ -8,12 +8,10 @@ using MiniShop.Api.Code.Middleware;
 using MiniShop.Api.Config;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using CommonTools.Core.Helper;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core.Result;
 
 namespace Microsoft.AspNetCore.Builder
 {

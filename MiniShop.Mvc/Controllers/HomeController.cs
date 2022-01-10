@@ -18,11 +18,9 @@ namespace MiniShop.Mvc.Controllers
     public class HomeController : BaseController
     {
         private readonly IShopApi _shopApi;
-        private readonly IUserApi _userApi;
-        public HomeController(ILogger<HomeController> logger, IShopApi shopApi, IUserApi userApi) : base(logger)
+        public HomeController(ILogger<HomeController> logger, IShopApi shopApi) : base(logger)
         {
             _shopApi = shopApi;
-            _userApi = userApi;
         }
 
         [HttpGet]
@@ -34,24 +32,6 @@ namespace MiniShop.Mvc.Controllers
 
         public IActionResult Privacy()
         {
-            //var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
-            //var idToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
-            //var refreshToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
-            //ViewData["accessToken"] = accessToken;
-            //ViewData["idToken"] = idToken;
-            //ViewData["refreshToken"] = refreshToken;
-
-            //ViewData["LoginIdToken"] = User.Claims.FirstOrDefault(s => s.Type == "LoginIdToken")?.Value;
-            //ViewData["LoginAccessToken"] = User.Claims.FirstOrDefault(s => s.Type == "LoginAccessToken")?.Value;
-            //ViewData["LoginRefreshToken"] = User.Claims.FirstOrDefault(s => s.Type == "LoginRefreshToken")?.Value;
-            //ViewData["LoginExpiresAt"] = User.Claims.FirstOrDefault(s => s.Type == "LoginExpiresAt")?.Value;
-            //ViewData["LoginId"] = User.Claims.FirstOrDefault(s => s.Type == "LoginId")?.Value;
-            //ViewData["LoginShopId"] = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-            //ViewData["LoginName"] = User.Claims.FirstOrDefault(s => s.Type == "LoginName")?.Value;
-            //ViewData["LoginPhone"] = User.Claims.FirstOrDefault(s => s.Type == "LoginPhone")?.Value;
-            //ViewData["LoginEmail"] = User.Claims.FirstOrDefault(s => s.Type == "LoginEmail")?.Value;
-            //ViewData["LoginRole"] = User.Claims.FirstOrDefault(s => s.Type == "LoginRole")?.Value;
-
             return View();
         }
 

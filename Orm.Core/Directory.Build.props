@@ -1,0 +1,23 @@
+﻿<Project>
+  <PropertyGroup>
+    <Code>yrjw</Code>
+    <Authors>yirujiwang</Authors>
+    <Icon>permission</Icon>
+    <Version>1.0.8</Version>
+    <Description>$(MSBuildProjectName) - It is not the encapsulation of ORM，a based on EF + dapper + Autofac, is repository and unitofwork</Description>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <LangVersion>Latest</LangVersion>
+    <RootNamespacePrefix>$(Code)</RootNamespacePrefix>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>$(AssemblyName)</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+    <!--设置打包路径-->
+    <PackageOutputPath>$(SolutionDir)\_packages</PackageOutputPath>
+    <Company>yirujiwang</Company>
+    <Copyright>yirujiwang</Copyright>
+    <PackageProjectUrl>https://gitee.com/h_gxi/yrjw.ORM.Chimp</PackageProjectUrl>
+    <RepositoryUrl>https://gitee.com/h_gxi/yrjw.ORM.Chimp.git</RepositoryUrl>
+  </PropertyGroup>
+</Project>

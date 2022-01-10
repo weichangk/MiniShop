@@ -10,7 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using yrjw.ORM.Chimp.Result;
+using Orm.Core.Result;
 
 namespace MiniShop.Api.Controllers
 {
@@ -98,7 +98,7 @@ namespace MiniShop.Api.Controllers
         [ResponseCache(Duration = 0)]
         [Parameters(name = "id", param = "门店ID")]
         [HttpGet("{id}")]
-        public async Task<IResultModel> Query([Required] int id)
+        public async Task<IResultModel> Query([Required] Guid id)
         {
             _logger.LogDebug($"根据用户ID:{id}获取用户");
             return await _storeService.Value.GetByIdAsync(id);
@@ -131,7 +131,7 @@ namespace MiniShop.Api.Controllers
         [OperationId("删除门店")]
         [Parameters(name = "id", param = "门店ID")]
         [HttpDelete("{id}")]
-        public async Task<IResultModel> Delete([Required] int id)
+        public async Task<IResultModel> Delete([Required] Guid id)
         {
             _logger.LogDebug("删除门店");
             return await _storeService.Value.RemoveAsync(id);
@@ -146,7 +146,7 @@ namespace MiniShop.Api.Controllers
         [OperationId("批量删除门店")]
         [Parameters(name = "ids", param = "门店ID集合")]
         [HttpDelete("BatchDelete")]
-        public async Task<IResultModel> BatchDelete([FromBody] List<int> ids)
+        public async Task<IResultModel> BatchDelete([FromBody] List<Guid> ids)
         {
             _logger.LogDebug("批量删除门店");
             return await _storeService.Value.RemoveAsync(ids);
@@ -189,7 +189,7 @@ namespace MiniShop.Api.Controllers
         [Description("使用JsonPatch修改门店，成功后返回当前门店信息")]
         [OperationId("使用JsonPatch修改门店")]
         [HttpPatch("{id}")]
-        public async Task<IResultModel> PatchUpdate([FromRoute] int id, [FromBody] JsonPatchDocument<StoreUpdateDto> patchDocument)
+        public async Task<IResultModel> PatchUpdate([FromRoute] Guid id, [FromBody] JsonPatchDocument<StoreUpdateDto> patchDocument)
         {
             _logger.LogDebug("使用JsonPatch修改门店");
             return await _updateStoreService.Value.PatchAsync(id, patchDocument);

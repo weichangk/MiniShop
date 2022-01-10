@@ -76,9 +76,11 @@ namespace MiniShop.Ids
                     var mini = userMgr.FindByNameAsync("mini").Result;
                     if (mini == null)
                     {
+                        var shopId = Guid.NewGuid();
                         mini = new ApplicationUser
                         {
-                            ShopId = Guid.NewGuid(),
+                            ShopId = shopId,
+                            StoreId = shopId,
                             UserName = "mini",
                             PhoneNumber = "18276743761",
                             Email = "18276743761@163.com",

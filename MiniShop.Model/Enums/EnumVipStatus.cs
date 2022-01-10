@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace MiniShop.Model
+namespace MiniShop.Model.Enums
 {
     /// <summary>
     /// 会员状态

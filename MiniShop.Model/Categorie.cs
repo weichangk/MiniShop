@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
 {
@@ -7,7 +6,7 @@ namespace MiniShop.Model
     /// 商品类别
     /// </summary>
     [Table("Categorie")]
-    public class Categorie : EntityBaseNoDeleted
+    public class Categorie : EntityBaseNoDeletedStoreId<int>
     {
 
     }
