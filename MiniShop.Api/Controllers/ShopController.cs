@@ -32,7 +32,7 @@ namespace MiniShop.Api.Controllers
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="shopService"></param>
-        public ShopController(ILogger<ControllerAbstract> logger, Lazy<IShopService> shopService) : base(logger)
+        public ShopController(ILogger<ShopController> logger, Lazy<IShopService> shopService) : base(logger)
         {
             _shopService = shopService;
         }

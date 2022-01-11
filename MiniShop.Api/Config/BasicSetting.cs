@@ -31,6 +31,12 @@ namespace MiniShop.Api.Config
         /// 接入webapi地址
         /// </summary>
         public string ApiUrl { get; set; }
+
+        /// <summary>
+        /// Ids数据库连接字符串
+        /// </summary>
+        public string IdsConnectionString { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

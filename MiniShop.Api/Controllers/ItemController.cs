@@ -25,7 +25,7 @@ namespace MiniShop.Api.Controllers
         /// <param name="shopService"></param>
         /// <param name="categorieService"></param>
         /// <param name="itemService"></param>
-        public ItemController(ILogger<ControllerAbstract> logger, IMapper mapper,
+        public ItemController(ILogger<ItemController> logger, IMapper mapper,
         IShopService shopService,
         ICategorieService categorieService,
         IItemService itemService

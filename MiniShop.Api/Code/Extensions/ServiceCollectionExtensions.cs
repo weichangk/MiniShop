@@ -13,10 +13,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CommonTools.Core.Extensions;
-using MiniShop.Model;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using MiniShop.Model.Code;
+using MiniShop.Api.Ids;
+using Microsoft.AspNetCore.Identity;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -33,6 +34,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddWebHost(this IServiceCollection services, IWebHostEnvironment env)
         {
+            //Ids
+            services.AddIdsConn(BasicSetting.Setting);
+
             //将控制器的寄宿器转为注册的服务
             services.AddControllers().AddControllersAsServices().AddNewtonsoftJson(options =>
             {
@@ -61,6 +65,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             //添加AutoMapper
             services.AddAutoMapper(typeof(MiniShop.Dto.Profiles.AutoMapperProfiles).Assembly);
+            services.AddAutoMapper(typeof(MiniShop.Api.Ids.Profiles.AutoMapperProfiles).Assembly);
 
             //添加Swagger
             if (env.IsDevelopment())
@@ -251,6 +256,23 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddValidators(this IServiceCollection services)
         {
             services.TryAddSingleton<IValidateResultFormatHandler, ValidateResultFormatHandler>();
+            return services;
+        }
+
+        /// <summary>
+        /// Ids连接服务
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="setting"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddIdsConn(this IServiceCollection services, BasicSetting setting)
+        {
+            services.AddDbContext<IdsDbContext>(options =>
+                options.UseMySql(setting.IdsConnectionString));
+                    services.AddIdentity<IdsUser, IdentityRole>()
+                        .AddErrorDescriber<CustomIdentityErrorDescriber>()
+                        .AddEntityFrameworkStores<IdsDbContext>()
+                        .AddDefaultTokenProviders();
             return services;
         }
     }

@@ -21,7 +21,7 @@ namespace MiniShop.Api.Controllers
         /// <param name="logger"></param>
         /// <param name="mapper"></param>
         /// <param name="categorieService"></param>
-        public CategorieController(ILogger<ControllerAbstract> logger, IMapper mapper, ICategorieService categorieService) : base(logger)
+        public CategorieController(ILogger<CategorieController> logger, IMapper mapper, ICategorieService categorieService) : base(logger)
         {
             _mapper = mapper;
             _categorieServicr = categorieService;
