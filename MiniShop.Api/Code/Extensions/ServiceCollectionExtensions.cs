@@ -65,7 +65,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
             //添加AutoMapper
             services.AddAutoMapper(typeof(MiniShop.Dto.Profiles.AutoMapperProfiles).Assembly);
-            services.AddAutoMapper(typeof(MiniShop.Api.Ids.Profiles.AutoMapperProfiles).Assembly);
 
             //添加Swagger
             if (env.IsDevelopment())
@@ -269,7 +268,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddDbContext<IdsDbContext>(options =>
                 options.UseMySql(setting.IdsConnectionString));
-                    services.AddIdentity<IdsUser, IdentityRole>()
+                    services.AddIdentity<IdentityUser, IdentityRole>()
                         .AddErrorDescriber<CustomIdentityErrorDescriber>()
                         .AddEntityFrameworkStores<IdsDbContext>()
                         .AddDefaultTokenProviders();

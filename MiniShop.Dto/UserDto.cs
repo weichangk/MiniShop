@@ -1,4 +1,5 @@
-﻿using MiniShop.Model.Enums;
+﻿using MiniShop.Model.Code;
+using MiniShop.Model.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,7 +20,7 @@ namespace MiniShop.Dto
         public string UserName { get; set; }
 
         [Display(Name = "手机号")]
-        public string Phone { get; set; }
+        public string PhoneNumber { get; set; }
 
         [Display(Name = "邮箱")]
         public string Email { get; set; }
@@ -28,7 +29,7 @@ namespace MiniShop.Dto
         public EnumRole Rank { get; set; }
 
         [Display(Name = "职称描述")]
-        public string RankDes { get; set; }
+        public string RankDes => Rank.ToDescription();
 
         [Display(Name = "是否冻结")]
         public bool IsFreeze { get; set; }

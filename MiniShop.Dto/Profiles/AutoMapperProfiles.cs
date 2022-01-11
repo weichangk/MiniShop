@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using MiniShop.Model;
 
 namespace MiniShop.Dto.Profiles
@@ -7,6 +8,10 @@ namespace MiniShop.Dto.Profiles
     {
         public AutoMapperProfiles()
         {
+            CreateMap<IdentityUser, UserDto>();
+            CreateMap<UserCreateDto, IdentityUser>();
+            CreateMap<UserUpdateDto, IdentityUser>();
+
             CreateMap<Shop, ShopDto>();
             CreateMap<ShopUpdateDto, Shop>();
 

@@ -76,11 +76,8 @@ namespace MiniShop.Ids
                     var mini = userMgr.FindByNameAsync("mini").Result;
                     if (mini == null)
                     {
-                        var shopId = Guid.NewGuid();
                         mini = new ApplicationUser
                         {
-                            ShopId = shopId,
-                            StoreId = shopId,
                             UserName = "mini",
                             PhoneNumber = "18276743761",
                             Email = "18276743761@163.com",
@@ -98,8 +95,13 @@ namespace MiniShop.Ids
                             throw new Exception(result.Errors.First().Description);
                         }
 
+                        var shopId = Guid.NewGuid();
                         result = userMgr.AddClaimsAsync(mini, new Claim[]{
                             new Claim("rank", "ShopManager"),
+                            new Claim("shopid", shopId.ToString()),
+                            new Claim("storeid", shopId.ToString()),
+                            new Claim("isfreeze", "false"),
+                            new Claim("createdtime", DateTime.Now.ToString()),
                         }).Result;
                         if (!result.Succeeded)
                         {

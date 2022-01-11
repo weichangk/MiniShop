@@ -14,13 +14,6 @@ namespace MiniShop.Ids.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            builder.Entity<ApplicationUser>()
-                .HasIndex(a => a.ShopId)
-                .IsUnique();
-            builder.Entity<ApplicationUser>()
-                .HasIndex(a => a.StoreId)
-                .IsUnique();
         }
     }
 }

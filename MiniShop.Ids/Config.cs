@@ -24,9 +24,9 @@ namespace MiniShop.Ids
             new IdentityResources.Phone(),
             new IdentityResources.Email(),
             new IdentityResource(
-                name: "user_rank",
-                displayName: "user rank",
-                userClaims: new[] { "rank" }),
+                name: "user_extras",
+                displayName: "user extras",
+                userClaims: new[] { "rank", "shopid", "storeid", "isfreeze", "createdtime"}),
         };
 
         public static IEnumerable<ApiScope> ApiScopes =>
@@ -68,8 +68,8 @@ namespace MiniShop.Ids
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.Phone,
-                    "user_rank",
                     "minishop_api",
+                    "user_extras",
                 }
             }
         };
