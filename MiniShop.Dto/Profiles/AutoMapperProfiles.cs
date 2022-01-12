@@ -9,8 +9,8 @@ namespace MiniShop.Dto.Profiles
         public AutoMapperProfiles()
         {
             CreateMap<IdentityUser, UserDto>();
-            CreateMap<UserCreateDto, IdentityUser>();
-            CreateMap<UserUpdateDto, IdentityUser>();
+            //CreateMap<UserCreateDto, IdentityUser>();
+            //CreateMap<UserUpdateDto, IdentityUser>();
 
             CreateMap<Shop, ShopDto>();
             CreateMap<ShopUpdateDto, Shop>();

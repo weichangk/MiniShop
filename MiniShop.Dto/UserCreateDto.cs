@@ -20,7 +20,7 @@ namespace MiniShop.Dto
 
         [Display(Name = "手机号")]
         [RegularExpression(@"^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$", ErrorMessage = "{0}的格式不正确")]
-        public string Phone { get; set; }
+        public string PhoneNumber { get; set; }
 
         [Display(Name = "邮箱")]
         [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "{0}的格式不正确")]

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Web;
 
 namespace MiniShop.Api.Controllers
@@ -23,6 +25,13 @@ namespace MiniShop.Api.Controllers
         {
             _logger = logger;
         }
+
+        public string ModelStateErrorMessage(ModelStateDictionary modelState)
+        {
+            var message = string.Join(" | ", modelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            return message;
+        }
+
         /// <summary>
         /// 导出Excel
         /// </summary>
