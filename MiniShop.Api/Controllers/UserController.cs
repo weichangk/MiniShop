@@ -33,6 +33,24 @@ namespace MiniShop.Api.Controllers
             _userManager = userManager;
         }
 
+        [Description("根据用户名获取用户")]
+        [OperationId("获取用户")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "name", param = "用户名")]
+        [HttpGet("{name}")]
+        public async Task<IResultModel> Query([Required] string name)
+        {
+            _logger.LogDebug($"根据用户名：{name} 获取用户");
+            var data = await _userManager.Value.FindByNameAsync(name);
+            if (data == null)
+            {
+                return ResultModel.NotExists;
+            }
+            var userDto = _mapper.Value.Map<UserDto>(data);
+            await UserDtoSetExtras(userDto);
+            return ResultModel.Success(userDto);
+        }
+
         [Description("根据商店ID和分页条件获取商店的用户分页列表")]
         [OperationId("获取用户分页列表")]
         [ResponseCache(Duration = 0)]
@@ -93,25 +111,6 @@ namespace MiniShop.Api.Controllers
             }
 
             return ResultModel.Success(userPagedList);
-        }
-
-
-        [Description("根据用户名获取用户")]
-        [OperationId("获取用户")]
-        [ResponseCache(Duration = 0)]
-        [Parameters(name = "name", param = "用户名")]
-        [HttpGet("{name}")]
-        public async Task<IResultModel> Query([Required] string name)
-        {
-            _logger.LogDebug($"根据用户名：{name} 获取用户");
-            var data = await _userManager.Value.FindByNameAsync(name);
-            if (data == null)
-            {
-                return ResultModel.NotExists;
-            }
-            var userDto = _mapper.Value.Map<UserDto>(data);
-            await UserDtoSetExtras(userDto);
-            return ResultModel.Success(userDto);
         }
 
         [Description("根据用户名删除用户")]

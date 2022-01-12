@@ -8,7 +8,7 @@ namespace MiniShop.Mvc.Code
     /// <summary>
     /// JWT Headers中加入AccessToken
     /// </summary>
-    public class ApiRequestTokenFilter : ApiActionFilterAttribute
+    public class SetAccessTokenFilter : ApiActionFilterAttribute
     {
         public override Task OnBeginRequestAsync(ApiActionContext context)
         {
@@ -18,8 +18,8 @@ namespace MiniShop.Mvc.Code
             }
             try
             {
-                var _loginInfo = context.GetService<ILoginInfo>();
-                context.RequestMessage.Headers.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {_loginInfo.LoginAccessToken}");
+                var userInfo = context.GetService<IUserInfo>();
+                context.RequestMessage.Headers.Add(HttpRequestHeader.Authorization.ToString(), $"Bearer {userInfo.AccessToken}");
             }
             catch (System.Exception)
             {

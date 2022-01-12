@@ -3,33 +3,38 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
-using System.Security.Claims;
 
 namespace MiniShop.Mvc.Code
 {
-    /// <summary>
-    /// 刷新登录状态
-    /// </summary>
-    public class TokenFilter : ActionFilterAttribute
+    public class RefreshAccessTokenFilter : ActionFilterAttribute
     {
+        private readonly IConfiguration _configuration;
+
+        public RefreshAccessTokenFilter(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var expat = filterContext.HttpContext.GetTokenAsync("expires_at").Result;
             var dataExp = DateTime.Parse(expat, null, DateTimeStyles.RoundtripKind);
             var info = filterContext.HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme).Result;
-            var loginId = info.Principal.FindFirst("LoginId")?.Value;
+            var userInfoId = info.Principal.Claims.FirstOrDefault(s => s.Type == "UserInfoId")?.Value;
 
-            if ((dataExp - DateTime.Now).TotalMinutes < 10 && !string.IsNullOrEmpty(loginId))
+            if (!string.IsNullOrEmpty(userInfoId) && (dataExp - DateTime.Now).TotalMinutes < 10)
             {
                 var client = new HttpClient();
-                var disco = client.GetDiscoveryDocumentAsync("http://localhost:5001").Result;
+                var disco = client.GetDiscoveryDocumentAsync(_configuration["IdsConfig:Authority"]).Result;
                 if (disco.IsError)
-                {
+                {         
                     throw new Exception(disco.Error);
                 }
                 var refreshToken = filterContext.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken).Result;
@@ -38,9 +43,9 @@ namespace MiniShop.Mvc.Code
                 var tokenResult = client.RequestRefreshTokenAsync(new RefreshTokenRequest
                 {
                     Address = disco.TokenEndpoint,
-                    ClientId = "MiniShopMvcId",
-                    ClientSecret = "MiniShopMvcClientSecret",
-                    Scope = "openid profile email phone address MiniShopMvc.role MiniShop.Api.Scope1",
+                    ClientId = _configuration["IdsConfig:ClientId"],
+                    ClientSecret = _configuration["IdsConfig:ClientSecret"],
+                    Scope = _configuration["IdsConfig:Scope"],
                     GrantType = OpenIdConnectGrantTypes.RefreshToken,
                     RefreshToken = refreshToken
                 }).Result;
@@ -59,9 +64,9 @@ namespace MiniShop.Mvc.Code
 
                     var tokens = new List<AuthenticationToken>
                     {
-                        new AuthenticationToken 
+                        new AuthenticationToken
                         {
-                            Name = OpenIdConnectParameterNames.IdToken, 
+                            Name = OpenIdConnectParameterNames.IdToken,
                             Value = newIdToken //oldIdToken
                         },
                         new AuthenticationToken
@@ -81,24 +86,7 @@ namespace MiniShop.Mvc.Code
                         },
                     };
                     info.Properties.StoreTokens(tokens);
-
-                    var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-                    identity.AddClaim(new Claim("LoginIdToken", newIdToken, ClaimValueTypes.String));
-                    identity.AddClaim(new Claim("LoginAccessToken", newAccessToken, ClaimValueTypes.String));
-                    identity.AddClaim(new Claim("LoginRefreshToken", newRefreshToken, ClaimValueTypes.String));
-                    identity.AddClaim(new Claim("LoginExpiresAt", expiresAt.ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.String));
-                    identity.AddClaim(new Claim("LoginId", info.Principal.FindFirst("LoginId")?.Value, ClaimValueTypes.String));
-                    identity.AddClaim(new Claim("LoginShopId", info.Principal.FindFirst("LoginShopId")?.Value, ClaimValueTypes.String));
-                    identity.AddClaim(new Claim("LoginName", info.Principal.FindFirst("LoginName")?.Value, ClaimValueTypes.String));
-                    identity.AddClaim(new Claim("LoginPhone", info.Principal.FindFirst("LoginPhone")?.Value, ClaimValueTypes.String));
-                    identity.AddClaim(new Claim("LoginEmail", info.Principal.FindFirst("LoginEmail")?.Value, ClaimValueTypes.String));
-                    identity.AddClaim(new Claim("LoginRole", info.Principal.FindFirst("LoginRole")?.Value, ClaimValueTypes.String));
-
-                    //info.Principal.AddIdentity(identity);
-                    //filterContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, info.Principal, info.Properties);
-
-                    filterContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), info.Properties);
-                    
+                    filterContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, info.Principal, info.Properties);
                 }
             }
         }

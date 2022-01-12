@@ -46,21 +46,17 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveAddAsync(StoreCreateDto model)
         {
-            if (ModelState.IsValid)
+            var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
+            Guid loginShopId = Guid.Parse(id);
+            model.ShopId = loginShopId;
+
+            if (!await UniqueStoreNameByShopId(loginShopId, model.Name))
             {
-                var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-                Guid loginShopId = Guid.Parse(id);
-                model.ShopId = loginShopId;
-
-                if (!await UniqueStoreNameByShopId(loginShopId, model.Name))
-                {
-                    return Json(new Result() { success = false, msg = $"门店名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
-                }
-
-                var result = await _storeApi.AddAsync(model);
-                return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
+                return Json(new Result() { success = false, msg = $"门店名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
             }
-            return Json(new Result() { success = false, msg = ModelStateErrorMessage(ModelState), status = (int)HttpStatusCode.BadRequest });
+
+            var result = await _storeApi.AddAsync(model);
+            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
         }
 
         public async Task<IActionResult> Edit(Guid id)
@@ -76,29 +72,25 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveEditAsync(StoreDto model)
         {
-            if (ModelState.IsValid)
+            var oldStoreDto = await _storeApi.QueryByIdAsync(model.Id);
+
+            var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
+            Guid loginShopId = Guid.Parse(id);
+            model.ShopId = loginShopId;
+
+            if (oldStoreDto.Data.Name != model.Name && !await UniqueStoreNameByShopId(loginShopId, model.Name))
             {
-                var oldStoreDto = await _storeApi.QueryByIdAsync(model.Id);
-
-                var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-                Guid loginShopId = Guid.Parse(id);
-                model.ShopId = loginShopId;
-
-                if (oldStoreDto.Data.Name != model.Name && !await UniqueStoreNameByShopId(loginShopId, model.Name))
-                {
-                    return Json(new Result() { success = false, msg = $"门店名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
-                }
-
-                var doc = new JsonPatchDocument<StoreUpdateDto>();
-                doc.Replace(item => item.Name, model.Name);
-                doc.Replace(item => item.Phone, model.Phone);
-                doc.Replace(item => item.Contacts, model.Contacts);
-                doc.Replace(item => item.Address, model.Address);
-
-                var result = await _storeApi.PatchUpdateAsync(model.Id, doc);
-                return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
+                return Json(new Result() { success = false, msg = $"门店名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
             }
-            return Json(new Result() { success = false, msg = ModelStateErrorMessage(ModelState), status = (int)HttpStatusCode.BadRequest });
+
+            var doc = new JsonPatchDocument<StoreUpdateDto>();
+            doc.Replace(item => item.Name, model.Name);
+            doc.Replace(item => item.Phone, model.Phone);
+            doc.Replace(item => item.Contacts, model.Contacts);
+            doc.Replace(item => item.Address, model.Address);
+
+            var result = await _storeApi.PatchUpdateAsync(model.Id, doc);
+            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
         }
 
         [ResponseCache(Duration = 0)]

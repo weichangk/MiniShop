@@ -10,7 +10,7 @@ using Orm.Core.Result;
 
 namespace MiniShop.Mvc.HttpApis
 {
-    [ApiRequestTokenFilter]
+    [SetAccessTokenFilter]
     [JsonReturn]
     public interface IStoreApi : IHttpApi
     {

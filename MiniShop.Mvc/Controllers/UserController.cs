@@ -13,64 +13,29 @@ using IdentityModel;
 using System.Security.Claims;
 using System.Collections.Generic;
 using Orm.Core.Result;
+using MiniShop.Model.Enums;
 
 namespace MiniShop.Mvc.Controllers
 {
     public class UserController : BaseController
     {
         private readonly IUserApi _userApi;
-        private readonly UserManager<IdentityUser> _userManager;
 
-        public UserController(ILogger<UserController> logger, IUserApi userApi, UserManager<IdentityUser> userManager) : base(logger)
+        public UserController(ILogger<UserController> logger, IUserApi userApi) : base(logger)
         {
             _userApi = userApi;
-            _userManager = userManager;
         }
-
-        #region private method
-        private async Task<bool> UniqueName(string name)
-        {
-            var existUser = await _userApi.QueryAsyncByName(name);
-            if (existUser.Data != null)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private async Task<bool> UniquePhone(string phone)
-        {
-            var existUser = await _userApi.QueryAsyncByPhone(phone);
-            if (existUser.Data != null)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private async Task<bool> UniqueEmail(string email)
-        {
-            var existUser = await _userApi.QueryAsyncByEmail(email);
-            if (existUser.Data != null)
-            {
-                return false;
-            }
-            return true;
-        }
-        #endregion
-
 
         public IActionResult Index()
         {
             return View();
         }
 
-
         //添加页面
         [HttpGet]
         public IActionResult Create()
         {
-            UserCreateDto model = new UserCreateDto { Role = Model.EnumRole.Admin, };
+            UserCreateDto model = new UserCreateDto { Rank = EnumRole.Admin, };
             return View(model);
         }
 
@@ -78,84 +43,18 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveAddAsync(UserCreateDto model)
         {
-            if (ModelState.IsValid)
-            {
-                if (! await UniqueName(model.Name))
-                {
-                    return Json(new Result() { success = false, msg = $"用户名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
-                }
-                if (!await UniquePhone(model.Phone))
-                {
-                    return Json(new Result() { success = false, msg = $"手机号：{model.Phone} 已被占用", status = (int)HttpStatusCode.BadRequest });
-                }
-                if (!await UniqueEmail(model.Email))
-                {
-                    return Json(new Result() { success = false, msg = $"邮箱：{model.Email} 已被占用", status = (int)HttpStatusCode.BadRequest });
-                }
-
-                var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-                Guid loginShopId = Guid.Parse(id);
-                model.ShopId = loginShopId;
-
-                //1. 存后台数据库
-                var result = await _userApi.AddAsync(model);
-                if (result.Success)
-                {
-                    //2. 存登录中心数据库
-                    var user = new IdentityUser
-                    {
-                        UserName = model.Name,
-                        PhoneNumber = model.Phone,
-                        Email = model.Email,
-                    };
-                    var identityResult = await _userManager.CreateAsync(user, model.PassWord);
-                    if (identityResult.Succeeded)
-                    {
-                        identityResult = await _userManager.AddClaimsAsync(user, new Claim[] { new Claim(JwtClaimTypes.Role, model.Role.ToString()) });
-                        if (identityResult.Succeeded)
-                        {
-                            //成功
-                            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
-                        }
-                        else
-                        {
-                            //失败
-                            string errors = "";
-                            foreach (var error in identityResult.Errors)
-                            {
-                                errors = $"{errors}{error.Description} ";
-                            }
-                            return Json(new Result() { success = false, msg = $"添加用户失败：{errors}", status = (int)HttpStatusCode.BadRequest });
-                            //回滚，删除前面存登录中心数据库的用户
-                            //回滚，删除前面存后台数据库的用户
-                        }
-
-                    }
-                    else
-                    {
-                        //失败
-                        string errors = "";
-                        foreach (var error in identityResult.Errors)
-                        {
-                            errors = $"{errors}{error.Description} ";
-                        }
-                        return Json(new Result() { success = false, msg = $"添加用户失败：{errors}", status = (int)HttpStatusCode.BadRequest });
-                        //回滚，删除前面存后台数据库的用户
-                    }
-                }
-
-                //失败
-                return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
-            }
-            //失败
-            return Json(new Result() { success = false, msg = ModelStateErrorMessage(ModelState), status = (int)HttpStatusCode.BadRequest });
+            var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
+            Guid loginShopId = Guid.Parse(id);
+            model.ShopId = loginShopId;
+            var result = await _userApi.AddAsync(model);
+            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
         }
 
         //修改页面
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string name)
         {
-            var result =  await _userApi.QueryAsync(id);
+            var result =  await _userApi.QueryAsync(name);
             if (result.Success)
             {
                 return View(result.Data);
@@ -167,112 +66,22 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveEditAsync(UserDto model)
         {
-            if (ModelState.IsValid)
-            {
-                var oldUserDto = await _userApi.QueryAsync(model.Id);
-                if (oldUserDto.Data == null)
-                {
-                    return Json(new Result() { success = false, msg = "查找不到要修改的用户", status = (int)HttpStatusCode.NotFound });
-                }
-                if (oldUserDto.Data.Name != model.Name && !await UniqueName(model.Name))
-                {
-                    return Json(new Result() { success = false, msg = $"用户名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
-                }
-                if (oldUserDto.Data.Phone != model.Phone && !await UniquePhone(model.Phone))
-                {
-                    return Json(new Result() { success = false, msg = $"手机号：{model.Phone} 已被占用", status = (int)HttpStatusCode.BadRequest });
-                }
-                if (oldUserDto.Data.Email != model.Email && !await UniqueEmail(model.Email))
-                {
-                    return Json(new Result() { success = false, msg = $"邮箱：{model.Email} 已被占用", status = (int)HttpStatusCode.BadRequest });
-                }
+            var doc = new JsonPatchDocument<UserUpdateDto>();
+            doc.Replace(item => item.UserName, model.UserName);
+            doc.Replace(item => item.PhoneNumber, model.PhoneNumber);
+            doc.Replace(item => item.Email, model.Email);
+            doc.Replace(item => item.Rank, model.Rank);
 
-                //更新当前登录用户要更新Claim。。。。。暂时不支持修改当前登录用户
-                var loginId = User.Claims.FirstOrDefault(s => s.Type == "LoginId")?.Value;
-                int userId = int.Parse(loginId);
-                if (oldUserDto.Data.Id == userId)
-                {
-                    return Json(new Result() { success = false, msg = $"不能修改当前登录用户：{oldUserDto.Data.Name}" });
-                }
-
-                var doc = new JsonPatchDocument<UserUpdateDto>();
-                doc.Replace(item => item.Name, model.Name);
-                doc.Replace(item => item.Phone, model.Phone);
-                doc.Replace(item => item.Email, model.Email);
-                doc.Replace(item => item.Role, model.Role);
-
-                //1. 更新后台数据库的用户
-                var result = await _userApi.PatchUpdateAsync(model.Id, doc);
-                if (result.Success)
-                {
-                    //2. 更新登陆中心数据库的用户
-                    var identityUser = await _userManager.FindByNameAsync(oldUserDto.Data.Name);
-                    if (identityUser != null)
-                    {
-                        identityUser.UserName = model.Name;
-                        identityUser.PhoneNumber = model.Phone;
-                        identityUser.Email = model.Email;
-                        var identityResult = await _userManager.UpdateAsync(identityUser);
-                        if (identityResult.Succeeded)
-                        {
-                            if (oldUserDto.Data.Role != model.Role)
-                            {
-                                identityResult = await _userManager.ReplaceClaimAsync(identityUser,  new Claim(JwtClaimTypes.Role, oldUserDto.Data.Role.ToString()), new Claim(JwtClaimTypes.Role, model.Role.ToString()) );
-                                if (identityResult.Succeeded)
-                                {
-                                    //成功
-                                    //return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
-                                }
-                                else
-                                {
-                                    //失败
-                                    string errors = "";
-                                    foreach (var error in identityResult.Errors)
-                                    {
-                                        errors = $"{errors}{error.Description} ";
-                                    }
-                                    return Json(new Result() { success = false, msg = "更新用户失败：{errors}", status = (int)HttpStatusCode.BadRequest });
-                                    //回滚，还原前面更新登录中心数据库的用户
-                                    //回滚，还原前面更新后台数据库的用户
-                                }
-                            }
-                            //成功
-                            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
-                            //更新当前登录用户要更新Claim。。。。。
-                        }
-                        else
-                        {
-                            //失败
-                            string errors = "";
-                            foreach (var error in identityResult.Errors)
-                            {
-                                errors = $"{errors}{error.Description} ";
-                            }
-                            return Json(new Result() { success = false, msg = "更新用户失败：{errors}", status = (int)HttpStatusCode.BadRequest });
-                            //回滚，还原前面更新后台数据库的用户
-                        }
-                    }
-                    else
-                    {
-                        //失败
-                        return Json(new Result() { success = false, msg = "更新用户失败", status = (int)HttpStatusCode.BadRequest });
-                        //回滚，还原前面更新后台数据库的用户
-                    }
-                }
-                //失败
-                return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
-            }
-            //失败
-            return Json(new Result() { success = false, msg = ModelStateErrorMessage(ModelState), status = (int)HttpStatusCode.BadRequest });
+            var result = await _userApi.PatchUpdateAsync(model.UserName, doc);
+            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
         }
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
         public async Task<IActionResult> GetPageListAsync(int page, int limit)
         {
-            var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-            Guid loginShopId = Guid.Parse(id);
-            var result = await _userApi.GetPageListAsync(page, limit, loginShopId);
+            var shopId = User.Claims.FirstOrDefault(s => s.Type == "ShopId")?.Value;
+            var result = await _userApi.QueryPageListByShopAsync(page, limit, shopId);
             return Json(new Table() { data = result.Data.Item, count = result == null ? 0 : result.Data.Total });
         }
 
@@ -280,8 +89,7 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPageListAndWhereQueryAsync(int page, int limit, string name, string phone, string role)
         {
-            var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-            Guid loginShopId = Guid.Parse(id);
+            var shopId = User.Claims.FirstOrDefault(s => s.Type == "ShopId")?.Value;
             if (string.IsNullOrEmpty(name))
             {
                 name = " ";
@@ -312,9 +120,6 @@ namespace MiniShop.Mvc.Controllers
                     case "管理员":
                         role = "Admin";
                         break;
-                    case "操作员":
-                        role = "Operator";
-                        break;
                     case "收银员":
                         role = "Cashier";
                         break;
@@ -324,63 +129,29 @@ namespace MiniShop.Mvc.Controllers
                 }
             }
 
-
-            var result = await _userApi.GetPageListAndWhereQueryAsync(page, limit, loginShopId, name, phone, role);
+            var result = await _userApi.QueryPageListByShopAndWhereAsync(page, limit, shopId, name, phone, role);
             return Json(new Table() { data = result.Data.Item, count = result == null ? 0 : result.Data.Total });
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(string name)
         {
-            var userDto = await _userApi.QueryAsync(id);
+            var userDto = await _userApi.QueryAsync(name);
             if (userDto.Data != null)
             {
-                if (userDto.Data.Role == Model.EnumRole.ShopManager)
+                if (userDto.Data.Rank == EnumRole.ShopManager)
                 {
-                    return Json(new Result() { success = false, msg = $"不能删除店长：{userDto.Data.Name}" });
+                    return Json(new Result() { success = false, msg = $"不能删除店长：{userDto.Data.UserName}" });
                 }
-                var loginId = User.Claims.FirstOrDefault(s => s.Type == "LoginId")?.Value;
+                var loginId = User.Claims.FirstOrDefault(s => s.Type == "UserName")?.Value;
                 int userId = int.Parse(loginId);
-                if (userDto.Data.Id == userId)
+                if (userDto.Data.UserName == loginId)
                 {
-                    return Json(new Result() { success = false, msg = $"不能删除当前登录用户：{userDto.Data.Name}" });
+                    return Json(new Result() { success = false, msg = $"不能删除当前登录用户：{userDto.Data.UserName}" });
                 }
 
                 //1. 删除后台数据库的用户
-                var result = await _userApi.DeleteAsync(id);
-                if (result.Success)
-                {
-                    //2. 删除登陆中心数据库的用户
-                    var identityUser = await _userManager.FindByNameAsync(userDto.Data.Name);
-                    if (identityUser != null)
-                    {
-                        var identityResult = await _userManager.DeleteAsync(identityUser);
-                        if (identityResult.Succeeded)
-                        {
-                            //成功
-                            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
-                        }
-                        else
-                        {
-                            //失败
-                            string errors = "";
-                            foreach (var error in identityResult.Errors)
-                            {
-                                errors = $"{errors}{error.Description} ";
-                            }
-                            return Json(new Result() { success = false, msg = "删除用户失败：{errors}", status = (int)HttpStatusCode.BadRequest });
-                            //回滚，还原前面删除后台数据库的用户
-                        }
-                    }
-                    else
-                    {
-                        //失败
-                        return Json(new Result() { success = false, msg = "查找不到要删除的用户", status = (int)HttpStatusCode.NotFound });
-                        //回滚，还原前面删除后台数据库的用户
-                        //做回滚不靠谱，后面在想怎么跨库事务处理吧。。。
-                    }
-                }
-                //失败
+                var result = await _userApi.DeleteAsync(name);
                 return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
             }
             else

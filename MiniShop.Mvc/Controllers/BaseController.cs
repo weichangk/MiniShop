@@ -15,19 +15,13 @@ using WebApiClient.Contexts;
 namespace MiniShop.Mvc.Controllers
 {
     [Authorize]
-    [TokenFilter]
+    [ServiceFilter(typeof(RefreshAccessTokenFilter))]
     public class BaseController : Controller
     {
         protected readonly ILogger<BaseController> _logger;
         public BaseController(ILogger<BaseController> logger)
         {
             _logger = logger;
-        }
-
-        public string ModelStateErrorMessage(ModelStateDictionary modelState)
-        {
-            var message = string.Join(" | ", modelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-            return message;
         }
     }
 }
