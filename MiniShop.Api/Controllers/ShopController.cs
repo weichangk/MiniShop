@@ -14,9 +14,6 @@ using Orm.Core.Result;
 namespace MiniShop.Api.Controllers
 {
     [Description("商店信息")]
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
     public class ShopController : ControllerAbstract
     {
         private readonly Lazy<IShopService> _shopService;

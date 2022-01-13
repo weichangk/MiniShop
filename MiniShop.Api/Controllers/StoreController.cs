@@ -15,9 +15,6 @@ using AutoMapper;
 namespace MiniShop.Api.Controllers
 {
     [Description("门店信息")]
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
     public class StoreController : ControllerAbstract
     {
         private readonly Lazy<IStoreService> _storeService;

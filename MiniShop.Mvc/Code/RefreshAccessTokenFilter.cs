@@ -1,14 +1,12 @@
 ﻿using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http;
 
 namespace MiniShop.Mvc.Code
@@ -25,13 +23,12 @@ namespace MiniShop.Mvc.Code
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var expat = filterContext.HttpContext.GetTokenAsync("expires_at").Result;
-            if (expat == null) return;//未登录
+            if (expat == null) return;//未登录认证
 
             var dataExp = DateTime.Parse(expat, null, DateTimeStyles.RoundtripKind);
             var info = filterContext.HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme).Result;
-            var userInfoId = info.Principal.Claims.FirstOrDefault(s => s.Type == "UserInfoId")?.Value;
 
-            if (!string.IsNullOrEmpty(userInfoId) && (dataExp - DateTime.Now).TotalMinutes < 10)
+            if ((dataExp - DateTime.Now).TotalMinutes < 10)
             {
                 var client = new HttpClient();
                 var disco = client.GetDiscoveryDocumentAsync(_configuration["IdsConfig:Authority"]).Result;
@@ -47,7 +44,7 @@ namespace MiniShop.Mvc.Code
                     Address = disco.TokenEndpoint,
                     ClientId = _configuration["IdsConfig:ClientId"],
                     ClientSecret = _configuration["IdsConfig:ClientSecret"],
-                    Scope = _configuration["IdsConfig:Scope"],
+                    Scope = _configuration["IdsConfig:Scopes"],
                     GrantType = OpenIdConnectGrantTypes.RefreshToken,
                     RefreshToken = refreshToken
                 }).Result;

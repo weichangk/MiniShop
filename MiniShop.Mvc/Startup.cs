@@ -23,8 +23,6 @@ namespace MiniShop.Mvc
             _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)      
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -80,7 +78,7 @@ namespace MiniShop.Mvc
                 services.AddHttpApi(type);
                 services.ConfigureHttpApi(type, o =>
                 {
-                    o.HttpHost = new Uri(Configuration["ApiUrl:Urls"]);
+                    o.HttpHost = new Uri(_configuration["ApiUrl:Urls"]);
                 });
             }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using MiniShop.Dto;
+using MiniShop.Mvc.Code;
 using Orm.Core;
 using Orm.Core.Result;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using WebApiClient.Attributes;
 
 namespace MiniShop.Mvc.HttpApis
 {
+    [SetAccessTokenFilter]
+    [JsonReturn]
     public interface IUserApi : IHttpApi
     {
         /// <summary>

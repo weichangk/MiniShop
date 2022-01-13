@@ -5,9 +5,6 @@ using WebApiClient.Contexts;
 
 namespace MiniShop.Mvc.Code
 {
-    /// <summary>
-    /// JWT Headers中加入AccessToken
-    /// </summary>
     public class SetAccessTokenFilter : ApiActionFilterAttribute
     {
         public override Task OnBeginRequestAsync(ApiActionContext context)

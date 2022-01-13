@@ -72,8 +72,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSwagger();
             }
 
-            //////Jwt身份认证
-            ////services.AddJwtAuth();
+            //身份认证
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
             .AddIdentityServerAuthentication(options =>
             {

@@ -86,19 +86,13 @@
                         type: 'checkbox'
                     },
                     {
-                        title: 'ID',
-                        field: 'id',
-                        align: 'center',
-                        width: 100
-                    },
-                    {
                         title: '用户',
-                        field: 'name',
+                        field: 'userName',
                         align: 'center',
                     },
                     {
                         title: '手机',
-                        field: 'phone',
+                        field: 'phoneNumber',
                         align: 'center'
                     },
                     {
@@ -107,13 +101,13 @@
                         align: 'center'
                     },
                     {
-                        title: '角色',
-                        field: 'roleDes',
+                        title: '职称',
+                        field: 'rankDes',
                         align: 'center'
                     },
                     {
-                        title: '启用',
-                        field: 'enable',
+                        title: '禁用',
+                        field: 'isFreeze',
                         align: 'center',
                         templet: '#user-enable'
                     },
@@ -195,7 +189,7 @@
                         title: '修改',
                         shade: 0.1,
                         area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '400px'],
-                        content: '/User/Edit/' + obj.data['id'],
+                        content: '/User/Edit?name=' + obj.data['userName'],
                     });
                 }
 
