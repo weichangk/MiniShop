@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniShop.Dto;
 using MiniShop.Mvc.HttpApis;
@@ -9,11 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Net;
-using IdentityModel;
-using System.Security.Claims;
 using System.Collections.Generic;
 using Orm.Core.Result;
 using MiniShop.Model.Enums;
+using AutoMapper;
+using MiniShop.Mvc.Code;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -21,7 +20,7 @@ namespace MiniShop.Mvc.Controllers
     {
         private readonly IUserApi _userApi;
 
-        public UserController(ILogger<UserController> logger, IUserApi userApi) : base(logger)
+        public UserController(ILogger<UserController> logger, IMapper mapper, IUserInfo userInfo, IUserApi userApi) : base(logger, mapper, userInfo)
         {
             _userApi = userApi;
         }
@@ -43,9 +42,7 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveAddAsync(UserCreateDto model)
         {
-            var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-            Guid loginShopId = Guid.Parse(id);
-            model.ShopId = loginShopId;
+            model.ShopId = _userInfo.ShopId;
             var result = await _userApi.AddAsync(model);
             return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
         }
@@ -66,30 +63,48 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveEditAsync(UserDto model)
         {
-            var doc = new JsonPatchDocument<UserUpdateDto>();
-            doc.Replace(item => item.UserName, model.UserName);
-            doc.Replace(item => item.PhoneNumber, model.PhoneNumber);
-            doc.Replace(item => item.Email, model.Email);
-            doc.Replace(item => item.Rank, model.Rank);
-
-            var result = await _userApi.PatchUpdateAsync(model.UserName, doc);
+            var dto = _mapper.Map<UserUpdateDto>(model);
+            var result = await _userApi.UpdateAsync(dto);
             return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> ChangeEnableAsync(string name, bool enable)
+        {
+            var userDto = await _userApi.QueryAsync(name);
+            if (userDto.Data != null)
+            {
+                if (userDto.Data.Rank == EnumRole.ShopManager)
+                {
+                    return Json(new Result() { success = false, msg = "不能禁用店长" });
+                }
+                if (userDto.Data.UserName == _userInfo.UserName)
+                {
+                    return Json(new Result() { success = false, msg = $"不能禁用当前登录用户：{userDto.Data.UserName}" });
+                }
+                var doc = new JsonPatchDocument<UserUpdateDto>();
+                doc.Replace(item => item.IsFreeze, enable);
+                var result = await _userApi.PatchUpdateAsync(name, doc);
+                return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
+            }
+            else
+            {
+                return Json(new Result() { success = false, msg = "查找不到要修改的用户", status = (int)HttpStatusCode.NotFound });
+            }
         }
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
         public async Task<IActionResult> GetPageListAsync(int page, int limit)
         {
-            var shopId = User.Claims.FirstOrDefault(s => s.Type == "ShopId")?.Value;
-            var result = await _userApi.QueryPageListByShopAsync(page, limit, shopId);
+            var result = await _userApi.QueryPageListByShopAsync(page, limit, _userInfo.ShopId.ToString());
             return Json(new Table() { data = result.Data.Item, count = result == null ? 0 : result.Data.Total });
         }
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
-        public async Task<IActionResult> GetPageListAndWhereQueryAsync(int page, int limit, string name, string phone, string role)
+        public async Task<IActionResult> GetPageListAndWhereQueryAsync(int page, int limit, string name, string phone, string rank)
         {
-            var shopId = User.Claims.FirstOrDefault(s => s.Type == "ShopId")?.Value;
             if (string.IsNullOrEmpty(name))
             {
                 name = " ";
@@ -106,30 +121,30 @@ namespace MiniShop.Mvc.Controllers
             {
                 phone = System.Web.HttpUtility.UrlEncode(phone);
             }
-            if (string.IsNullOrEmpty(role))
+            if (string.IsNullOrEmpty(rank))
             {
-                role = " ";
+                rank = " ";
             }
             else
             {
-                switch (role)
+                switch (rank)
                 {
                     case "店长":
-                        role = "ShopManager";
+                        rank = "ShopManager";
                         break;
                     case "管理员":
-                        role = "Admin";
+                        rank = "Admin";
                         break;
                     case "收银员":
-                        role = "Cashier";
+                        rank = "Cashier";
                         break;
                     default:
-                        role = System.Web.HttpUtility.UrlEncode(role);
+                        rank = System.Web.HttpUtility.UrlEncode(rank);
                         break;
                 }
             }
 
-            var result = await _userApi.QueryPageListByShopAndWhereAsync(page, limit, shopId, name, phone, role);
+            var result = await _userApi.QueryPageListByShopAndWhereAsync(page, limit, _userInfo.ShopId.ToString(), name, phone, rank);
             return Json(new Table() { data = result.Data.Item, count = result == null ? 0 : result.Data.Total });
         }
 
@@ -143,14 +158,11 @@ namespace MiniShop.Mvc.Controllers
                 {
                     return Json(new Result() { success = false, msg = $"不能删除店长：{userDto.Data.UserName}" });
                 }
-                var loginId = User.Claims.FirstOrDefault(s => s.Type == "UserName")?.Value;
-                int userId = int.Parse(loginId);
-                if (userDto.Data.UserName == loginId)
+                if (userDto.Data.UserName == _userInfo.UserName)
                 {
                     return Json(new Result() { success = false, msg = $"不能删除当前登录用户：{userDto.Data.UserName}" });
                 }
 
-                //1. 删除后台数据库的用户
                 var result = await _userApi.DeleteAsync(name);
                 return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
             }
@@ -161,108 +173,11 @@ namespace MiniShop.Mvc.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> BatchDeleteAsync(string ids)
+        public async Task<IActionResult> BatchDeleteAsync(string names)
         {
-            List<string> idsStrList = ids.Split(",").ToList();
-            List<int> idsIntList = new List<int>();
-            List<UserDto> userDtos = new List<UserDto>();
-            ResultModel<UserDto> resultModel = new ResultModel<UserDto>();
-            var loginId = User.Claims.FirstOrDefault(s => s.Type == "LoginId")?.Value;
-            int userId = int.Parse(loginId);
-            foreach (var id in idsStrList)
-            {
-                resultModel = await _userApi.QueryAsync(int.Parse(id));
-                if (resultModel.Data != null)
-                {
-                    idsIntList.Add(int.Parse(id));
-                    userDtos.Add(resultModel.Data);
-                    if (resultModel.Data.Role == Model.EnumRole.ShopManager)
-                    {
-                        return Json(new Result() { success = false, msg = $"不能删除店长：{resultModel.Data.Name}" });
-                    }
-                    if (resultModel.Data.Id == userId)
-                    {
-                        return Json(new Result() { success = false, msg = $"不能删除当前登录用户：{resultModel.Data.Name}" });
-                    }
-                }
-            }
-
-            if (idsIntList.Count > 0)
-            {
-                var result = await _userApi.BatchDeleteAsync(idsIntList);
-                if (result.Success)
-                {
-                    foreach (var item in userDtos)
-                    {
-                        var identityUser = await _userManager.FindByNameAsync(item.Name);
-                        if (identityUser != null)
-                        {
-                            var identityResult = await _userManager.DeleteAsync(identityUser);
-                            if (identityResult.Succeeded)
-                            {
-                                //成功
-                                //return Json(new Result() { success = true, msg = "Success", status = (int)HttpStatusCode.OK });
-                            }
-                            else
-                            {
-                                //失败
-                                string errors = "";
-                                foreach (var error in identityResult.Errors)
-                                {
-                                    errors = $"{errors}{error.Description} ";
-                                }
-                                return Json(new Result() { success = false, msg = "删除用户失败：{errors}", status = (int)HttpStatusCode.BadRequest });
-                                //回滚，还原前面删除后台数据库的用户
-                            }
-                        }
-                        else
-                        {
-                            //失败
-                            return Json(new Result() { success = false, msg = "查找不到要删除的用户", status = (int)HttpStatusCode.NotFound });
-                            //回滚，还原前面删除后台数据库的用户
-                            //做回滚不靠谱，后面在想怎么跨库事务处理吧。。。
-                        }
-                    }
-                    //成功
-                    return Json(new Result() { success = true, msg = "Success", status = (int)HttpStatusCode.OK });
-
-                }
-                //失败
-                return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
-            }
-            else
-            {
-                return Json(new Result() { success = false, msg = "查找不到要删除的用户", status = (int)HttpStatusCode.NotFound });
-            }
-
-        }
-
-        [HttpPatch]
-        public async Task<IActionResult> ChangeEnableAsync(int id, bool enable)
-        {
-            var userDto = await _userApi.QueryAsync(id);
-            if (userDto.Data != null)
-            {
-                if (userDto.Data.Role == Model.EnumRole.ShopManager)
-                {
-                    return Json(new Result() { success = false, msg = "不能禁用店长" });
-                }
-                var loginId = User.Claims.FirstOrDefault(s => s.Type == "LoginId")?.Value;
-                int userId = int.Parse(loginId);
-                if (userDto.Data.Id == userId)
-                {
-                    return Json(new Result() { success = false, msg = $"不能禁用当前登录用户：{userDto.Data.Name}" });
-                }
-
-                var doc = new JsonPatchDocument<UserUpdateDto>();
-                doc.Replace(item => item.Enable, enable);
-                var result = await _userApi.PatchUpdateAsync(id, doc);
-                return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
-            }
-            else
-            {
-                return Json(new Result() { success = false, msg = "查找不到要修改的用户", status = (int)HttpStatusCode.NotFound });
-            }
+            List<string> namesList = names.Split(",").ToList();
+            var result = await _userApi.BatchDeleteAsync(namesList);
+            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
         }
 
     }

@@ -8,15 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
 using Orm.Core.Result;
+using AutoMapper;
 
 namespace MiniShop.Api.Controllers
 {
-    /// <summary>
-    /// 门店信息控制器
-    /// </summary>
     [Description("门店信息")]
     [Authorize]
     [Route("api/[controller]")]
@@ -27,16 +24,9 @@ namespace MiniShop.Api.Controllers
         private readonly Lazy<ICreateStoreService> _createStoreService;
         private readonly Lazy<IUpdateStoreService> _updateStoreService;
 
-        /// <summary>
-        /// 门店信息控制器
-        /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="storeService"></param>
-        /// <param name="createStoreService"></param>
-        /// <param name="updateStoreService"></param>
-        public StoreController(ILogger<StoreController> logger, Lazy<IStoreService> storeService,
+        public StoreController(ILogger<StoreController> logger, Lazy<IMapper> mapper, Lazy<IStoreService> storeService,
             Lazy<ICreateStoreService> createStoreService,
-            Lazy<IUpdateStoreService> updateStoreService) : base(logger)
+            Lazy<IUpdateStoreService> updateStoreService) : base(logger, mapper)
         {
             _storeService = storeService;
             _updateStoreService = updateStoreService;
@@ -44,13 +34,6 @@ namespace MiniShop.Api.Controllers
 
         }
 
-        /// <summary>
-        /// 根据商店ID和分页条件获取门店
-        /// </summary>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="shopId"></param>
-        /// <returns></returns>
         [Description("根据商店ID和分页条件获取门店")]
         [OperationId("获取门店分页列表")]
         [ResponseCache(Duration = 0)]
@@ -64,15 +47,6 @@ namespace MiniShop.Api.Controllers
             return await _storeService.Value.GetPageUsersByShopId(pageIndex, pageSize, shopId);
         }
 
-        /// <summary>
-        /// 根据商店ID、分页条件、查询条件获取所有用户
-        /// </summary>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="shopId"></param>
-        /// <param name="name"></param>
-        /// <param name="contacts"></param>
-        /// <returns></returns>
         [Description("根据商店ID、分页条件、查询条件获取门店")]
         [OperationId("按条件获取用户分页列表")]
         [ResponseCache(Duration = 0)]
@@ -88,11 +62,6 @@ namespace MiniShop.Api.Controllers
             return await _storeService.Value.GetPageUsersByShopIdAndWhereQueryAsync(pageIndex, pageSize, shopId, name, contacts);
         }
 
-        /// <summary>
-        /// 根据门店ID获取门店
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [Description("根据用户ID获取门店")]
         [OperationId("获取门店")]
         [ResponseCache(Duration = 0)]
@@ -104,12 +73,7 @@ namespace MiniShop.Api.Controllers
             return await _storeService.Value.GetByIdAsync(id);
         }
 
-        /// <summary>
-        /// 根据商户ID和门店名获取门店
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="shopId"></param>
-        /// <returns></returns>
+
         [Description("根据商户ID和门店名获取门店")]
         [OperationId("获取门店")]
         [ResponseCache(Duration = 0)]
@@ -122,11 +86,6 @@ namespace MiniShop.Api.Controllers
             return await _storeService.Value.GetByShopIdAndNameAsync(shopId, name);
         }
 
-        /// <summary>
-        /// 删除门店
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [Description("通过指定门店ID删除门店")]
         [OperationId("删除门店")]
         [Parameters(name = "id", param = "门店ID")]
@@ -137,11 +96,6 @@ namespace MiniShop.Api.Controllers
             return await _storeService.Value.RemoveAsync(id);
         }
 
-        /// <summary>
-        /// 批量删除用户
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <returns></returns>
         [Description("通过指定门店ID集合批量删除门店")]
         [OperationId("批量删除门店")]
         [Parameters(name = "ids", param = "门店ID集合")]
@@ -152,11 +106,6 @@ namespace MiniShop.Api.Controllers
             return await _storeService.Value.RemoveAsync(ids);
         }
 
-        /// <summary>
-        /// 添加门店
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         [Description("添加门店，成功后返回当前门店信息")]
         [OperationId("添加门店")]
         [HttpPost]
@@ -166,11 +115,6 @@ namespace MiniShop.Api.Controllers
             return await _createStoreService.Value.InsertAsync(model);
         }
 
-        /// <summary>
-        /// 修改门店
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         [Description("修改门店，成功后返回当前门店信息")]
         [OperationId("修改门店")]
         [HttpPut]
@@ -180,12 +124,6 @@ namespace MiniShop.Api.Controllers
             return await _updateStoreService.Value.UpdateAsync(model);
         }
 
-        /// <summary>
-        /// 使用JsonPatch修改门店
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="patchDocument"></param>
-        /// <returns></returns>
         [Description("使用JsonPatch修改门店，成功后返回当前门店信息")]
         [OperationId("使用JsonPatch修改门店")]
         [HttpPatch("{id}")]

@@ -20,16 +20,12 @@ using System.Threading.Tasks;
 namespace MiniShop.Api.Controllers
 {
     [Description("用户信息")]
-    [Route("api/[controller]")]
-    [ApiController]
     public class UserController : ControllerAbstract
     {
         private readonly Lazy<UserManager<IdentityUser>> _userManager;
-        private readonly Lazy<IMapper> _mapper;
 
-        public UserController(ILogger<UserController> logger, Lazy<IMapper> mapper, Lazy<UserManager<IdentityUser>> userManager) : base(logger)
+        public UserController(ILogger<UserController> logger, Lazy<IMapper> mapper, Lazy<UserManager<IdentityUser>> userManager) : base(logger, mapper)
         {
-            _mapper = mapper;
             _userManager = userManager;
         }
 
@@ -47,7 +43,7 @@ namespace MiniShop.Api.Controllers
                 return ResultModel.NotExists;
             }
             var userDto = _mapper.Value.Map<UserDto>(data);
-            await UserDtoSetExtras(userDto);
+            await UserDtoSetClaimExtras(userDto);
             return ResultModel.Success(userDto);
         }
 
@@ -65,7 +61,7 @@ namespace MiniShop.Api.Controllers
             var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
             foreach (var u in userPagedList.Item)
             {
-                await UserDtoSetExtras(u);
+                await UserDtoSetClaimExtras(u);
             }
             return ResultModel.Success(userPagedList);
         }
@@ -87,7 +83,7 @@ namespace MiniShop.Api.Controllers
             var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
             foreach (var u in userPagedList.Item)
             {
-                await UserDtoSetExtras(u);
+                await UserDtoSetClaimExtras(u);
             }
 
             if (!string.IsNullOrEmpty(name))
@@ -128,7 +124,7 @@ namespace MiniShop.Api.Controllers
             }
             else
             {
-                var result =  await _userManager.Value.DeleteAsync(data);
+                var result = await _userManager.Value.DeleteAsync(data);
                 if (!result.Succeeded)
                 {
                     _logger.LogError($"删除错误：{result.Errors.FirstOrDefault().Description}");
@@ -202,7 +198,7 @@ namespace MiniShop.Api.Controllers
                     return ResultModel.Failed($"添加错误：{result.Errors.First().Description}");
                 }
 
-                result = await AddUserExtras(user, model);
+                result = await AddUserClaimExtras(user, model);
                 if (!result.Succeeded)
                 {
                     _logger.LogError($"添加错误：{result.Errors.First().Description}");
@@ -236,7 +232,7 @@ namespace MiniShop.Api.Controllers
                     return ResultModel.Failed($"修改错误：{result.Errors.First().Description}");
                 }
 
-                result = await UpdateUserExtras(user, model);
+                result = await UpdateUserClaimExtras(user, model);
                 if (!result.Succeeded)
                 {
                     _logger.LogError($"修改错误：{result.Errors.First().Description}");
@@ -245,7 +241,7 @@ namespace MiniShop.Api.Controllers
 
                 var data = await _userManager.Value.FindByNameAsync(model.UserName);
                 var userDto = _mapper.Value.Map<UserDto>(data);
-                await UserDtoSetExtras(userDto);
+                await UserDtoSetClaimExtras(userDto);
                 return ResultModel.Success(userDto);
             }
             return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
@@ -267,7 +263,7 @@ namespace MiniShop.Api.Controllers
                     return ResultModel.NotExists;
                 }
                 var modelRouteToPatch = _mapper.Value.Map<UserUpdateDto>(user);
-                await UserUpdateDtoSetExtras(modelRouteToPatch);
+                await UserUpdateDtoSetClaimExtras(modelRouteToPatch);
                 patchDocument.ApplyTo(modelRouteToPatch);
                 _mapper.Value.Map(modelRouteToPatch, user);
                 var result = await _userManager.Value.UpdateAsync(user);
@@ -277,7 +273,7 @@ namespace MiniShop.Api.Controllers
                     return ResultModel.Failed($"修改错误：{result.Errors.First().Description}");
                 }
 
-                result = await UpdateUserExtras(user, modelRouteToPatch);
+                result = await UpdateUserClaimExtras(user, modelRouteToPatch);
                 if (!result.Succeeded)
                 {
                     _logger.LogError($"修改错误：{result.Errors.First().Description}");
@@ -286,13 +282,13 @@ namespace MiniShop.Api.Controllers
 
                 var data = await _userManager.Value.FindByNameAsync(name);
                 var userDto = _mapper.Value.Map<UserDto>(data);
-                await UserDtoSetExtras(userDto);
+                await UserDtoSetClaimExtras(userDto);
                 return ResultModel.Success(userDto);
             }
             return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
         }
 
-        private async Task UserDtoSetExtras(UserDto dto)
+        private async Task UserDtoSetClaimExtras(UserDto dto)
         {
             var user = await _userManager.Value.FindByNameAsync(dto.UserName);
             var claims = await _userManager.Value.GetClaimsAsync(user);
@@ -321,7 +317,7 @@ namespace MiniShop.Api.Controllers
             }
         }
 
-        private async Task<IdentityResult> AddUserExtras(IdentityUser user, UserCreateDto model)
+        private async Task<IdentityResult> AddUserClaimExtras(IdentityUser user, UserCreateDto model)
         {
             var result = await _userManager.Value.AddClaimsAsync(user, new Claim[]{
                             new Claim("rank", model.Rank.ToString()),
@@ -333,7 +329,7 @@ namespace MiniShop.Api.Controllers
             return result;
         }
 
-        private async Task UserUpdateDtoSetExtras(UserUpdateDto dto)
+        private async Task UserUpdateDtoSetClaimExtras(UserUpdateDto dto)
         {
             var user = await _userManager.Value.FindByNameAsync(dto.UserName);
             var claims = await _userManager.Value.GetClaimsAsync(user);
@@ -355,15 +351,32 @@ namespace MiniShop.Api.Controllers
             }
         }
 
-        private async Task<IdentityResult> UpdateUserExtras(IdentityUser user, UserUpdateDto model)
+        private async Task<IdentityResult> UpdateUserClaimExtras(IdentityUser user, UserUpdateDto model)
         {
             var userDto = _mapper.Value.Map<UserDto>(user);
-            await UserDtoSetExtras(userDto);
+            await UserDtoSetClaimExtras(userDto);
             var result =  await _userManager.Value.ReplaceClaimAsync(user, new Claim("rank", userDto.Rank.ToString()), new Claim("rank", model.Rank.ToString()));
             if (!result.Succeeded)
             {
                 return result;
             }
+
+            var claims = await _userManager.Value.GetClaimsAsync(user);
+            if (claims.FirstOrDefault(c => c.Type == "rank")?.Value != model.Rank.ToString())
+            {
+                var roles = await _userManager.Value.GetRolesAsync(user);
+                result = await _userManager.Value.RemoveFromRolesAsync(user, roles);
+                if (!result.Succeeded)
+                {
+                    return result;
+                }
+                result = await _userManager.Value.AddToRoleAsync(user, model.Rank.ToString());
+                if (!result.Succeeded)
+                {
+                    return result;
+                }
+            }
+
             await _userManager.Value.ReplaceClaimAsync(user, new Claim("isfreeze", userDto.IsFreeze.ToString()), new Claim("isfreeze", model.IsFreeze.ToString()));
             if (!result.Succeeded)
             {

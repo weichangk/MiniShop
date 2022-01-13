@@ -10,6 +10,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Orm.Core.Result;
+using AutoMapper;
+using MiniShop.Mvc.Code;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -17,7 +19,7 @@ namespace MiniShop.Mvc.Controllers
     {
         private readonly IStoreApi _storeApi;
 
-        public StoreController(ILogger<StoreController> logger, IStoreApi storeApi) : base(logger)
+        public StoreController(ILogger<StoreController> logger, IMapper mapper, IUserInfo userInfo, IStoreApi storeApi) : base(logger, mapper, userInfo)
         {
             _storeApi = storeApi;
         }

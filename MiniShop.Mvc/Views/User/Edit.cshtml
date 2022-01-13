@@ -14,17 +14,17 @@
             <div class="main-container">
                 <div class="main-container">
                     <input type="hidden" id="Id" name="Id" value="@Model.Id" />
-                    <input type="hidden" id="Role" name="Role" value="@Model.Role" />
+                    <input type="hidden" id="Role" name="Role" value="@Model.Rank" />
                     <div class="layui-form-item">
                         <label class="layui-form-label" style="width: 20%">用户名</label>
                         <div class="layui-input-block">
-                            <input type="text" name="Name" value="@Model.Name" lay-verify="userName" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+                            <input type="text" name="Name" value="@Model.UserName" lay-verify="userName" autocomplete="off" placeholder="请输入用户名" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label" style="width: 20%">手机号</label>
                         <div class="layui-input-block">
-                            <input type="text" name="Phone" value="@Model.Phone" lay-verify="nullablePhone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
+                            <input type="text" name="Phone" value="@Model.PhoneNumber" lay-verify="nullablePhone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     @* 店长角色屏蔽角色修改选择 *@
-                    @if (Model.Role != MiniShop.Model.EnumRole.ShopManager)
+                    @if (Model.Rank != MiniShop.Model.Enums.EnumRole.ShopManager)
                     {
                         <div class="layui-form-item">
                             <label class="layui-form-label" style="width: 20%">角色</label>

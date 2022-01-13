@@ -1,16 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using MiniShop.Mvc.Code;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using WebApiClient.Contexts;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -19,9 +11,13 @@ namespace MiniShop.Mvc.Controllers
     public class BaseController : Controller
     {
         protected readonly ILogger<BaseController> _logger;
-        public BaseController(ILogger<BaseController> logger)
+        protected readonly IMapper _mapper;
+        protected readonly IUserInfo _userInfo;
+        public BaseController(ILogger<BaseController> logger, IMapper mapper, IUserInfo userInfo)
         {
             _logger = logger;
+            _mapper = mapper;
+            _userInfo = userInfo;
         }
     }
 }

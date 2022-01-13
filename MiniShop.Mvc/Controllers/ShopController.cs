@@ -1,7 +1,8 @@
-﻿using CommonTools.Core.Helper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniShop.Dto;
+using MiniShop.Mvc.Code;
 using MiniShop.Mvc.HttpApis;
 using System;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace MiniShop.Mvc.Controllers
     public class ShopController : BaseController
     {
         private readonly IShopApi _shopApi;
-        public ShopController(ILogger<ShopController> logger, IShopApi shopApi) : base(logger)
+        public ShopController(ILogger<ShopController> logger, IMapper mapper, IUserInfo userInfo, IShopApi shopApi) : base(logger, mapper, userInfo)
         {
             _shopApi = shopApi;
         }

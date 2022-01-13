@@ -77,30 +77,15 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
             .AddIdentityServerAuthentication(options =>
             {
-                options.Authority = "http://localhost:5001";
-                options.ApiName = "MiniShop.Api";
+                options.Authority = "https://localhost:5001";
+                options.ApiName = "minishop_api";
                 options.RequireHttpsMetadata = false;
-                options.ApiSecret = "MiniShop.Api.Secret";
+                options.ApiSecret = "minishop_api_secret";
                 //options.JwtValidationClockSkew = TimeSpan.FromSeconds(0);//时间偏移
             });
 
             //开启模型验证结果格式化
             services.AddValidators();
-
-            ////////添加HttpClient相关
-            //////services.AddSingleton<IHttpApiFactory<IWebApiHelper>, HttpApiFactory<IWebApiHelper>>(p =>
-            //////{
-            //////    return new HttpApiFactory<IWebApiHelper>().ConfigureHttpApiConfig(c =>
-            //////    {
-            //////        // Api 地址
-            //////        c.HttpHost = new Uri(BasicSetting.Setting.ApiUrl);
-            //////    });
-            //////});
-            //////services.AddTransient(p =>
-            //////{
-            //////    var factory = p.GetRequiredService<IHttpApiFactory<IWebApiHelper>>();
-            //////    return factory.CreateHttpApi();
-            //////});
 
             //解决Multipart body length limit 134217728 exceeded
             services.Configure<FormOptions>(x =>

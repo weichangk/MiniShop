@@ -25,6 +25,8 @@ namespace MiniShop.Mvc.Code
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var expat = filterContext.HttpContext.GetTokenAsync("expires_at").Result;
+            if (expat == null) return;//未登录
+
             var dataExp = DateTime.Parse(expat, null, DateTimeStyles.RoundtripKind);
             var info = filterContext.HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme).Result;
             var userInfoId = info.Principal.Claims.FirstOrDefault(s => s.Type == "UserInfoId")?.Value;

@@ -24,24 +24,31 @@ namespace MiniShop.Ids
             new IdentityResources.Phone(),
             new IdentityResources.Email(),
             new IdentityResource(
-                name: "user_extras",
-                displayName: "user extras",
-                userClaims: new[] { "rank", "shopid", "storeid", "isfreeze", "createdtime"}),
+                name: _configuration["UserClaimExtras:Name"],
+                displayName: _configuration["UserClaimExtras:DisplayName"],
+                userClaims: _configuration["UserClaimExtras:UserClaims"].Split(" ")),
         };
 
-        public static IEnumerable<ApiScope> ApiScopes =>
-        new ApiScope[]
+        public static IEnumerable<ApiScope> ApiScopes()
         {
-            new ApiScope("minishop_api"),
-        };
+            List<ApiScope> apiScope = new List<ApiScope>();
+            var miniShopApiScopes = _configuration["MiniShopApiResourceConfig:Scopes"].Split(" ");
+            for (int i = 0; i < miniShopApiScopes.Length; i++)
+            {
+                apiScope.Add(new ApiScope {Name = miniShopApiScopes[i] });
+            }
+
+            return apiScope;
+        }
+
 
         public static IEnumerable<ApiResource> ApiResources =>
         new ApiResource[]
         {
-            new ApiResource("minishop_api", "minishop api")
+            new ApiResource(_configuration["MiniShopApiResourceConfig:Name"], _configuration["MiniShopApiResourceConfig:DisplayName"])
             {
-                ApiSecrets = { new Secret("minishop_api_secret".Sha256()) },
-                Scopes = { "minishop_api"},
+                ApiSecrets = { new Secret(_configuration["MiniShopApiResourceConfig:Secret"].Sha256()) },
+                Scopes = _configuration["MiniShopApiResourceConfig:Scopes"].Split(" "),
             }
         };
 
@@ -50,27 +57,18 @@ namespace MiniShop.Ids
         {
             new Client
             {
-                    ClientId = _configuration["MiniShopWebConfig:ClientId"],
-                    ClientName = _configuration["MiniShopWebConfig:ClientName"],
-                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
-                    ClientSecrets = { new Secret(_configuration["MiniShopWebConfig:ClientSecret"].Sha256()) },
-                    RedirectUris = { $"{_configuration["MiniShopWebConfig:ApplicationUrl"]}signin-oidc" },
-                    FrontChannelLogoutUri = $"{_configuration["MiniShopWebConfig:ApplicationUrl"]}signout-oidc",
-                    PostLogoutRedirectUris = { $"{_configuration["MiniShopWebConfig:ApplicationUrl"]}signout-callback-oidc" },
-                    AlwaysIncludeUserClaimsInIdToken = true,
-                    RequireConsent = false,
-                    AllowOfflineAccess = true,
-                    AccessTokenLifetime = 3600,
-
-                AllowedScopes = 
-                { 
-                    IdentityServerConstants.StandardScopes.OpenId,
-                    IdentityServerConstants.StandardScopes.Profile,
-                    IdentityServerConstants.StandardScopes.Email,
-                    IdentityServerConstants.StandardScopes.Phone,
-                    "minishop_api",
-                    "user_extras",
-                }
+                ClientId = _configuration["MiniShopWebConfig:ClientId"],
+                ClientName = _configuration["MiniShopWebConfig:ClientName"],
+                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                ClientSecrets = { new Secret(_configuration["MiniShopWebConfig:ClientSecret"].Sha256()) },
+                RedirectUris = { $"{_configuration["MiniShopWebConfig:ApplicationUrl"]}signin-oidc" },
+                FrontChannelLogoutUri = $"{_configuration["MiniShopWebConfig:ApplicationUrl"]}signout-oidc",
+                PostLogoutRedirectUris = { $"{_configuration["MiniShopWebConfig:ApplicationUrl"]}signout-callback-oidc" },
+                AlwaysIncludeUserClaimsInIdToken = true,
+                RequireConsent = false,
+                AllowOfflineAccess = true,
+                AccessTokenLifetime = int.Parse(_configuration["MiniShopWebConfig:AccessTokenLifetime"]),
+                AllowedScopes = _configuration["MiniShopWebConfig:AllowedScopes"].Split(" "),
             }
         };
     }

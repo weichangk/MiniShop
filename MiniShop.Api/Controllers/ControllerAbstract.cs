@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,26 +8,27 @@ using System.Web;
 
 namespace MiniShop.Api.Controllers
 {
-    /// <summary>
-    /// 
-    /// </summary>
+
+    [Route("api/[controller]")]
+    [ApiController]
     public class ControllerAbstract : ControllerBase
     {
-        /// <summary>
-        /// 
-        /// </summary>
+        /*
+         * 有个坑，在该基类定义公共方法如果用public修饰时Swagger文档保存报错：Failed to load API definition！！！用protected就可以。。。
+         */
+
         protected readonly ILogger<ControllerAbstract> _logger;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="logger"></param>
-        public ControllerAbstract(ILogger<ControllerAbstract> logger)
+        protected readonly Lazy<IMapper> _mapper;
+
+
+        public ControllerAbstract(ILogger<ControllerAbstract> logger, Lazy<IMapper> mapper)
         {
             _logger = logger;
+            _mapper = mapper;
         }
 
-        public string ModelStateErrorMessage(ModelStateDictionary modelState)
+        protected string ModelStateErrorMessage(ModelStateDictionary modelState)
         {
             var message = string.Join(" | ", modelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
             return message;

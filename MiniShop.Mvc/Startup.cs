@@ -53,7 +53,7 @@ namespace MiniShop.Mvc
 
                 // configure scope
                 config.Scope.Clear();
-                var scopes = _configuration["IdsConfig:Scope"];
+                var scopes = _configuration["IdsConfig:Scopes"];
                 var scopeArray = scopes.Split(" ");
                 for (int i = 0; i < scopeArray.Length; i++)
                 {
@@ -85,6 +85,9 @@ namespace MiniShop.Mvc
             }
 
             services.AddScoped(typeof(RefreshAccessTokenFilter));
+
+            //Ìí¼ÓAutoMapper
+            services.AddAutoMapper(typeof(Dto.Profiles.AutoMapperProfiles).Assembly);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

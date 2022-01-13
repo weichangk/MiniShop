@@ -32,25 +32,25 @@ namespace MiniShop.Mvc.HttpApis
         /// 根据用户名删除用户
         /// </summary>
         [HttpDelete("/api/User/{name}")]
-        ITask<ResultModel<UserDto>> DeleteAsync(string name);
+        ITask<ResultModel<string>> DeleteAsync(string name);
 
         /// <summary>
         /// 根据用户名批量删除用户
         /// </summary>
         [HttpDelete("/api/User/BatchDelete")]
-        ITask<ResultModel<UserDto>> BatchDeleteAsync([JsonContent] List<string> names);
+        ITask<ResultModel<string>> BatchDeleteAsync([JsonContent] List<string> names);
 
         /// <summary>
         /// 创建用户
         /// </summary>
         [HttpPost("/api/User")]
-        ITask<ResultModel<UserCreateDto>> AddAsync([JsonContent] UserCreateDto model);
+        ITask<ResultModel<UserDto>> AddAsync([JsonContent] UserCreateDto model);
 
         /// <summary>
         /// Put修改用户
         /// </summary>
         [HttpPut("/api/User")]
-        ITask<ResultModel<UserUpdateDto>> UpdateAsync([JsonContent] UserUpdateDto model);
+        ITask<ResultModel<UserDto>> UpdateAsync([JsonContent] UserUpdateDto model);
 
         /// <summary>
         /// Patch修改用户
