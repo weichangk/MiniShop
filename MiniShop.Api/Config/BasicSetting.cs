@@ -37,6 +37,12 @@ namespace MiniShop.Api.Config
         /// </summary>
         public string IdsConnectionString { get; set; }
 
+        public string AuthenticationAuthority { get; set; }
+
+        public string AuthenticationMiniShopApiName { get; set; }
+
+        public string AuthenticationMiniShopApiSecret { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

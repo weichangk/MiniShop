@@ -11,19 +11,16 @@ namespace MiniShop.Mvc.HttpApis
     [JsonReturn]
     public interface IShopApi : IHttpApi
     {
-        /// <summary>
-        /// 根据商店ID，返回商店信息
-        /// </summary>
-        /// <param name="shopId"></param>
-        /// <returns></returns>
-        [HttpGet("/api/Shop/{shopId}")]
-        ITask<ResultModel<ShopDto>> QueryAsync(Guid shopId);
+        [HttpGet("/api/Shop/{id}")]
+        ITask<ResultModel<ShopDto>> QueryAsync(Guid id);
 
-        /// <summary>
-        /// 修改商店
-        /// </summary>
-        /// <returns></returns>
+        [HttpGet("/api/Shop/QueryByShopId/{shopId}")]
+        ITask<ResultModel<ShopDto>> QueryByShopIdAsync(Guid shopId);
+ 
+        [HttpPost("/api/Shop")]
+        ITask<ResultModel<ShopCreateDto>> AddAsync([JsonContent] ShopCreateDto model);
+
         [HttpPut("/api/Shop")]
-        ITask<ResultModel<ShopDto>> UpdateAsync([JsonContent] ShopDto model);
+        ITask<ResultModel<ShopUpdateDto>> UpdateAsync([JsonContent] ShopUpdateDto model);
     }
 }

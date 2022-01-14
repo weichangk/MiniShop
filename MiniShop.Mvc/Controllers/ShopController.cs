@@ -34,25 +34,25 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveAsync(ShopDto model)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _shopApi.UpdateAsync(model);
-                if (result.Success)
-                {
-                    //return RedirectToAction("ShowMsg", "Home", new { msg = "修改成功", json = JsonHelper.SerializeJSON(result.Data) });
-                }
-                else
-                {
-                    if (result.Errors.Count > 0)
-                    {
-                        ModelState.AddModelError(result.Errors[0].Id, result.Errors[0].Msg);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("error", result.Msg);
-                    }
-                }
-            }
+            //if (ModelState.IsValid)
+            //{
+            //    var result = await _shopApi.UpdateAsync(model);
+            //    if (result.Success)
+            //    {
+            //        //return RedirectToAction("ShowMsg", "Home", new { msg = "修改成功", json = JsonHelper.SerializeJSON(result.Data) });
+            //    }
+            //    else
+            //    {
+            //        if (result.Errors.Count > 0)
+            //        {
+            //            ModelState.AddModelError(result.Errors[0].Id, result.Errors[0].Msg);
+            //        }
+            //        else
+            //        {
+            //            ModelState.AddModelError("error", result.Msg);
+            //        }
+            //    }
+            //}
             return View("Edit", model);
         }
     }

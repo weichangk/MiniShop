@@ -16,6 +16,7 @@ namespace MiniShop.Dto.Profiles
             CreateMap<UserDto, UserUpdateDto>();
 
             CreateMap<Shop, ShopDto>();
+            CreateMap<ShopCreateDto, Shop>();
             CreateMap<ShopUpdateDto, Shop>();
 
             CreateMap<Store, StoreDto>();

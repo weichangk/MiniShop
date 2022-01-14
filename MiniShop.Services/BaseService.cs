@@ -94,7 +94,7 @@ namespace MiniShop.Services
 
             if (await UnitOfWork.SaveChangesAsync() > 0)
             {
-                return ResultModel.Success(entity);
+                return ResultModel.Success(modelRouteToPatch);
             }
             _logger.LogError($"error：Update Save failed");
             return ResultModel.Failed("error：Update Save failed", 500);
@@ -114,7 +114,7 @@ namespace MiniShop.Services
 
             if (await UnitOfWork.SaveChangesAsync() > 0)
             {
-                return ResultModel.Success(entity);
+                return ResultModel.Success(_mapper.Value.Map<TEntityDTO>(entity));
             }
             _logger.LogError($"error：Update Save failed");
             return ResultModel.Failed("error：Update Save failed", 500);

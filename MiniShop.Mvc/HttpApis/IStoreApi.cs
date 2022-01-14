@@ -14,6 +14,9 @@ namespace MiniShop.Mvc.HttpApis
     [JsonReturn]
     public interface IStoreApi : IHttpApi
     {
+        [HttpGet("/api/store/{storeId}")]
+        ITask<ResultModel<StoreDto>> QueryAsync(Guid storeId);
+
         /// <summary>
         /// 根据商店ID获取所有门店
         /// </summary>

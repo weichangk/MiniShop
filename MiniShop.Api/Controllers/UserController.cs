@@ -206,7 +206,9 @@ namespace MiniShop.Api.Controllers
                     return ResultModel.Failed($"添加错误：{result.Errors.First().Description}");
                 }
 
-                return ResultModel.Success();
+                var data = await _userManager.Value.FindByNameAsync(model.UserName);
+                var userDto = _mapper.Value.Map<UserDto>(data);
+                return ResultModel.Success(userDto);
             }
             return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
         }

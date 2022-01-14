@@ -54,11 +54,11 @@ namespace MiniShop.Mvc.Controllers
 
             if (!await UniqueStoreNameByShopId(loginShopId, model.Name))
             {
-                return Json(new Result() { success = false, msg = $"门店名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
+                return Json(new Result() { Success = false, Msg = $"门店名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
             }
 
             var result = await _storeApi.AddAsync(model);
-            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
         }
 
         public async Task<IActionResult> Edit(Guid id)
@@ -68,7 +68,7 @@ namespace MiniShop.Mvc.Controllers
             {
                 return View(result.Data);
             }
-            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
         }
 
         [HttpPost]
@@ -82,7 +82,7 @@ namespace MiniShop.Mvc.Controllers
 
             if (oldStoreDto.Data.Name != model.Name && !await UniqueStoreNameByShopId(loginShopId, model.Name))
             {
-                return Json(new Result() { success = false, msg = $"门店名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
+                return Json(new Result() { Success = false, Msg = $"门店名：{model.Name} 已被占用", status = (int)HttpStatusCode.BadRequest });
             }
 
             var doc = new JsonPatchDocument<StoreUpdateDto>();
@@ -92,7 +92,7 @@ namespace MiniShop.Mvc.Controllers
             doc.Replace(item => item.Address, model.Address);
 
             var result = await _storeApi.PatchUpdateAsync(model.Id, doc);
-            return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
         }
 
         [ResponseCache(Duration = 0)]
@@ -101,7 +101,7 @@ namespace MiniShop.Mvc.Controllers
             var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
             Guid loginShopId = Guid.Parse(id);
             var result = await _storeApi.GetPageListAsync(page, limit, loginShopId);
-            return Json(new Table() { data = result.Data.Item, count = result == null ? 0 : result.Data.Total });
+            return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
         [HttpDelete]
@@ -112,21 +112,21 @@ namespace MiniShop.Mvc.Controllers
             {
                 if (storeDto.Data.Name == "总部门店")
                 {
-                    return Json(new Result() { success = false, msg = $"不能删除总部门店：{storeDto.Data.Name}" });
+                    return Json(new Result() { Success = false, Msg = $"不能删除总部门店：{storeDto.Data.Name}" });
                 }
                 var loginStoreId = User.Claims.FirstOrDefault(s => s.Type == "LoginStoreId")?.Value;
                 Guid storeId = Guid.Parse(loginStoreId);
                 if (storeDto.Data.Id == storeId)
                 {
-                    return Json(new Result() { success = false, msg = $"不能删除当前登录门店：{storeDto.Data.Name}" });
+                    return Json(new Result() { Success = false, Msg = $"不能删除当前登录门店：{storeDto.Data.Name}" });
                 }
 
                 var result = await _storeApi.DeleteAsync(id);
-                return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
+                return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
             }
             else
             {
-                return Json(new Result() { success = false, msg = "查找不到要删除的门店", status = (int)HttpStatusCode.NotFound });
+                return Json(new Result() { Success = false, Msg = "查找不到要删除的门店", status = (int)HttpStatusCode.NotFound });
             }
         }
 
@@ -146,13 +146,13 @@ namespace MiniShop.Mvc.Controllers
                     idsIntList.Add(Guid.Parse(id));
                     if (resultModel.Data.Name == "总部门店")
                     {
-                        return Json(new Result() { success = false, msg = $"不能删除总部门店：{resultModel.Data.Name}" });
+                        return Json(new Result() { Success = false,Msg = $"不能删除总部门店：{resultModel.Data.Name}" });
                     }
                     var loginStoreId = User.Claims.FirstOrDefault(s => s.Type == "LoginStoreId")?.Value;
                     Guid storeId = Guid.Parse(loginStoreId);
                     if (resultModel.Data.Id == storeId)
                     {
-                        return Json(new Result() { success = false, msg = $"不能删除当前登录门店：{resultModel.Data.Name}" });
+                        return Json(new Result() { Success = false, Msg = $"不能删除当前登录门店：{resultModel.Data.Name}" });
                     }
                 }
             }
@@ -160,11 +160,11 @@ namespace MiniShop.Mvc.Controllers
             if (idsIntList.Count > 0)
             {
                 var result = await _storeApi.BatchDeleteAsync(idsIntList);
-                return Json(new Result() { success = result.Success, msg = result.Msg, status = result.Status });
+                return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
             }
             else
             {
-                return Json(new Result() { success = false, msg = "查找不到要删除的门店", status = (int)HttpStatusCode.NotFound });
+                return Json(new Result() { Success = false, Msg = "查找不到要删除的门店", status = (int)HttpStatusCode.NotFound });
             }
 
         }

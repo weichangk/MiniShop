@@ -31,6 +31,28 @@ namespace MiniShop.Api.Controllers
 
         }
 
+        [Description("根据门店ID查询门店")]
+        [OperationId("查询门店")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "id", param = "门店ID")]
+        [HttpGet("{id}")]
+        public async Task<IResultModel> Query([Required] Guid id)
+        {
+            _logger.LogDebug($"根据门店ID：{id} 查询门店");
+            return await _storeService.Value.GetByIdAsync(id);
+        }
+
+        [Description("根据StoreId查询门店")]
+        [OperationId("查询门店")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "storeId", param = "StoreId")]
+        [HttpGet("QueryByStoreId/{storeId}")]
+        public async Task<IResultModel> QueryByStoreId([Required] Guid storeId)
+        {
+            _logger.LogDebug($"根据StoreId：{storeId} 查询门店");
+            return await _storeService.Value.GetByIdAsync(storeId);
+        }
+
         [Description("根据商店ID和分页条件获取门店")]
         [OperationId("获取门店分页列表")]
         [ResponseCache(Duration = 0)]
@@ -58,18 +80,6 @@ namespace MiniShop.Api.Controllers
             _logger.LogDebug($"根据商店ID:{shopId} 分页条件:pageIndex {pageIndex} pageSize {pageSize} 查询条件:name {name} phone {contacts}获取门店");
             return await _storeService.Value.GetPageUsersByShopIdAndWhereQueryAsync(pageIndex, pageSize, shopId, name, contacts);
         }
-
-        [Description("根据用户ID获取门店")]
-        [OperationId("获取门店")]
-        [ResponseCache(Duration = 0)]
-        [Parameters(name = "id", param = "门店ID")]
-        [HttpGet("{id}")]
-        public async Task<IResultModel> Query([Required] Guid id)
-        {
-            _logger.LogDebug($"根据用户ID:{id}获取用户");
-            return await _storeService.Value.GetByIdAsync(id);
-        }
-
 
         [Description("根据商户ID和门店名获取门店")]
         [OperationId("获取门店")]

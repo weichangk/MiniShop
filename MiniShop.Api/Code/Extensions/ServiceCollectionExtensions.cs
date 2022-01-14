@@ -76,10 +76,10 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
             .AddIdentityServerAuthentication(options =>
             {
-                options.Authority = "https://localhost:5001";
-                options.ApiName = "minishop_api";
+                options.Authority = BasicSetting.Setting.AuthenticationAuthority;
+                options.ApiName = BasicSetting.Setting.AuthenticationMiniShopApiName;
                 options.RequireHttpsMetadata = false;
-                options.ApiSecret = "minishop_api_secret";
+                options.ApiSecret = BasicSetting.Setting.AuthenticationMiniShopApiSecret;
                 //options.JwtValidationClockSkew = TimeSpan.FromSeconds(0);//时间偏移
             });
 
