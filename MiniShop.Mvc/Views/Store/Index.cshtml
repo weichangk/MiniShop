@@ -11,7 +11,7 @@
             <form class="layui-form" action="">
                 <div class="layui-form-item">
                     <div class="layui-form-item layui-inline">
-                        <label class="layui-form-label">门店</label>
+                        <label class="layui-form-label">门店名称</label>
                         <div class="layui-input-inline">
                             <input type="text" name="name" placeholder="" class="layui-input">
                         </div>
@@ -119,7 +119,7 @@
 
                 table.render({
                     elem: '#store-table',
-                    url: 'GetPageList',
+                    url: 'GetPageByShopId',
                     page: true,//开启分页
                     cols: cols,
                     skin: 'line',
@@ -151,7 +151,7 @@
 
                 form.on('submit(store-query)', function (data) {
                     table.reload('store-table', {
-                        url: 'GetPageListAndWhereQuery',
+                        url: 'GetPageByShopIdAndWhereQuery',
                         page: {
                             curr:1,//重新从第一页开始
                         },
@@ -167,7 +167,7 @@
                         title: '新增',
                         shade: 0.1,
                         area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '500px'],
-                        content: '/store/Create',
+                        content: '/store/add',
                     });
                 }
 
@@ -177,7 +177,7 @@
                         title: '修改',
                         shade: 0.1,
                         area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '400px'],
-                        content: '/store/Edit/' + obj.data['id'],
+                        content: '/store/update/' + obj.data['id'],
                     });
                 }
 
@@ -189,7 +189,7 @@
                         layer.close(index);
                         let loading = layer.load();
                         $.ajax({
-                            url: "/store/Delete/" + obj.data['id'],
+                            url: "/store/delete/" + obj.data['id'],
                             dataType: 'json',
                             type: 'delete',
                             success: function (result) {
@@ -257,7 +257,7 @@
 
                 window.refresh = function (param) {
                     table.reload('store-table',{
-                        url: 'GetPageList'
+                        url: 'GetPageByShopId'
                     });
                 }
             })

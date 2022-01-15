@@ -66,12 +66,12 @@ namespace MiniShop.Mvc.Controllers
         {
             if (_userInfo.Rank == Model.Enums.EnumRole.ShopManager)
             {
-                var queryShop = await _shopApi.QueryByShopIdAsync(_userInfo.ShopId);
+                var queryShop = await _shopApi.GetByShopIdAsync(_userInfo.ShopId);
                 if (queryShop.Data == null)
                 {
                     ShopCreateDto shopCreateDto = new ShopCreateDto
                     {
-                        Id = _userInfo.ShopId,
+                        ShopId = _userInfo.ShopId,
                         Name = $"{_userInfo.UserName}的商店",
                         Contacts = _userInfo.UserName,
                         Phone = _userInfo.PhoneNumber,
@@ -81,16 +81,16 @@ namespace MiniShop.Mvc.Controllers
                     if (!addShop.Success)
                     {
                         //应该重定向到错误页
-                        return Json(new Result() { Success = addShop.Success, Msg = addShop.Msg, status = addShop.Status });
+                        return Json(new Result() { Success = addShop.Success, Msg = addShop.Msg, Status = addShop.Status });
                     }
                 }
 
-                var queryStore = await _storeApi.QueryAsync(_userInfo.StoreId);
+                var queryStore = await _storeApi.GetByStoreIdAsync(_userInfo.StoreId);
                 if (queryStore.Data == null)
                 {
                     StoreCreateDto storeCreateDto = new StoreCreateDto
                     {
-                        Id = _userInfo.StoreId,
+                        StoreId = _userInfo.StoreId,
                         ShopId =_userInfo.ShopId,
                         Name = $"{_userInfo.UserName}的门店",
                         Contacts = _userInfo.UserName,
@@ -100,7 +100,7 @@ namespace MiniShop.Mvc.Controllers
                     if (!addStore.Success)
                     {
                         //应该重定向到错误页
-                        return Json(new Result() { Success = addStore.Success, Msg = addStore.Msg, status = addStore.Status });
+                        return Json(new Result() { Success = addStore.Success, Msg = addStore.Msg, Status = addStore.Status });
                     }
                 }
             }

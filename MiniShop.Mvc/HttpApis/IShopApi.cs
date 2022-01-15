@@ -12,10 +12,10 @@ namespace MiniShop.Mvc.HttpApis
     public interface IShopApi : IHttpApi
     {
         [HttpGet("/api/Shop/{id}")]
-        ITask<ResultModel<ShopDto>> QueryAsync(Guid id);
+        ITask<ResultModel<ShopDto>> GetByIdAsync(int id);
 
-        [HttpGet("/api/Shop/QueryByShopId/{shopId}")]
-        ITask<ResultModel<ShopDto>> QueryByShopIdAsync(Guid shopId);
+        [HttpGet("/api/Shop/GetByShopId/{shopId}")]
+        ITask<ResultModel<ShopDto>> GetByShopIdAsync(Guid shopId);
  
         [HttpPost("/api/Shop")]
         ITask<ResultModel<ShopCreateDto>> AddAsync([JsonContent] ShopCreateDto model);

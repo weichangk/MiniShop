@@ -7,7 +7,7 @@ namespace MiniShop.Model
     /// 门店
     /// </summary>
     [Table("Store")]
-    public class Store : EntityBaseNoStoreId<Guid>
+    public class Store : EntityBase<int>
     {
         /// <summary>
         /// 联系人

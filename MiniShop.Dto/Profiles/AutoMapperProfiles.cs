@@ -18,10 +18,18 @@ namespace MiniShop.Dto.Profiles
             CreateMap<Shop, ShopDto>();
             CreateMap<ShopCreateDto, Shop>();
             CreateMap<ShopUpdateDto, Shop>();
+            CreateMap<Shop, ShopCreateDto>();
+            CreateMap<Shop, ShopUpdateDto>();
+            CreateMap<ShopDto, ShopCreateDto>();
+            CreateMap<ShopDto, ShopUpdateDto>();
 
             CreateMap<Store, StoreDto>();
             CreateMap<StoreCreateDto, Store>();
             CreateMap<StoreUpdateDto, Store>();
+            CreateMap<Store, StoreCreateDto>();
+            CreateMap<Store, StoreUpdateDto>();
+            CreateMap<StoreDto, StoreCreateDto>();
+            CreateMap<StoreDto, StoreUpdateDto>();
 
             CreateMap<Categorie, CategorieDto>();
 

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Orm.Core;
 using Orm.Core.Result;
 using Microsoft.AspNetCore.JsonPatch;
+using System.Reflection;
 
 namespace MiniShop.Services
 {
@@ -154,7 +155,12 @@ namespace MiniShop.Services
                 return ResultModel.NotExists;
             }
             //判断模型是否拥有软删除字段
-            if (entity is Model.EntityBaseNoDeleted<TKey>)
+            //if (entity is Model.EntityBaseNoDeleted<TKey>)
+            //{
+            //    _logger.LogError($"error：not inheritance for EntityBaseNoDeleted");
+            //    return ResultModel.Failed("error：not inheritance for EntityBaseNoDeleted", 500);
+            //}
+            if (!ContainProperty(entity, "Deleted"))
             {
                 _logger.LogError($"error：not inheritance for EntityBaseNoDeleted");
                 return ResultModel.Failed("error：not inheritance for EntityBaseNoDeleted", 500);
@@ -185,7 +191,12 @@ namespace MiniShop.Services
                     return ResultModel.NotExists;
                 }
                 //判断模型是否拥有软删除字段
-                if (entity is Model.EntityBaseNoDeleted<TKey>)
+                //if (entity is Model.EntityBaseNoDeleted<TKey>)
+                //{
+                //    _logger.LogError($"error：not inheritance for EntityBaseNoDeleted");
+                //    return ResultModel.Failed("error：not inheritance for EntityBaseNoDeleted", 500);
+                //}
+                if (!ContainProperty(entity, "Deleted"))
                 {
                     _logger.LogError($"error：not inheritance for EntityBaseNoDeleted");
                     return ResultModel.Failed("error：not inheritance for EntityBaseNoDeleted", 500);
@@ -242,6 +253,16 @@ namespace MiniShop.Services
             }
             _logger.LogError($"error：Remove failed");
             return ResultModel.Failed("error：Remove failed", 500);
+        }
+
+        protected bool ContainProperty(object instance, string propertyName)
+        {
+            if (instance != null && !string.IsNullOrEmpty(propertyName))
+            {
+                PropertyInfo _findedPropertyInfo = instance.GetType().GetProperty(propertyName);
+                return (_findedPropertyInfo != null);
+            }
+            return false;
         }
     }
 }

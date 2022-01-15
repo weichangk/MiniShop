@@ -13,7 +13,7 @@ using Orm.Core.Result;
 
 namespace MiniShop.Services
 {
-    public class StoreService : BaseService<Store, StoreDto, Guid>, IStoreService, IDependency
+    public class StoreService : BaseService<Store, StoreDto, int>, IStoreService, IDependency
     {
         public StoreService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<StoreService> logger,
             Lazy<IRepository<Store>> _repository) : base(mapper, unitOfWork, logger, _repository)
@@ -21,21 +21,14 @@ namespace MiniShop.Services
 
         }
 
-        public async Task<IResultModel> QueryByStoreIdAsync(Guid storeId)
+        public async Task<IResultModel> GetByStoreIdAsync(Guid storeId)
         {
             var data = _repository.Value.TableNoTracking.Where(s => s.StoreId == storeId);
             var storeDto = await data.ProjectTo<StoreDto>(_mapper.Value.ConfigurationProvider).FirstOrDefaultAsync();
             return ResultModel.Success(storeDto);
         }
 
-        public async Task<IResultModel> GetByShopIdAndNameAsync(Guid shopId, string name)
-        {
-            var data = _repository.Value.TableNoTracking.Where(s => s.ShopId == shopId && s.Name.ToUpper() == name.ToUpper());
-            var storeDto = await data.ProjectTo<StoreDto>(_mapper.Value.ConfigurationProvider).FirstOrDefaultAsync();
-            return ResultModel.Success(storeDto);
-        }
-
-        public async Task<IResultModel> GetPageUsersByShopId(int pageIndex, int pageSize, Guid shopId)
+        public async Task<IResultModel> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId)
         {
             var data = _repository.Value.TableNoTracking;
             data = data.Where(s => s.ShopId == shopId);
@@ -43,7 +36,7 @@ namespace MiniShop.Services
             return ResultModel.Success(list);
         }
 
-        public async Task<IResultModel> GetPageUsersByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name, string contacts)
+        public async Task<IResultModel> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name, string contacts)
         {
             var data = _repository.Value.TableNoTracking;
             data = data.Where(s => s.ShopId == shopId);
@@ -61,7 +54,7 @@ namespace MiniShop.Services
         }
     }
 
-    public class CreateStoreService : BaseService<Store, StoreCreateDto, Guid>, ICreateStoreService, IDependency
+    public class CreateStoreService : BaseService<Store, StoreCreateDto, int>, ICreateStoreService, IDependency
     {
         public CreateStoreService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<CreateStoreService> logger,
             Lazy<IRepository<Store>> repository) : base(mapper, unitOfWork, logger, repository)
@@ -71,7 +64,7 @@ namespace MiniShop.Services
     }
 
 
-    public class UpdateStoreService : BaseService<Store, StoreUpdateDto, Guid>, IUpdateStoreService, IDependency
+    public class UpdateStoreService : BaseService<Store, StoreUpdateDto, int>, IUpdateStoreService, IDependency
     {
         public UpdateStoreService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<UpdateStoreService> logger, Lazy<IRepository<Store>> repository)
         : base(mapper, unitOfWork, logger, repository)

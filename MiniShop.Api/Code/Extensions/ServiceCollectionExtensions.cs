@@ -35,7 +35,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddWebHost(this IServiceCollection services, IWebHostEnvironment env)
         {
             //Ids
-            services.AddIdsConn(BasicSetting.Setting);
+            //services.AddIdsConn(BasicSetting.Setting);
 
             //将控制器的寄宿器转为注册的服务
             services.AddControllers().AddControllersAsServices().AddNewtonsoftJson(options =>

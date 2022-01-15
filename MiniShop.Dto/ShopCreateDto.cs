@@ -7,7 +7,7 @@ namespace MiniShop.Dto
     {
         [Display(Name = "商店ID")]
         [Required(ErrorMessage = "{0},不能为空")]
-        public Guid Id { get; set; }
+        public Guid ShopId { get; set; }
 
         [Display(Name = "商店名称")]
         [Required(ErrorMessage ="{0},不能为空")]
@@ -28,7 +28,7 @@ namespace MiniShop.Dto
         public string Email { get; set; }
 
         [Display(Name = "地址")]
-        [StringLength(32, ErrorMessage = "{0},不能大于{1}")]
+        [StringLength(64, ErrorMessage = "{0},不能大于{1}")]
         public string Address { get; set; }
     }
 }

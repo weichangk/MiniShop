@@ -36,7 +36,7 @@ namespace MiniShop.Api.Controllers
         [ResponseCache(Duration = 0)]
         [Parameters(name = "id", param = "门店ID")]
         [HttpGet("{id}")]
-        public async Task<IResultModel> Query([Required] Guid id)
+        public async Task<IResultModel> Query([Required] int id)
         {
             _logger.LogDebug($"根据门店ID：{id} 查询门店");
             return await _storeService.Value.GetByIdAsync(id);
@@ -46,11 +46,11 @@ namespace MiniShop.Api.Controllers
         [OperationId("查询门店")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "storeId", param = "StoreId")]
-        [HttpGet("QueryByStoreId/{storeId}")]
-        public async Task<IResultModel> QueryByStoreId([Required] Guid storeId)
+        [HttpGet("GetByStoreId/{storeId}")]
+        public async Task<IResultModel> Query([Required] Guid storeId)
         {
             _logger.LogDebug($"根据StoreId：{storeId} 查询门店");
-            return await _storeService.Value.GetByIdAsync(storeId);
+            return await _storeService.Value.GetByStoreIdAsync(storeId);
         }
 
         [Description("根据商店ID和分页条件获取门店")]
@@ -59,11 +59,11 @@ namespace MiniShop.Api.Controllers
         [Parameters(name = "pageIndex", param = "索引页")]
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
-        [HttpGet("{pageIndex}/{pageSize}/{shopId}")]
+        [HttpGet("GetPageByShopId/{pageIndex}/{pageSize}/{shopId}")]
         public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId)
         {
-            _logger.LogDebug($"根据商店ID:{shopId} 分页条件:pageIndex{pageIndex} pageSize{pageSize} 获取门店");
-            return await _storeService.Value.GetPageUsersByShopId(pageIndex, pageSize, shopId);
+            _logger.LogDebug($"根据商店ID:{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取门店");
+            return await _storeService.Value.GetPageByShopIdAsync(pageIndex, pageSize, shopId);
         }
 
         [Description("根据商店ID、分页条件、查询条件获取门店")]
@@ -74,30 +74,18 @@ namespace MiniShop.Api.Controllers
         [Parameters(name = "shopId", param = "商店ID")]
         [Parameters(name = "name", param = "用户名")]
         [Parameters(name = "contacts", param = "联系人")]
-        [HttpGet("GetPageAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{role}")]
+        [HttpGet("GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{role}")]
         public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, string name, string contacts)
         {
             _logger.LogDebug($"根据商店ID:{shopId} 分页条件:pageIndex {pageIndex} pageSize {pageSize} 查询条件:name {name} phone {contacts}获取门店");
-            return await _storeService.Value.GetPageUsersByShopIdAndWhereQueryAsync(pageIndex, pageSize, shopId, name, contacts);
-        }
-
-        [Description("根据商户ID和门店名获取门店")]
-        [OperationId("获取门店")]
-        [ResponseCache(Duration = 0)]
-        [Parameters(name = "shopId", param = "商店ID")]
-        [Parameters(name = "name", param = "门店名")]
-        [HttpGet("GetByShopIdAndName/{shopId}/{name}")]
-        public async Task<IResultModel> QueryByName([Required] Guid shopId, string name)
-        {
-            _logger.LogDebug($"根据商店ID:{shopId} 和门店名:{name} 获取门店");
-            return await _storeService.Value.GetByShopIdAndNameAsync(shopId, name);
+            return await _storeService.Value.GetPageByShopIdAndWhereQueryAsync(pageIndex, pageSize, shopId, name, contacts);
         }
 
         [Description("通过指定门店ID删除门店")]
         [OperationId("删除门店")]
         [Parameters(name = "id", param = "门店ID")]
         [HttpDelete("{id}")]
-        public async Task<IResultModel> Delete([Required] Guid id)
+        public async Task<IResultModel> Delete([Required] int id)
         {
             _logger.LogDebug("删除门店");
             return await _storeService.Value.RemoveAsync(id);
@@ -107,7 +95,7 @@ namespace MiniShop.Api.Controllers
         [OperationId("批量删除门店")]
         [Parameters(name = "ids", param = "门店ID集合")]
         [HttpDelete("BatchDelete")]
-        public async Task<IResultModel> BatchDelete([FromBody] List<Guid> ids)
+        public async Task<IResultModel> BatchDelete([FromBody] List<int> ids)
         {
             _logger.LogDebug("批量删除门店");
             return await _storeService.Value.RemoveAsync(ids);
@@ -122,7 +110,7 @@ namespace MiniShop.Api.Controllers
             return await _createStoreService.Value.InsertAsync(model);
         }
 
-        [Description("修改门店，成功后返回当前门店信息")]
+        [Description("Put修改门店，成功返回门店信息")]
         [OperationId("修改门店")]
         [HttpPut]
         public async Task<IResultModel> Update([FromBody] StoreUpdateDto model)
@@ -131,10 +119,10 @@ namespace MiniShop.Api.Controllers
             return await _updateStoreService.Value.UpdateAsync(model);
         }
 
-        [Description("使用JsonPatch修改门店，成功后返回当前门店信息")]
-        [OperationId("使用JsonPatch修改门店")]
+        [Description("Patch使用修改门店，成功返回门店信息")]
+        [OperationId("修改门店")]
         [HttpPatch("{id}")]
-        public async Task<IResultModel> PatchUpdate([FromRoute] Guid id, [FromBody] JsonPatchDocument<StoreUpdateDto> patchDocument)
+        public async Task<IResultModel> PatchUpdate([FromRoute] int id, [FromBody] JsonPatchDocument<StoreUpdateDto> patchDocument)
         {
             _logger.LogDebug("使用JsonPatch修改门店");
             return await _updateStoreService.Value.PatchAsync(id, patchDocument);

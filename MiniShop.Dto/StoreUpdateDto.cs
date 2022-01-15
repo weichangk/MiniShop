@@ -1,9 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MiniShop.Dto
 {
     public class StoreUpdateDto
     {
+        [Display(Name = "ID")]
+        [Required(ErrorMessage = "{0},不能为空")]
+        public int Id { get; set; }
+
+        [Display(Name = "门店ID")]
+        [Required(ErrorMessage = "{0},不能为空")]
+        public Guid StoreId { get; set; }
+
+        [Display(Name = "商店ID")]
+        [Required(ErrorMessage = "{0},不能为空")]
+        public Guid ShopId { get; set; }
+
         [Display(Name = "门店名称")]
         [Required(ErrorMessage = "{0},不能为空")]
         public string Name { get; set; }

@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MiniShop.Services
 {
-    public class ShopService : BaseService<Shop, ShopDto, Guid>, IShopService, IDependency
+    public class ShopService : BaseService<Shop, ShopDto, int>, IShopService, IDependency
     {
         public ShopService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<ShopService> logger,
             Lazy<IRepository<Shop>> _repository) : base(mapper, unitOfWork, logger, _repository)
@@ -29,9 +29,18 @@ namespace MiniShop.Services
         }
     }
 
-    public class ShopCreateService : BaseService<Shop, ShopCreateDto, Guid>, IShopCreateService, IDependency
+    public class ShopCreateService : BaseService<Shop, ShopCreateDto, int>, IShopCreateService, IDependency
     {
         public ShopCreateService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<ShopCreateService> logger,
+            Lazy<IRepository<Shop>> _repository) : base(mapper, unitOfWork, logger, _repository)
+        {
+
+        }
+    }
+
+    public class ShopUpdateService : BaseService<Shop, ShopUpdateDto, int>, IShopUpdateService, IDependency
+    {
+        public ShopUpdateService(Lazy<IMapper> mapper, IUnitOfWork unitOfWork, ILogger<ShopUpdateService> logger,
             Lazy<IRepository<Shop>> _repository) : base(mapper, unitOfWork, logger, _repository)
         {
 

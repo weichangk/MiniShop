@@ -771,7 +771,7 @@
 						"icon": "layui-icon layui-icon-face-cry",
 						"type": 1,
 						"openType": "_iframe",
-						"href": "Shop/Edit"
+						"href": "Shop/Index"
 					},
 					{
 						"id": 191211,

@@ -4,8 +4,10 @@ using Microsoft.Extensions.Logging;
 using MiniShop.Dto;
 using MiniShop.Mvc.Code;
 using MiniShop.Mvc.HttpApis;
+using MiniShop.Mvc.Models;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace MiniShop.Mvc.Controllers
@@ -19,41 +21,26 @@ namespace MiniShop.Mvc.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditAsync()
+        public async Task<IActionResult> Index()
         {
-            var id = User.Claims.FirstOrDefault(s => s.Type == "LoginShopId")?.Value;
-            Guid loginShopId = Guid.Parse(id);
-            var result = await _shopApi.QueryAsync(loginShopId);
-            if (!result.Success)
+            var result = await _shopApi.GetByShopIdAsync(_userInfo.ShopId);
+            if (result.Success && result.Data != null)
             {
-                return View();
+                if (result.Data != null)
+                {
+                    return View(result.Data);
+                }
+                return Json(new Result() { Success = false, Msg = "商店信息不存在！", Status = (int)HttpStatusCode.NotFound });
             }
-            return View(result.Data);
+            return Json(new Result() { Success = false, Msg = result.Msg, Status = result.Status });
         }
 
         [HttpPost]
         public async Task<IActionResult> SaveAsync(ShopDto model)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    var result = await _shopApi.UpdateAsync(model);
-            //    if (result.Success)
-            //    {
-            //        //return RedirectToAction("ShowMsg", "Home", new { msg = "修改成功", json = JsonHelper.SerializeJSON(result.Data) });
-            //    }
-            //    else
-            //    {
-            //        if (result.Errors.Count > 0)
-            //        {
-            //            ModelState.AddModelError(result.Errors[0].Id, result.Errors[0].Msg);
-            //        }
-            //        else
-            //        {
-            //            ModelState.AddModelError("error", result.Msg);
-            //        }
-            //    }
-            //}
-            return View("Edit", model);
+            var dto = _mapper.Map<ShopUpdateDto>(model);
+            var result = await _shopApi.UpdateAsync(dto);
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
     }
 }

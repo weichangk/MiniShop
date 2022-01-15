@@ -4,6 +4,10 @@ namespace MiniShop.Dto
 {
     public class ShopUpdateDto
     {
+        [Display(Name = "ID")]
+        [Required(ErrorMessage = "{0},不能为空")]
+        public int Id { get; set; }
+
         [Display(Name = "商店名称")]
         [Required(ErrorMessage ="{0},不能为空")]
         [StringLength(32, ErrorMessage = "{0},不能大于{1}")]
@@ -23,7 +27,7 @@ namespace MiniShop.Dto
         public string Email { get; set; }
 
         [Display(Name = "地址")]
-        [StringLength(32, ErrorMessage = "{0},不能大于{1}")]
+        [StringLength(64, ErrorMessage = "{0},不能大于{1}")]
         public string Address { get; set; }
     }
 }

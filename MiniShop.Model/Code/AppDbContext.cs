@@ -23,17 +23,21 @@ namespace MiniShop.Model.Code
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Shop>()
+                .HasIndex(m => m.ShopId)
+                .IsUnique();
+            modelBuilder.Entity<Store>()
+                .HasIndex(m => m.StoreId)
+                .IsUnique();
             modelBuilder.Entity<Vip>()
-                .HasIndex(a => a.Code)
+                .HasIndex(m => m.Code)
                 .IsUnique();
             modelBuilder.Entity<Categorie>()
-                .HasIndex(a => a.Name)
+                .HasIndex(m => m.Name)
                 .IsUnique();
             modelBuilder.Entity<Unit>()
-                .HasIndex(a => a.Name)
+                .HasIndex(m => m.Name)
                 .IsUnique();
-
-
 
             //modelBuilder.Seed();
         }

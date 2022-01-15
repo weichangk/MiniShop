@@ -44,7 +44,7 @@ namespace MiniShop.Mvc.Controllers
         {
             model.ShopId = _userInfo.ShopId;
             var result = await _userApi.AddAsync(model);
-            return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         //修改页面
@@ -56,7 +56,7 @@ namespace MiniShop.Mvc.Controllers
             {
                 return View(result.Data);
             }
-            return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         //保存修改用户信息
@@ -65,7 +65,7 @@ namespace MiniShop.Mvc.Controllers
         {
             var dto = _mapper.Map<UserUpdateDto>(model);
             var result = await _userApi.UpdateAsync(dto);
-            return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         [HttpPatch]
@@ -85,11 +85,11 @@ namespace MiniShop.Mvc.Controllers
                 var doc = new JsonPatchDocument<UserUpdateDto>();
                 doc.Replace(item => item.IsFreeze, enable);
                 var result = await _userApi.PatchUpdateAsync(name, doc);
-                return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
+                return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
             }
             else
             {
-                return Json(new Result() { Success = false, Msg = "查找不到要修改的用户", status = (int)HttpStatusCode.NotFound });
+                return Json(new Result() { Success = false, Msg = "查找不到要修改的用户", Status = (int)HttpStatusCode.NotFound });
             }
         }
 
@@ -164,11 +164,11 @@ namespace MiniShop.Mvc.Controllers
                 }
 
                 var result = await _userApi.DeleteAsync(name);
-                return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
+                return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
             }
             else
             {
-                return Json(new Result() { Success = false, Msg = "查找不到要删除的用户", status = (int)HttpStatusCode.NotFound });
+                return Json(new Result() { Success = false, Msg = "查找不到要删除的用户", Status = (int)HttpStatusCode.NotFound });
             }
         }
 
@@ -177,7 +177,7 @@ namespace MiniShop.Mvc.Controllers
         {
             List<string> namesList = names.Split(",").ToList();
             var result = await _userApi.BatchDeleteAsync(namesList);
-            return Json(new Result() { Success = result.Success, Msg = result.Msg, status = result.Status });
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
     }

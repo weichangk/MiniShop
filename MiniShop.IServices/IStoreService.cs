@@ -6,23 +6,21 @@ using Orm.Core.Result;
 
 namespace MiniShop.IServices
 {
-    public interface IStoreService : IBaseService<Store, StoreDto, Guid>
+    public interface IStoreService : IBaseService<Store, StoreDto, int>
     {
-        Task<IResultModel> QueryByStoreIdAsync(Guid storeId);
+        Task<IResultModel> GetByStoreIdAsync(Guid storeId);
 
-        Task<IResultModel> GetPageUsersByShopId(int pageIndex, int pageSize, Guid shopId);
+        Task<IResultModel> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId);
 
-        Task<IResultModel> GetPageUsersByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name, string contacts);
-
-        Task<IResultModel> GetByShopIdAndNameAsync(Guid shopId, string name);
+        Task<IResultModel> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name, string contacts);
     }
 
-    public interface ICreateStoreService : IBaseService<Store, StoreCreateDto, Guid>
+    public interface ICreateStoreService : IBaseService<Store, StoreCreateDto, int>
     {
 
     }
 
-    public interface IUpdateStoreService : IBaseService<Store, StoreUpdateDto, Guid>
+    public interface IUpdateStoreService : IBaseService<Store, StoreUpdateDto, int>
     {
 
     }
