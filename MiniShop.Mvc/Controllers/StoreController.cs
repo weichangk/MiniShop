@@ -67,9 +67,26 @@ namespace MiniShop.Mvc.Controllers
         }
 
         [ResponseCache(Duration = 0)]
+        [HttpGet]
         public async Task<IActionResult> GetPageByShopIdAsync(int page, int limit)
         {
             var result = await _storeApi.GetPageByShopIdAsync(page, limit, _userInfo.ShopId);
+            return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
+        }
+
+        [ResponseCache(Duration = 0)]
+        [HttpGet]
+        public async Task<IActionResult> GetPageByShopIdAndWhereQueryAsync(int page, int limit, string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                name = " ";
+            }
+            else
+            {
+                name = System.Web.HttpUtility.UrlEncode(name);
+            }
+            var result = await _storeApi.GetPageByShopIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, name);
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
@@ -104,15 +121,9 @@ namespace MiniShop.Mvc.Controllers
                 if (resultModel.Data != null)
                 {
                     idsIntList.Add(int.Parse(id));
-                    if (resultModel.Data.Name == "总部门店")
+                    if (resultModel.Data.StoreId == _userInfo.ShopId)
                     {
                         return Json(new Result() { Success = false,Msg = $"不能删除总部门店：{resultModel.Data.Name}" });
-                    }
-                    var loginStoreId = User.Claims.FirstOrDefault(s => s.Type == "LoginStoreId")?.Value;
-                    Guid storeId = Guid.Parse(loginStoreId);
-                    if (resultModel.Data.StoreId == storeId)
-                    {
-                        return Json(new Result() { Success = false, Msg = $"不能删除当前登录门店：{resultModel.Data.Name}" });
                     }
                 }
             }

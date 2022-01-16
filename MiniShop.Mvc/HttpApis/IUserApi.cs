@@ -3,6 +3,7 @@ using MiniShop.Dto;
 using MiniShop.Mvc.Code;
 using Orm.Core;
 using Orm.Core.Result;
+using System;
 using System.Collections.Generic;
 using WebApiClient;
 using WebApiClient.Attributes;
@@ -14,13 +15,13 @@ namespace MiniShop.Mvc.HttpApis
     public interface IUserApi : IHttpApi
     {
         [HttpGet("/api/User/{name}")]
-        ITask<ResultModel<UserDto>> QueryAsync(string name);
+        ITask<ResultModel<UserDto>> GetByNameAsync(string name);
 
-        [HttpGet("/api/User/PageListByShop/{pageIndex}/{pageSize}/{shopId}")]
-        ITask<ResultModel<PagedList<UserDto>>> QueryPageListByShopAsync(int pageIndex, int pageSize, string shopId);
+        [HttpGet("/api/User/GetPageByShopId/{pageIndex}/{pageSize}/{shopId}")]
+        ITask<ResultModel<PagedList<UserDto>>> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId);
 
-        [HttpGet("/api/User/PageListByShopAndWhere/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{rank}")]
-        ITask<ResultModel<PagedList<UserDto>>> QueryPageListByShopAndWhereAsync(int pageIndex, int pageSize, string shopId, string name, string phone, string rank);
+        [HttpGet("/api/User/GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{rank}")]
+        ITask<ResultModel<PagedList<UserDto>>> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name, string phone, string rank);
 
         [HttpDelete("/api/User/{name}")]
         ITask<ResultModel<string>> DeleteAsync(string name);

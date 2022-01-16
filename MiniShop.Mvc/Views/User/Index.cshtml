@@ -86,6 +86,11 @@
                         type: 'checkbox'
                     },
                     {
+                        title: '门店',
+                        field: 'storeName',
+                        align: 'center',
+                    },
+                    {
                         title: '用户',
                         field: 'userName',
                         align: 'center',
@@ -128,7 +133,7 @@
 
                 table.render({
                     elem: '#user-table',
-                    url: 'GetPageList',
+                    url: 'GetPageByShopId',
                     page: true,//开启分页
                     cols: cols,
                     skin: 'line',
@@ -160,7 +165,7 @@
 
                 form.on('submit(user-query)', function (data) {
                     table.reload('user-table', {
-                        url: 'GetPageListAndWhereQuery',
+                        url: 'GetPageByShopIdAndWhereQuery',
                         page: {
                             curr:1,//重新从第一页开始
                         },
@@ -287,7 +292,7 @@
 
                 window.refresh = function (param) {
                     table.reload('user-table',{
-                        url: 'GetPageList'
+                        url: 'GetPageByShopId'
                     });
                 }
             })

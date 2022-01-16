@@ -8,7 +8,7 @@ namespace MiniShop.IServices
 {
     public interface IShopService : IBaseService<Shop, ShopDto, int>
     {
-        Task<IResultModel> QueryByShopIdAsync(Guid shopId);
+        Task<IResultModel> GetByShopIdAsync(Guid shopId); 
     }
 
     public interface IShopCreateService : IBaseService<Shop, ShopCreateDto, int>

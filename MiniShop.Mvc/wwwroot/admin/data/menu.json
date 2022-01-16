@@ -713,91 +713,51 @@
 		"children": [
 			{
 				"id": 1910,
-				"title": "门店信息",
-				"icon": "layui-icon layui-icon-util",
-				"type": 0,
-				"children": [
-					{
-						"id": 191010,
-						"title": "门店管理",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "store/Index"
-					}
-				]
+				"title": "商店管理",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "Shop/Index"
 			},
 			{
 				"id": 1911,
-				"title": "用户信息",
-				"icon": "layui-icon layui-icon-util",
-				"type": 0,
-				"children": [
-					{
-						"id": 191110,
-						"title": "用户管理",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "User/Index"
-					},
-					{
-						"id": 191111,
-						"title": "修改密码",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "view/document/drawer.html"
-					},
-					{
-						"id": 191112,
-						"title": "头像设置",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "view/document/drawer.html"
-					}
-				]
+				"title": "门店管理",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "store/Index"
 			},
 			{
 				"id": 1912,
-				"title": "商店信息",
-				"icon": "layui-icon layui-icon-util",
-				"type": 0,
-				"children": [
-					{
-						"id": 191210,
-						"title": "商店管理",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "Shop/Index"
-					},
-					{
-						"id": 191211,
-						"title": "续费管理",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "view/document/drawer.html"
-					},
-					{
-						"id": 191212,
-						"title": "系统日志",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "view/document/drawer.html"
-					},
-					{
-						"id": 191213,
-						"title": "调试参数",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "Home/Privacy"
-					}
-				]
+				"title": "用户管理",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "User/Index"
+			},
+			{
+				"id": 1913,
+				"title": "续费管理",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/document/drawer.html"
+			},
+			{
+				"id": 1914,
+				"title": "系统日志",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/document/drawer.html"
+			},
+			{
+				"id": 1915,
+				"title": "调试参数",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "Home/Privacy"
 			}
 		]
 	}

@@ -49,7 +49,7 @@ namespace MiniShop.Api.Controllers
         public async Task<IResultModel> Query([Required] Guid shopId)
         {
             _logger.LogDebug($"根据ShopId：{shopId } 查询商店");
-            return await _shopService.Value.QueryByShopIdAsync(shopId);
+            return await _shopService.Value.GetByShopIdAsync(shopId);
         }
 
         [Description("添加商店，成功返回商店信息")]

@@ -62,7 +62,7 @@ namespace MiniShop.Api.Controllers
         [HttpGet("GetPageByShopId/{pageIndex}/{pageSize}/{shopId}")]
         public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId)
         {
-            _logger.LogDebug($"根据商店ID:{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取门店");
+            _logger.LogDebug($"根据商店ID：{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取门店");
             return await _storeService.Value.GetPageByShopIdAsync(pageIndex, pageSize, shopId);
         }
 
@@ -73,12 +73,11 @@ namespace MiniShop.Api.Controllers
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
         [Parameters(name = "name", param = "用户名")]
-        [Parameters(name = "contacts", param = "联系人")]
-        [HttpGet("GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{role}")]
-        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, string name, string contacts)
+        [HttpGet("GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}")]
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, string name)
         {
-            _logger.LogDebug($"根据商店ID:{shopId} 分页条件:pageIndex {pageIndex} pageSize {pageSize} 查询条件:name {name} phone {contacts}获取门店");
-            return await _storeService.Value.GetPageByShopIdAndWhereQueryAsync(pageIndex, pageSize, shopId, name, contacts);
+            _logger.LogDebug($"根据商店ID：{shopId} 分页条件：索引页 {pageIndex} 单页条数 {pageSize} 查询条件：门店名称 {name} 获取门店");
+            return await _storeService.Value.GetPageByShopIdAndWhereQueryAsync(pageIndex, pageSize, shopId, name);
         }
 
         [Description("通过指定门店ID删除门店")]

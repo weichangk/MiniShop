@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniShop.Dto;
+using MiniShop.IServices;
 using MiniShop.Model.Enums;
 using Orm.Core;
 using Orm.Core.Result;
@@ -24,10 +25,16 @@ namespace MiniShop.Api.Controllers
     public class UserController : ControllerAbstract
     {
         private readonly Lazy<UserManager<IdentityUser>> _userManager;
+        private readonly Lazy<IShopService> _shopService;
+        private readonly Lazy<IStoreService> _storeService;
 
-        public UserController(ILogger<UserController> logger, Lazy<IMapper> mapper, Lazy<UserManager<IdentityUser>> userManager) : base(logger, mapper)
+        public UserController(ILogger<UserController> logger, Lazy<IMapper> mapper, Lazy<UserManager<IdentityUser>> userManager,
+            Lazy<IShopService> shopService,
+            Lazy<IStoreService> storeService) : base(logger, mapper)
         {
             _userManager = userManager;
+            _shopService = shopService;
+            _storeService = storeService;
         }
 
         [Description("根据用户名获取用户")]
@@ -54,11 +61,11 @@ namespace MiniShop.Api.Controllers
         [Parameters(name = "pageIndex", param = "索引页")]
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
-        [HttpGet("PageListByShop/{pageIndex}/{pageSize}/{shopId}")]
-        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, string shopId)
+        [HttpGet("GetPageByShopId/{pageIndex}/{pageSize}/{shopId}")]
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId)
         {
             _logger.LogDebug($"根据商店ID：{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取商店的用户分页列表");
-            var data = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId));
+            var data = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId.ToString()));
             var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
             foreach (var u in userPagedList.Item)
             {
@@ -76,11 +83,11 @@ namespace MiniShop.Api.Controllers
         [Parameters(name = "name", param = "用户名")]
         [Parameters(name = "phone", param = "手机号")]
         [Parameters(name = "rank", param = "职称")]
-        [HttpGet("PageListByShopAndWhere/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{rank}")]
-        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, string shopId, string name, string phone, string rank)
+        [HttpGet("GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{rank}")]
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, string name, string phone, string rank)
         {
             _logger.LogDebug($"根据商店ID：{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 查询条件：用户名：{name} 手机号：{phone} 职称：{rank} 获取商店的用户分页列表");
-            var data = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId));
+            var data = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId.ToString()));
             var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
             foreach (var u in userPagedList.Item)
             {
@@ -304,9 +311,13 @@ namespace MiniShop.Api.Controllers
                         break;
                     case "shopid":
                         dto.ShopId = Guid.Parse(c.Value);
+                        var shop = await _shopService.Value.GetByShopIdAsync(dto.ShopId);
+                        dto.ShopName = ((IResultModel<ShopDto>)shop).Data.Name;
                         break;
                     case "storeid":
                         dto.StoreId = Guid.Parse(c.Value);
+                        var store = await _storeService.Value.GetByStoreIdAsync(dto.StoreId);
+                        dto.StoreName = ((IResultModel<StoreDto>)store).Data.Name;
                         break;
                     case "isfreeze":
                         dto.IsFreeze = bool.Parse(c.Value);

@@ -23,8 +23,8 @@ namespace MiniShop.Mvc.HttpApis
         [HttpGet("/api/store/GetPageByShopId/{pageIndex}/{pageSize}/{shopId}")]
         ITask<ResultModel<PagedList<StoreDto>>> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId);
 
-        [HttpGet("/api/store/GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{contacts}")]
-        ITask<ResultModel<PagedList<UserDto>>> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name, string contacts);
+        [HttpGet("/api/store/GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}")]
+        ITask<ResultModel<PagedList<StoreDto>>> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name);
 
         [HttpDelete("/api/store/{id}")]
         ITask<ResultModel<StoreDto>> DeleteAsync(int id);

@@ -51,7 +51,7 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string name)
         {
-            var result =  await _userApi.QueryAsync(name);
+            var result =  await _userApi.GetByNameAsync(name);
             if (result.Success)
             {
                 return View(result.Data);
@@ -71,7 +71,7 @@ namespace MiniShop.Mvc.Controllers
         [HttpPatch]
         public async Task<IActionResult> ChangeEnableAsync(string name, bool enable)
         {
-            var userDto = await _userApi.QueryAsync(name);
+            var userDto = await _userApi.GetByNameAsync(name);
             if (userDto.Data != null)
             {
                 if (userDto.Data.Rank == EnumRole.ShopManager)
@@ -95,15 +95,15 @@ namespace MiniShop.Mvc.Controllers
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
-        public async Task<IActionResult> GetPageListAsync(int page, int limit)
+        public async Task<IActionResult> GetPageByShopIdAsync(int page, int limit)
         {
-            var result = await _userApi.QueryPageListByShopAsync(page, limit, _userInfo.ShopId.ToString());
+            var result = await _userApi.GetPageByShopIdAsync(page, limit, _userInfo.ShopId);
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
-        public async Task<IActionResult> GetPageListAndWhereQueryAsync(int page, int limit, string name, string phone, string rank)
+        public async Task<IActionResult> GetPageByShopIdAndWhereQueryAsync(int page, int limit, string name, string phone, string rank)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -144,14 +144,14 @@ namespace MiniShop.Mvc.Controllers
                 }
             }
 
-            var result = await _userApi.QueryPageListByShopAndWhereAsync(page, limit, _userInfo.ShopId.ToString(), name, phone, rank);
+            var result = await _userApi.GetPageByShopIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, name, phone, rank);
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(string name)
         {
-            var userDto = await _userApi.QueryAsync(name);
+            var userDto = await _userApi.GetByNameAsync(name);
             if (userDto.Data != null)
             {
                 if (userDto.Data.Rank == EnumRole.ShopManager)
