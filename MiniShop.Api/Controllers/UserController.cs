@@ -74,6 +74,26 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success(userPagedList);
         }
 
+        [Description("根据商店ID和分页条件获取商店的用户分页列表")]
+        [OperationId("获取用户分页列表")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "pageIndex", param = "索引页")]
+        [Parameters(name = "pageSize", param = "单页条数")]
+        [Parameters(name = "shopId", param = "商店ID")]
+        [Parameters(name = "storeId", param = "门店ID")]
+        [HttpGet("GetPageByShopId/{pageIndex}/{pageSize}/{shopId}/{storeId}")]
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, Guid storeId)
+        {
+            _logger.LogDebug($"根据商店ID：{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取商店的用户分页列表");
+            var data = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId.ToString()));
+            var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
+            foreach (var u in userPagedList.Item)
+            {
+                await UserDtoSetClaimExtras(u);
+            }
+            return ResultModel.Success(userPagedList);
+        }
+
         [Description("根据商店ID和分页条件、查询条件获取商店的用户分页列表")]
         [OperationId("获取用户分页列表")]
         [ResponseCache(Duration = 0)]
@@ -96,14 +116,17 @@ namespace MiniShop.Api.Controllers
 
             if (!string.IsNullOrEmpty(name))
             {
+                name = System.Web.HttpUtility.UrlDecode(name);
                 userPagedList.Item = userPagedList.Item.Where(u => u.UserName.Contains(name));
             }
             if (!string.IsNullOrEmpty(phone))
             {
+                phone = System.Web.HttpUtility.UrlDecode(phone);
                 userPagedList.Item = userPagedList.Item.Where(u => u.PhoneNumber.Contains(phone));
             }
             if (!string.IsNullOrEmpty(rank))
             {
+                rank = System.Web.HttpUtility.UrlDecode(rank);
                 if (Enum.TryParse<EnumRole>(rank, out EnumRole r))
                 {
                     userPagedList.Item = userPagedList.Item.Where(u => u.Rank == r);

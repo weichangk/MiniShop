@@ -184,7 +184,7 @@
                         title: '新增',
                         shade: 0.1,
                         area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '500px'],
-                        content: '/User/Create',
+                        content: '/user/add',
                     });
                 }
 
@@ -194,13 +194,13 @@
                         title: '修改',
                         shade: 0.1,
                         area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '400px'],
-                        content: '/User/Edit?name=' + obj.data['userName'],
+                        content: '/user/update?name=' + obj.data['userName'],
                     });
                 }
 
                 window.changeEnable = function (obj) {
                     $.ajax({
-                        url: "/User/ChangeEnable?id=" + obj.value + "&enable=" + obj.elem.checked,
+                        url: "/User/ChangeFreezeState?id=" + obj.value + "&enable=" + obj.elem.checked,
                         dataType: 'json',
                         type: 'patch',
                         success: function (result) {
@@ -224,7 +224,7 @@
                         layer.close(index);
                         let loading = layer.load();
                         $.ajax({
-                            url: "/User/Delete/" + obj.data['id'],
+                            url: "/user/delete/" + obj.data['id'],
                             dataType: 'json',
                             type: 'delete',
                             success: function (result) {
@@ -267,7 +267,7 @@
                         layer.close(index);
                         let loading = layer.load();
                         $.ajax({
-                            url: "/User/batchDelete?ids=" + checkIds,
+                            url: "/user/batchDelete?ids=" + checkIds,
                             dataType: 'json',
                             type: 'delete',
                             success: function (result) {

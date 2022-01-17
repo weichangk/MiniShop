@@ -13,6 +13,7 @@ using Orm.Core.Result;
 using MiniShop.Model.Enums;
 using AutoMapper;
 using MiniShop.Mvc.Code;
+using MiniShop.Model.Code;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -30,26 +31,59 @@ namespace MiniShop.Mvc.Controllers
             return View();
         }
 
-        //添加页面
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult GetRankScope()
         {
-            UserCreateDto model = new UserCreateDto { Rank = EnumRole.Admin, };
+            List<dynamic> rankSelect = new List<dynamic>();
+            var shopAssistantOp = new { opValue = EnumRole.ShopAssistant.ToString(), opName = EnumRole.ShopAssistant.ToDescription() };
+            var storeManagerOp = new { opValue = EnumRole.StoreManager.ToString(), opName = EnumRole.StoreManager.ToDescription() };
+            var storeAssistantOp = new { opValue = EnumRole.StoreAssistant.ToString(), opName = EnumRole.StoreAssistant.ToDescription() };
+            var cashierOp = new { opValue = EnumRole.Cashier.ToString(), opName = EnumRole.Cashier.ToDescription() };
+            switch (_userInfo.Rank)
+            {          
+                case EnumRole.ShopManager:
+                    rankSelect.Add(shopAssistantOp);
+                    rankSelect.Add(storeManagerOp);
+                    rankSelect.Add(storeAssistantOp);
+                    rankSelect.Add(cashierOp);
+                    break;
+                case EnumRole.ShopAssistant:
+                    rankSelect.Add(storeManagerOp);
+                    rankSelect.Add(storeAssistantOp);
+                    rankSelect.Add(cashierOp);
+                    break;
+                case EnumRole.StoreManager:
+                    rankSelect.Add(storeAssistantOp);
+                    rankSelect.Add(cashierOp);
+                    break;
+                case EnumRole.StoreAssistant:
+                    rankSelect.Add(cashierOp);
+                    break;
+                //case EnumRole.Cashier:
+                //    break;
+                default:
+                    break;
+            }
+            return Json(new Result() { Success = true, Data = rankSelect });
+        }
+
+        [HttpGet]
+        public IActionResult Add()
+        {
+            UserCreateDto model = new UserCreateDto { Rank = EnumRole.Cashier, };
             return View(model);
         }
 
-        //保存添加用户信息
         [HttpPost]
-        public async Task<IActionResult> SaveAddAsync(UserCreateDto model)
+        public async Task<IActionResult> AddAsync(UserCreateDto model)
         {
             model.ShopId = _userInfo.ShopId;
             var result = await _userApi.AddAsync(model);
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
-        //修改页面
         [HttpGet]
-        public async Task<IActionResult> Edit(string name)
+        public async Task<IActionResult> UpdateAsync(string name)
         {
             var result =  await _userApi.GetByNameAsync(name);
             if (result.Success)
@@ -59,9 +93,8 @@ namespace MiniShop.Mvc.Controllers
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
-        //保存修改用户信息
         [HttpPost]
-        public async Task<IActionResult> SaveEditAsync(UserDto model)
+        public async Task<IActionResult> UpdateAsync(UserDto model)
         {
             var dto = _mapper.Map<UserUpdateDto>(model);
             var result = await _userApi.UpdateAsync(dto);
@@ -69,14 +102,14 @@ namespace MiniShop.Mvc.Controllers
         }
 
         [HttpPatch]
-        public async Task<IActionResult> ChangeEnableAsync(string name, bool enable)
+        public async Task<IActionResult> ChangeFreezeStateAsync(string name, bool enable)
         {
             var userDto = await _userApi.GetByNameAsync(name);
             if (userDto.Data != null)
             {
                 if (userDto.Data.Rank == EnumRole.ShopManager)
                 {
-                    return Json(new Result() { Success = false, Msg = "不能禁用店长" });
+                    return Json(new Result() { Success = false, Msg = "不能禁用老板" });
                 }
                 if (userDto.Data.UserName == _userInfo.UserName)
                 {
@@ -156,7 +189,7 @@ namespace MiniShop.Mvc.Controllers
             {
                 if (userDto.Data.Rank == EnumRole.ShopManager)
                 {
-                    return Json(new Result() { Success = false, Msg = $"不能删除店长：{userDto.Data.UserName}" });
+                    return Json(new Result() { Success = false, Msg = $"不能删除老板：{userDto.Data.UserName}" });
                 }
                 if (userDto.Data.UserName == _userInfo.UserName)
                 {
@@ -176,6 +209,26 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> BatchDeleteAsync(string names)
         {
             List<string> namesList = names.Split(",").ToList();
+            foreach (var item in namesList)
+            {
+                var userDto = await _userApi.GetByNameAsync(item);
+                if (userDto.Data != null)
+                {
+                    if (userDto.Data.Rank == EnumRole.ShopManager)
+                    {
+                        return Json(new Result() { Success = false, Msg = $"不能删除老板：{userDto.Data.UserName}" });
+                    }
+                    if (userDto.Data.UserName == _userInfo.UserName)
+                    {
+                        return Json(new Result() { Success = false, Msg = $"不能删除当前登录用户：{userDto.Data.UserName}" });
+                    }
+                }
+                else
+                {
+                    return Json(new Result() { Success = false, Msg = "查找不到要删除的用户", Status = (int)HttpStatusCode.NotFound });
+                }
+            }
+
             var result = await _userApi.BatchDeleteAsync(namesList);
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }

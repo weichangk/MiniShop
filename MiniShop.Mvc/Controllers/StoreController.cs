@@ -48,7 +48,7 @@ namespace MiniShop.Mvc.Controllers
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
-        public async Task<IActionResult> Update(int id)
+        public async Task<IActionResult> UpdateAsync(int id)
         {
             var result = await _storeApi.GetByIdAsync(id);
             if (result.Success)
