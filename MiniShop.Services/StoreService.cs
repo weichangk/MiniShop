@@ -28,6 +28,13 @@ namespace MiniShop.Services
             return ResultModel.Success(storeDto);
         }
 
+        public async Task<IResultModel> GetByShopIdAsync(Guid shopId)
+        {
+            var data = _repository.Value.TableNoTracking.Where(s => s.ShopId == shopId);
+            var storeDtoList = await data.ProjectTo<StoreDto>(_mapper.Value.ConfigurationProvider).ToListAsync();
+            return ResultModel.Success(storeDtoList);
+        }
+
         public async Task<IResultModel> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId)
         {
             var data = _repository.Value.TableNoTracking;

@@ -10,6 +10,8 @@ namespace MiniShop.IServices
     {
         Task<IResultModel> GetByStoreIdAsync(Guid storeId);
 
+        Task<IResultModel> GetByShopIdAsync(Guid shopId);
+
         Task<IResultModel> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId);
 
         Task<IResultModel> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name);

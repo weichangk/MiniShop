@@ -11,6 +11,22 @@
                 <form class="layui-form" action="">
                     <div class="layui-form-item">
                         <div class="layui-form-item layui-inline">
+                            <label class="layui-form-label">门店</label>
+                            <div class="layui-input-inline">
+                                <select id="OptionStore" name="store" lay-filter="SelectStore">
+                                    <option value="">请选择一个门店</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item layui-inline">
+                            <label class="layui-form-label">职位</label>
+                            <div class="layui-input-inline">
+                                <select id="OptionRank" name="rank" lay-filter="SelectRank">
+                                    <option value="">请选择一个职位</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item layui-inline">
                             <label class="layui-form-label">用户</label>
                             <div class="layui-input-inline">
                                 <input type="text" name="name" placeholder="" class="layui-input">
@@ -20,12 +36,6 @@
                             <label class="layui-form-label">手机</label>
                             <div class="layui-input-inline">
                                 <input type="text" name="phone" placeholder="" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item layui-inline">
-                            <label class="layui-form-label">角色</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="role" placeholder="" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item layui-inline">
@@ -133,7 +143,7 @@
 
                 table.render({
                     elem: '#user-table',
-                    url: 'GetPageByShopId',
+                    url: 'GetPage',
                     page: true,//开启分页
                     cols: cols,
                     skin: 'line',
@@ -165,7 +175,7 @@
 
                 form.on('submit(user-query)', function (data) {
                     table.reload('user-table', {
-                        url: 'GetPageByShopIdAndWhereQuery',
+                        url: 'GetPageWhereQuery',
                         page: {
                             curr:1,//重新从第一页开始
                         },
@@ -186,7 +196,7 @@
                         area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '500px'],
                         content: '/user/add',
                     });
-                }
+                };
 
                 window.edit = function (obj) {
                     layer.open({
@@ -196,7 +206,7 @@
                         area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '400px'],
                         content: '/user/update?name=' + obj.data['userName'],
                     });
-                }
+                };
 
                 window.changeEnable = function (obj) {
                     $.ajax({
@@ -214,7 +224,7 @@
                             }
                         }
                     })
-                }
+                };
 
                 window.remove = function (obj) {
                     layer.confirm('确定要删除该用户', {
@@ -246,7 +256,7 @@
                             }
                         })
                     });
-                }
+                };
 
                 window.batchRemove = function (obj) {
 
@@ -288,14 +298,59 @@
                             }
                         })
                     });
-                }
+                };
 
                 window.refresh = function (param) {
                     table.reload('user-table',{
-                        url: 'GetPageByShopId'
+                        url: 'GetPage'
                     });
-                }
-            })
+                };
+
+                //门店绑定
+                BindStores($);
+
+                //职位绑定
+                BindRank($);
+            });
+
+            function BindStores($) {
+                $.get('GetStoresByCurrentShop', function (result) {
+                    layui.use('form', function () {
+                        var form = layui.form;
+                        if (result.success) {
+                            var str = '';
+                            //var data = $.parseJSON(result.data);//转成Json对象
+                            $("#OptionStore option:gt(0)").remove();//重新加载前，移除第一个以外的option
+                            $.each(result.data, function (i, obj) {
+                                str += '<option value="' + obj.opValue + '">' + obj.opName + '</option>';
+                            });//遍历循环遍历
+                            $(str).appendTo("#OptionStore");//绑定
+                            //$("#OptionStore option:eq(1)").attr("selected", 'selected'); //默认选择第一个选项
+                            form.render("select");//注意：最后必须重新渲染下拉框，否则没有任何效果。
+                        }
+                    });
+                });
+            };
+
+            function BindRank($) {
+                $.get('GetRankScopeByCurrentRankForQueryUser', function (result) {
+                    layui.use('form', function () {
+                        var form = layui.form;
+                        if (result.success) {
+                            var str = ''; //声明字符串
+                            //var data = $.parseJSON(result.data);//转成Json对象
+                            $("#OptionRank option:gt(0)").remove();//重新加载前，移除第一个以外的option
+                            $.each(result.data, function (i, obj) {
+                                str += '<option value="' + obj.opValue + '">' + obj.opName + '</option>';
+                            });//遍历循环遍历
+                            $(str).appendTo("#OptionRank");//绑定
+                            //$("#OptionRank option:eq(1)").attr("selected", 'selected'); //默认选择第一个选项
+                            form.render("select");//注意：最后必须重新渲染下拉框，否则没有任何效果。
+                        }
+                    });
+                });
+            };
+
         </script>
     </body>
 </html>

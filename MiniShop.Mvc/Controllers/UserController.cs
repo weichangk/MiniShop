@@ -3,13 +3,11 @@ using Microsoft.Extensions.Logging;
 using MiniShop.Dto;
 using MiniShop.Mvc.HttpApis;
 using MiniShop.Mvc.Models;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Net;
 using System.Collections.Generic;
-using Orm.Core.Result;
 using MiniShop.Model.Enums;
 using AutoMapper;
 using MiniShop.Mvc.Code;
@@ -20,10 +18,13 @@ namespace MiniShop.Mvc.Controllers
     public class UserController : BaseController
     {
         private readonly IUserApi _userApi;
+        private readonly IStoreApi _storeApi;
 
-        public UserController(ILogger<UserController> logger, IMapper mapper, IUserInfo userInfo, IUserApi userApi) : base(logger, mapper, userInfo)
+        public UserController(ILogger<UserController> logger, IMapper mapper, IUserInfo userInfo,
+            IUserApi userApi, IStoreApi storeApi) : base(logger, mapper, userInfo)
         {
             _userApi = userApi;
+            _storeApi = storeApi;
         }
 
         public IActionResult Index()
@@ -32,7 +33,24 @@ namespace MiniShop.Mvc.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetRankScope()
+        public async Task<IActionResult> GetStoresByCurrentShopAsync()
+        {
+            var result = await _storeApi.GetByShopIdAsync(_userInfo.ShopId);
+            if (result.Data != null)
+            {
+                List<dynamic> rankSelect = new List<dynamic>();
+                foreach (var item in result.Data)
+                {
+                    var op = new { opValue = item.StoreId, opName = item.Name };
+                    rankSelect.Add(op);
+                }
+                return Json(new Result() { Success = true, Data = rankSelect });
+            }
+            return Json(new Result() { Success = false });
+        }
+
+        [HttpGet]
+        public IActionResult GetRankScopeByCurrentRankForAddUser()
         {
             List<dynamic> rankSelect = new List<dynamic>();
             var shopAssistantOp = new { opValue = EnumRole.ShopAssistant.ToString(), opName = EnumRole.ShopAssistant.ToDescription() };
@@ -57,6 +75,83 @@ namespace MiniShop.Mvc.Controllers
                     rankSelect.Add(cashierOp);
                     break;
                 case EnumRole.StoreAssistant:
+                    rankSelect.Add(cashierOp);
+                    break;
+                //case EnumRole.Cashier:
+                //    break;
+                default:
+                    break;
+            }
+            return Json(new Result() { Success = true, Data = rankSelect });
+        }
+
+        [HttpGet]
+        public IActionResult GetRankScopeByCurrentRankForUpdateUser()
+        {
+            List<dynamic> rankSelect = new List<dynamic>();
+            var shopAssistantOp = new { opValue = EnumRole.ShopAssistant.ToString(), opName = EnumRole.ShopAssistant.ToDescription() };
+            var storeManagerOp = new { opValue = EnumRole.StoreManager.ToString(), opName = EnumRole.StoreManager.ToDescription() };
+            var storeAssistantOp = new { opValue = EnumRole.StoreAssistant.ToString(), opName = EnumRole.StoreAssistant.ToDescription() };
+            var cashierOp = new { opValue = EnumRole.Cashier.ToString(), opName = EnumRole.Cashier.ToDescription() };
+            switch (_userInfo.Rank)
+            {
+                case EnumRole.ShopManager:
+                    rankSelect.Add(shopAssistantOp);
+                    rankSelect.Add(storeManagerOp);
+                    rankSelect.Add(storeAssistantOp);
+                    rankSelect.Add(cashierOp);
+                    break;
+                case EnumRole.ShopAssistant:
+                    rankSelect.Add(storeManagerOp);
+                    rankSelect.Add(storeAssistantOp);
+                    rankSelect.Add(cashierOp);
+                    break;
+                case EnumRole.StoreManager:
+                    rankSelect.Add(storeAssistantOp);
+                    rankSelect.Add(cashierOp);
+                    break;
+                case EnumRole.StoreAssistant:
+                    rankSelect.Add(cashierOp);
+                    break;
+                //case EnumRole.Cashier:
+                //    break;
+                default:
+                    break;
+            }
+            return Json(new Result() { Success = true, Data = rankSelect });
+        }
+
+        [HttpGet]
+        public IActionResult GetRankScopeByCurrentRankForQueryUser()
+        {
+            List<dynamic> rankSelect = new List<dynamic>();
+            var shopManagerOp = new { opValue = EnumRole.ShopManager.ToString(), opName = EnumRole.ShopManager.ToDescription() };
+            var shopAssistantOp = new { opValue = EnumRole.ShopAssistant.ToString(), opName = EnumRole.ShopAssistant.ToDescription() };
+            var storeManagerOp = new { opValue = EnumRole.StoreManager.ToString(), opName = EnumRole.StoreManager.ToDescription() };
+            var storeAssistantOp = new { opValue = EnumRole.StoreAssistant.ToString(), opName = EnumRole.StoreAssistant.ToDescription() };
+            var cashierOp = new { opValue = EnumRole.Cashier.ToString(), opName = EnumRole.Cashier.ToDescription() };
+            switch (_userInfo.Rank)
+            {
+                case EnumRole.ShopManager:
+                    rankSelect.Add(shopManagerOp);
+                    rankSelect.Add(shopAssistantOp);
+                    rankSelect.Add(storeManagerOp);
+                    rankSelect.Add(storeAssistantOp);
+                    rankSelect.Add(cashierOp);
+                    break;
+                case EnumRole.ShopAssistant:
+                    rankSelect.Add(shopAssistantOp);
+                    rankSelect.Add(storeManagerOp);
+                    rankSelect.Add(storeAssistantOp);
+                    rankSelect.Add(cashierOp);
+                    break;
+                case EnumRole.StoreManager:
+                    rankSelect.Add(storeManagerOp);
+                    rankSelect.Add(storeAssistantOp);
+                    rankSelect.Add(cashierOp);
+                    break;
+                case EnumRole.StoreAssistant:
+                    rankSelect.Add(storeAssistantOp);
                     rankSelect.Add(cashierOp);
                     break;
                 //case EnumRole.Cashier:
@@ -128,16 +223,32 @@ namespace MiniShop.Mvc.Controllers
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
-        public async Task<IActionResult> GetPageByShopIdAsync(int page, int limit)
+        public async Task<IActionResult> GetPageAsync(int page, int limit)
         {
-            var result = await _userApi.GetPageByShopIdAsync(page, limit, _userInfo.ShopId);
-            return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
+            if (_userInfo.Rank == EnumRole.ShopManager)
+            {
+                var result = await _userApi.GetPageByShopIdAsync(page, limit, _userInfo.ShopId);
+                return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
+            }
+            else
+            {
+                var result = await _userApi.GetPageByShopIdStoreIdAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId);
+                return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
+            }
         }
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
-        public async Task<IActionResult> GetPageByShopIdAndWhereQueryAsync(int page, int limit, string name, string phone, string rank)
+        public async Task<IActionResult> GetPageWhereQueryAsync(int page, int limit, string store, string name, string phone, string rank)
         {
+            if (string.IsNullOrEmpty(store))
+            {
+                store = " ";
+            }
+            else
+            {
+                store = System.Web.HttpUtility.UrlEncode(store);
+            }
             if (string.IsNullOrEmpty(name))
             {
                 name = " ";
@@ -163,13 +274,13 @@ namespace MiniShop.Mvc.Controllers
                 switch (rank)
                 {
                     case "店长":
-                        rank = "ShopManager";
+                        rank = System.Web.HttpUtility.UrlEncode("ShopManager");
                         break;
                     case "管理员":
-                        rank = "Admin";
+                        rank = System.Web.HttpUtility.UrlEncode("Admin");
                         break;
                     case "收银员":
-                        rank = "Cashier";
+                        rank = System.Web.HttpUtility.UrlEncode("Cashier");
                         break;
                     default:
                         rank = System.Web.HttpUtility.UrlEncode(rank);
@@ -177,8 +288,18 @@ namespace MiniShop.Mvc.Controllers
                 }
             }
 
-            var result = await _userApi.GetPageByShopIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, name, phone, rank);
-            return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
+            if (_userInfo.Rank == EnumRole.ShopManager)
+            {
+                //var result = await _userApi.GetPageByShopIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, name, phone, rank);
+                var result = await _userApi.GetPageByShopIdStoreIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, System.Guid.Parse(store), name, phone, rank);
+                return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
+            }
+            else
+            {
+                var result = await _userApi.GetPageByShopIdStoreIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId, name, phone, rank);
+                return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
+            }
+
         }
 
         [HttpDelete]
@@ -234,4 +355,10 @@ namespace MiniShop.Mvc.Controllers
         }
 
     }
+
+
+    //备注：
+    //老板查全部商店所有门店用户，非老板用户查所在当前门店下所有用户
+    //一个商店只有一个老板，可以有多个老板助理；一个商店可以有多个门店，一个门店只有一个店长，可以有多个店长助理，可以有多个收银员
+    //职位的管理范围是该职位下的所有职位，如添加修改删除用户只能操作该职位以下的所有职位用户
 }

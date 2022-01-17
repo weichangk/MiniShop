@@ -49,9 +49,6 @@
                     <div class="layui-input-block">
                         <select id="OptionRank" name="OptionRank" lay-filter="SelectRank" lay-verify="required">
                             <option value="">请选择一个职位</option>
-                            @*<option value="Admin">管理员</option>
-                            <option value="Operator">操作员</option>
-                            <option value="Cashier">收银员</option>*@
                         </select>
                     </div>
                 </div>
@@ -106,7 +103,7 @@
             });
 
             //绑定职位
-            BindRankScope();
+            BindRank();
 
             ////选中当前职位
             //var value = $('#Rank').val();
@@ -125,7 +122,7 @@
                 layer.msg(result.msg, { icon: 1, time: 1000 }, function () {
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
                     parent.layui.table.reload("user-table",{
-                        url: 'GetPageByShopId',
+                        url: 'GetPage',
                         //page: {
                         //    curr: ,//最后一页
                         //},
@@ -152,8 +149,8 @@
             }
         };
 
-        function BindRankScope() {
-            $.get('GetRankScope', function (result) {
+        function BindRank() {
+            $.get('GetRankScopeByCurrentRankForAddUser', function (result) {
                 layui.use('form', function () {
                     var form = layui.form;
                     if (result.success) {
@@ -169,7 +166,7 @@
                     }
                 });
             });
-        }
+        };
 
 
     </script>

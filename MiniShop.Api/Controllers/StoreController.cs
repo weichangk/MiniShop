@@ -47,10 +47,21 @@ namespace MiniShop.Api.Controllers
         [ResponseCache(Duration = 0)]
         [Parameters(name = "storeId", param = "StoreId")]
         [HttpGet("GetByStoreId/{storeId}")]
-        public async Task<IResultModel> Query([Required] Guid storeId)
+        public async Task<IResultModel> QueryByStoreId([Required] Guid storeId)
         {
             _logger.LogDebug($"根据StoreId：{storeId} 查询门店");
             return await _storeService.Value.GetByStoreIdAsync(storeId);
+        }
+
+        [Description("根据ShopId查询门店")]
+        [OperationId("查询门店")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "shopId", param = "ShopId")]
+        [HttpGet("GetByShopId/{shopId}")]
+        public async Task<IResultModel> QueryByShopId([Required] Guid shopId)
+        {
+            _logger.LogDebug($"根据ShopId：{shopId} 查询门店");
+            return await _storeService.Value.GetByShopIdAsync(shopId);
         }
 
         [Description("根据商店ID和分页条件获取门店")]

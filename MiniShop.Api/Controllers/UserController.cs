@@ -81,11 +81,13 @@ namespace MiniShop.Api.Controllers
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
         [Parameters(name = "storeId", param = "门店ID")]
-        [HttpGet("GetPageByShopId/{pageIndex}/{pageSize}/{shopId}/{storeId}")]
+        [HttpGet("GetPageByShopIdStoreId/{pageIndex}/{pageSize}/{shopId}/{storeId}")]
         public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, Guid storeId)
         {
             _logger.LogDebug($"根据商店ID：{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取商店的用户分页列表");
-            var data = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId.ToString()));
+            var dataByShopId = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId.ToString()));
+            var dataByStoreId = await _userManager.Value.GetUsersForClaimAsync(new Claim("StoreId", storeId.ToString()));
+            var data = dataByShopId.Union(dataByStoreId).ToList();
             var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
             foreach (var u in userPagedList.Item)
             {
