@@ -115,7 +115,7 @@ namespace MiniShop.Ids
                             throw new Exception(result.Errors.First().Description);
                         }
 
-                        result = userMgr.AddToRolesAsync(mini, new System.Collections.Generic.List<string>{ "ShopManager", "Admin", "Cashier" }).Result; ;
+                        result = userMgr.AddToRolesAsync(mini, new System.Collections.Generic.List<string>{ "ShopManager"}).Result;
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);

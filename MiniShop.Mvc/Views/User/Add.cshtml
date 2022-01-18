@@ -16,7 +16,7 @@
                 <input type="hidden" id="ShopId" name="ShopId" value="@Model.ShopId" />
                 <input type="hidden" id="StoreId" name="StoreId" value="@Model.StoreId" />
                 <input type="hidden" id="Rank" name="Rank" value="@Model.Rank" />
-                @if (User.Claims.FirstOrDefault(s => s.Type == "rank")?.Value == "ShopManager")
+                @if (User.Claims.FirstOrDefault(s => s.Type == "rank").Value.Contains("Shop"))
                 {
                     <div class="layui-form-item">
                         <label class="layui-form-label" style="width: 20%">门店</label>

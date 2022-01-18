@@ -10,7 +10,7 @@
             <div class="layui-card-body">
                 <form class="layui-form" action="">
                     <div class="layui-form-item">
-                        @if (User.Claims.FirstOrDefault(s => s.Type == "rank")?.Value == "ShopManager")
+                        @if (User.Claims.FirstOrDefault(s => s.Type == "rank").Value.Contains("Shop"))
                         {
                             <div class="layui-form-item layui-inline">
                                 <label class="layui-form-label">门店</label>
