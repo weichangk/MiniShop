@@ -10,14 +10,17 @@
             <div class="layui-card-body">
                 <form class="layui-form" action="">
                     <div class="layui-form-item">
-                        <div class="layui-form-item layui-inline">
-                            <label class="layui-form-label">门店</label>
-                            <div class="layui-input-inline">
-                                <select id="OptionStore" name="store" lay-filter="SelectStore">
-                                    <option value="">请选择一个门店</option>
-                                </select>
+                        @if (User.Claims.FirstOrDefault(s => s.Type == "rank")?.Value == "ShopManager")
+                        {
+                            <div class="layui-form-item layui-inline">
+                                <label class="layui-form-label">门店</label>
+                                <div class="layui-input-inline">
+                                    <select id="OptionStore" name="store" lay-filter="SelectStore">
+                                        <option value="">请选择一个门店</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        }
                         <div class="layui-form-item layui-inline">
                             <label class="layui-form-label">职位</label>
                             <div class="layui-input-inline">

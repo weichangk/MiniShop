@@ -13,17 +13,38 @@
     <form class="layui-form" asp-controller="User" asp-action="Add" data-ajax="true" data-ajax-method="post" data-ajax-success="onSuccess">
         <div class="mainBox">
             <div class="main-container">
+                <input type="hidden" id="ShopId" name="ShopId" value="@Model.ShopId" />
+                <input type="hidden" id="StoreId" name="StoreId" value="@Model.StoreId" />
                 <input type="hidden" id="Rank" name="Rank" value="@Model.Rank" />
+                @if (User.Claims.FirstOrDefault(s => s.Type == "rank")?.Value == "ShopManager")
+                {
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" style="width: 20%">门店</label>
+                        <div class="layui-input-block">
+                            <select id="OptionStore" lay-filter="SelectStore" lay-verify="required">
+                                <option value="">请选择一个门店</option>
+                            </select>
+                        </div>
+                    </div>
+                }
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="width: 20%">角色</label>
+                    <div class="layui-input-block">
+                        <select id="OptionRank" lay-filter="SelectRank" lay-verify="required">
+                            <option value="">请选择一个职位</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label" style="width: 20%">用户名</label>
                     <div class="layui-input-block">
-                        <input type="text" name="Name" value="@Model.UserName" lay-verify="userName" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+                        <input type="text" name="UserName" value="@Model.UserName" lay-verify="userName" autocomplete="off" placeholder="请输入用户名" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label" style="width: 20%">手机号</label>
                     <div class="layui-input-block">
-                        <input type="text" name="Phone" value="@Model.PhoneNumber" lay-verify="nullablePhone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
+                        <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" lay-verify="nullablePhone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -42,14 +63,6 @@
                     <label class="layui-form-label" style="width: 20%">确认密码</label>
                     <div class="layui-input-block">
                         <input type="password" name="ConfirmPassWord" value="@Model.ConfirmPassWord" lay-verify="required|confirmPass" autocomplete="off" placeholder="请输入确认密码" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">角色</label>
-                    <div class="layui-input-block">
-                        <select id="OptionRank" name="OptionRank" lay-filter="SelectRank" lay-verify="required">
-                            <option value="">请选择一个职位</option>
-                        </select>
                     </div>
                 </div>
             </div>
@@ -102,13 +115,16 @@
                 },
             });
 
+            //绑定门店
+            BindStores();
+
+            //选择门店更新@Model.StoreId
+            form.on('select(SelectStore)', function (data) {
+                $('#StoreId').val(data.value);
+            });
+
             //绑定职位
             BindRank();
-
-            ////选中当前职位
-            //var value = $('#Rank').val();
-            //$('#OptionRank').find("option[value=" + value + "]").attr("selected", true);
-            //form.render('select');
 
             //选择职位更新@Model.Rank
             form.on('select(SelectRank)', function (data) {
@@ -149,6 +165,26 @@
             }
         };
 
+        function BindStores() {
+            $.get('GetStoresByCurrentShop', function (result) {
+                layui.use('form', function () {
+                    var form = layui.form;
+                    if (result.success) {
+                        var str = '';
+                        var currentStoreId = $('#StoreId').val();//当前门店ID
+                        //var data = $.parseJSON(result.data);//转成Json对象
+                        $("#OptionStore option:gt(0)").remove();//重新加载前，移除第一个以外的option
+                        $.each(result.data, function (i, obj) {
+                            str += '<option value="' + obj.opValue + '">' + obj.opName + '</option>';
+                        });//遍历循环遍历
+                        $(str).appendTo("#OptionStore");//绑定
+                        $('#OptionStore').find("option[value=" + currentStoreId + "]").attr("selected", true); //默认选择
+                        form.render("select");//注意：最后必须重新渲染下拉框，否则没有任何效果。
+                    }
+                });
+            });
+        };
+
         function BindRank() {
             $.get('GetRankScopeByCurrentRankForAddUser', function (result) {
                 layui.use('form', function () {
@@ -161,8 +197,8 @@
                             str += '<option value="' + obj.opValue + '">' + obj.opName + '</option>';
                         });//遍历循环遍历
                         $(str).appendTo("#OptionRank");//绑定
-                        $("#OptionRank option:eq(1)").attr("selected", 'selected'); //默认选择第一个选项
-                        form.render("select");//注意：最后必须重新渲染下拉框，否则没有任何效果。
+                        //$("#OptionRank option:eq(1)").attr("selected", 'selected'); //默认选择第一个选项
+                        //form.render("select");//注意：最后必须重新渲染下拉框，否则没有任何效果。
                     }
                 });
             });

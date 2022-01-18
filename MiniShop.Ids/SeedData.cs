@@ -46,12 +46,38 @@ namespace MiniShop.Ids
                             throw new Exception(result.Errors.First().Description);
                         }
                     }
-                    role = roleMgr.FindByNameAsync("Admin").Result;
+                    role = roleMgr.FindByNameAsync("ShopAssistant").Result;
                     if (role == null)
                     {
                         IdentityRole IdentityRole = new IdentityRole
                         {
-                            Name = "Admin",
+                            Name = "ShopAssistant",
+                        };
+                        var result = roleMgr.CreateAsync(IdentityRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
+                    role = roleMgr.FindByNameAsync("StoreManager").Result;
+                    if (role == null)
+                    {
+                        IdentityRole IdentityRole = new IdentityRole
+                        {
+                            Name = "StoreManager",
+                        };
+                        var result = roleMgr.CreateAsync(IdentityRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
+                    role = roleMgr.FindByNameAsync("StoreAssistant").Result;
+                    if (role == null)
+                    {
+                        IdentityRole IdentityRole = new IdentityRole
+                        {
+                            Name = "StoreAssistant",
                         };
                         var result = roleMgr.CreateAsync(IdentityRole).Result;
                         if (!result.Succeeded)

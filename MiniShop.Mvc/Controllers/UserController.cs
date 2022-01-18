@@ -29,6 +29,7 @@ namespace MiniShop.Mvc.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.CurrentRank = "";
             return View();
         }
 
@@ -165,14 +166,18 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            UserCreateDto model = new UserCreateDto { Rank = EnumRole.Cashier, };
+            UserCreateDto model = new UserCreateDto 
+            { 
+                ShopId = _userInfo.ShopId,
+                StoreId = _userInfo.StoreId,
+                //Rank = EnumRole.Cashier, 
+            };
             return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddAsync(UserCreateDto model)
         {
-            model.ShopId = _userInfo.ShopId;
             var result = await _userApi.AddAsync(model);
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
@@ -271,21 +276,7 @@ namespace MiniShop.Mvc.Controllers
             }
             else
             {
-                switch (rank)
-                {
-                    case "店长":
-                        rank = System.Web.HttpUtility.UrlEncode("ShopManager");
-                        break;
-                    case "管理员":
-                        rank = System.Web.HttpUtility.UrlEncode("Admin");
-                        break;
-                    case "收银员":
-                        rank = System.Web.HttpUtility.UrlEncode("Cashier");
-                        break;
-                    default:
-                        rank = System.Web.HttpUtility.UrlEncode(rank);
-                        break;
-                }
+                rank = System.Web.HttpUtility.UrlEncode(rank);
             }
 
             if (_userInfo.Rank == EnumRole.ShopManager)
