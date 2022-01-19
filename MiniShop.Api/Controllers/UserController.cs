@@ -55,17 +55,53 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success(userDto);
         }
 
-        [Description("根据商店ID和分页条件获取商店的用户分页列表")]
-        [OperationId("获取用户分页列表")]
+        [Description("根据商店ID、分页条件、职位等级获取商店用户分页列表")]
+        [OperationId("根据商店ID、分页条件、职位等级获取商店用户分页列表")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "pageIndex", param = "索引页")]
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
-        [HttpGet("GetPageByShopId/{pageIndex}/{pageSize}/{shopId}")]
-        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId)
+        [Parameters(name = "rank", param = "职位等级")]
+        [HttpGet("GetPage/{pageIndex}/{pageSize}/{shopId}/{rank}")]
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, EnumRole rank)
         {
-            _logger.LogDebug($"根据商店ID：{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取商店的用户分页列表");
+            _logger.LogDebug($"根据商店ID：{shopId}  职位等级：{rank} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取商店的用户分页列表");
             var data = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId.ToString()));
+            var dataShopManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "ShopManager"));
+            dataShopManager = data.Intersect(dataShopManager).ToList();
+            var dataShopAssistant = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "ShopAssistant"));
+            dataShopAssistant = data.Intersect(dataShopAssistant).ToList();
+            var dataStoreManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "StoreManager"));
+            dataStoreManager = data.Intersect(dataStoreManager).ToList();
+            var dataStoreAssistant = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "StoreAssistant"));
+            dataStoreAssistant = data.Intersect(dataStoreAssistant).ToList();
+            var dataCashier = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "Cashier"));
+            dataCashier = data.Intersect(dataCashier).ToList();
+            switch (rank)
+            {
+                case EnumRole.ShopManager:
+                    break;
+                case EnumRole.ShopAssistant:
+                    data = data.Except(dataShopManager).ToList();
+                    break;
+                case EnumRole.StoreManager:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    break;
+                case EnumRole.StoreAssistant:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    data = data.Except(dataStoreManager).ToList();
+                    break;
+                case EnumRole.Cashier:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    data = data.Except(dataStoreManager).ToList();
+                    data = data.Except(dataStoreAssistant).ToList();
+                    break;
+                default:
+                    break;
+            }
             var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
             foreach (var u in userPagedList.Item)
             {
@@ -74,20 +110,57 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success(userPagedList);
         }
 
-        [Description("根据商店ID和分页条件获取商店的用户分页列表")]
-        [OperationId("获取用户分页列表")]
+        [Description("根据商店ID、门店ID、分页条件、职位等级获取门店用户分页列表")]
+        [OperationId("根据商店ID、门店ID、分页条件、职位等级获取门店用户分页列表")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "pageIndex", param = "索引页")]
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
         [Parameters(name = "storeId", param = "门店ID")]
-        [HttpGet("GetPageByShopIdStoreId/{pageIndex}/{pageSize}/{shopId}/{storeId}")]
-        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, Guid storeId)
+        [Parameters(name = "rank", param = "职位等级")]
+        [HttpGet("GetPage/{pageIndex}/{pageSize}/{shopId}/{storeId}/{rank}")]
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, Guid storeId, EnumRole rank)
         {
-            _logger.LogDebug($"根据商店ID：{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取商店的用户分页列表");
+            _logger.LogDebug($"根据商店ID：{shopId} 门店ID：{storeId} 职位等级：{rank} 分页条件：索引页{pageIndex} 单页条数{pageSize} 获取门店的用户分页列表");
             var dataByShopId = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId.ToString()));
             var dataByStoreId = await _userManager.Value.GetUsersForClaimAsync(new Claim("StoreId", storeId.ToString()));
-            var data = dataByShopId.Union(dataByStoreId).ToList();
+            var data = dataByShopId.Intersect(dataByStoreId).ToList();
+            var dataShopManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "ShopManager"));
+            dataShopManager = data.Intersect(dataShopManager).ToList();
+            var dataShopAssistant = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "ShopAssistant"));
+            dataShopAssistant = data.Intersect(dataShopAssistant).ToList();
+            var dataStoreManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "StoreManager"));
+            dataStoreManager = data.Intersect(dataStoreManager).ToList();
+            var dataStoreAssistant = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "StoreAssistant"));
+            dataStoreAssistant = data.Intersect(dataStoreAssistant).ToList();
+            var dataCashier = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "Cashier"));
+            dataCashier = data.Intersect(dataCashier).ToList();
+            switch (rank)
+            {
+                case EnumRole.ShopManager:
+                    break;
+                case EnumRole.ShopAssistant:
+                    data = data.Except(dataShopManager).ToList();
+                    break;
+                case EnumRole.StoreManager:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    break;
+                case EnumRole.StoreAssistant:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    data = data.Except(dataStoreManager).ToList();
+                    break;
+                case EnumRole.Cashier:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    data = data.Except(dataStoreManager).ToList();
+                    data = data.Except(dataStoreAssistant).ToList();
+                    break;
+                default:
+                    break;
+            }
+
             var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
             foreach (var u in userPagedList.Item)
             {
@@ -96,47 +169,161 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success(userPagedList);
         }
 
-        [Description("根据商店ID和分页条件、查询条件获取商店的用户分页列表")]
-        [OperationId("获取用户分页列表")]
+        [Description("根据商店ID、分页条件、职位等级，和职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
+        [OperationId("根据商店ID、分页条件、职位等级，和职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "pageIndex", param = "索引页")]
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
-        [Parameters(name = "name", param = "用户名")]
-        [Parameters(name = "phone", param = "手机号")]
-        [Parameters(name = "rank", param = "职称")]
-        [HttpGet("GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{rank}")]
-        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, string name, string phone, string rank)
+        [Parameters(name = "rank", param = "职位等级")]
+        [Parameters(name = "queryRank", param = "职位查询")]
+        [Parameters(name = "queryName", param = "用户名查询")]
+        [Parameters(name = "queryPhone", param = "手机号查询")]
+        [HttpGet("GetPageWhereQuery/{pageIndex}/{pageSize}/{shopId}/{rank}/{queryRank}/{queryName}/{queryPhone}")]
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, EnumRole rank, EnumRole? queryRank, string queryName, string queryPhone)
         {
-            _logger.LogDebug($"根据商店ID：{shopId} 分页条件：索引页{pageIndex} 单页条数{pageSize} 查询条件：用户名：{name} 手机号：{phone} 职称：{rank} 获取商店的用户分页列表");
+            _logger.LogDebug($"根据商店ID：{shopId} 职位等级：{rank} 分页条件：索引页{pageIndex} 单页条数{pageSize} 模糊查询条件： 职位：{queryRank} 用户名：{queryName} 手机号：{queryPhone} 获取商店的用户分页列表");
             var data = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId.ToString()));
+
+            var dataShopManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "ShopManager"));
+            dataShopManager = data.Intersect(dataShopManager).ToList();
+            var dataShopAssistant = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "ShopAssistant"));
+            dataShopAssistant = data.Intersect(dataShopAssistant).ToList();
+            var dataStoreManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "StoreManager"));
+            dataStoreManager = data.Intersect(dataStoreManager).ToList();
+            var dataStoreAssistant = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "StoreAssistant"));
+            dataStoreAssistant = data.Intersect(dataStoreAssistant).ToList();
+            var dataCashier = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "Cashier"));
+            dataCashier = data.Intersect(dataCashier).ToList();
+            switch (rank)
+            {
+                case EnumRole.ShopManager:
+                    break;
+                case EnumRole.ShopAssistant:
+                    data = data.Except(dataShopManager).ToList();
+                    break;
+                case EnumRole.StoreManager:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    break;
+                case EnumRole.StoreAssistant:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    data = data.Except(dataStoreManager).ToList();
+                    break;
+                case EnumRole.Cashier:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    data = data.Except(dataStoreManager).ToList();
+                    data = data.Except(dataStoreAssistant).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            if (queryRank != null)
+            {
+                var dataQueryRank = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", queryRank.ToString()));
+                data = data.Intersect(dataQueryRank).ToList();
+            }
+            if (!string.IsNullOrEmpty(queryName))
+            {
+                queryName = System.Web.HttpUtility.UrlDecode(queryName);
+                data = data.Where(u => u.UserName.Contains(queryName)).ToList();
+            }
+            if (!string.IsNullOrEmpty(queryPhone))
+            {
+                queryPhone = System.Web.HttpUtility.UrlDecode(queryPhone);
+                data = data.Where(u => u.UserName.Contains(queryPhone)).ToList();
+            }
+
             var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
             foreach (var u in userPagedList.Item)
             {
                 await UserDtoSetClaimExtras(u);
             }
 
-            if (!string.IsNullOrEmpty(name))
+            return ResultModel.Success(userPagedList);
+        }
+
+        [Description("根据商店ID、分页条件、职位等级，和职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
+        [OperationId("根据商店ID、分页条件、职位等级，和职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "pageIndex", param = "索引页")]
+        [Parameters(name = "pageSize", param = "单页条数")]
+        [Parameters(name = "shopId", param = "商店ID")]
+        [Parameters(name = "rank", param = "职位等级")]
+        [Parameters(name = "queryStore", param = "职位门店")]
+        [Parameters(name = "queryRank", param = "职位查询")]
+        [Parameters(name = "queryName", param = "用户名查询")]
+        [Parameters(name = "queryPhone", param = "手机号查询")]
+        [HttpGet("GetPageWhereQuery/{pageIndex}/{pageSize}/{shopId}/{rank}/{queryStore}/{queryRank}/{queryName}/{queryPhone}")]
+        public async Task<IResultModel> Query([Required] int pageIndex, int pageSize, Guid shopId, EnumRole rank, Guid? queryStore, EnumRole? queryRank, string queryName, string queryPhone)
+        {
+            _logger.LogDebug($"根据商店ID：{shopId} 职位等级：{rank} 分页条件：索引页{pageIndex} 单页条数{pageSize} 模糊查询条件： 门店：{queryStore} 职位：{queryRank} 用户名：{queryName} 手机号：{queryPhone} 获取商店的用户分页列表");
+            var data = await _userManager.Value.GetUsersForClaimAsync(new Claim("ShopId", shopId.ToString()));
+
+            var dataShopManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "ShopManager"));
+            dataShopManager = data.Intersect(dataShopManager).ToList();
+            var dataShopAssistant = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "ShopAssistant"));
+            dataShopAssistant = data.Intersect(dataShopAssistant).ToList();
+            var dataStoreManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "StoreManager"));
+            dataStoreManager = data.Intersect(dataStoreManager).ToList();
+            var dataStoreAssistant = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "StoreAssistant"));
+            dataStoreAssistant = data.Intersect(dataStoreAssistant).ToList();
+            var dataCashier = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", "Cashier"));
+            dataCashier = data.Intersect(dataCashier).ToList();
+            switch (rank)
             {
-                name = System.Web.HttpUtility.UrlDecode(name);
-                userPagedList.Item = userPagedList.Item.Where(u => u.UserName.Contains(name));
+                case EnumRole.ShopManager:
+                    break;
+                case EnumRole.ShopAssistant:
+                    data = data.Except(dataShopManager).ToList();
+                    break;
+                case EnumRole.StoreManager:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    break;
+                case EnumRole.StoreAssistant:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    data = data.Except(dataStoreManager).ToList();
+                    break;
+                case EnumRole.Cashier:
+                    data = data.Except(dataShopManager).ToList();
+                    data = data.Except(dataShopAssistant).ToList();
+                    data = data.Except(dataStoreManager).ToList();
+                    data = data.Except(dataStoreAssistant).ToList();
+                    break;
+                default:
+                    break;
             }
-            if (!string.IsNullOrEmpty(phone))
+
+            if (queryStore != null)
             {
-                phone = System.Web.HttpUtility.UrlDecode(phone);
-                userPagedList.Item = userPagedList.Item.Where(u => u.PhoneNumber.Contains(phone));
+                var dataByStoreId = await _userManager.Value.GetUsersForClaimAsync(new Claim("StoreId", queryStore.ToString()));
+                data = data.Intersect(dataByStoreId).ToList();
             }
-            if (!string.IsNullOrEmpty(rank))
+            if (queryRank != null)
             {
-                rank = System.Web.HttpUtility.UrlDecode(rank);
-                if (Enum.TryParse<EnumRole>(rank, out EnumRole r))
-                {
-                    userPagedList.Item = userPagedList.Item.Where(u => u.Rank == r);
-                }
-                else
-                {
-                    userPagedList.Item = userPagedList.Item.Where(u => u.Id == "");
-                }
+                var dataQueryRank = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", queryRank.ToString()));
+                data = data.Intersect(dataQueryRank).ToList();
+            }
+            if (!string.IsNullOrEmpty(queryName))
+            {
+                queryName = System.Web.HttpUtility.UrlDecode(queryName);
+                data = data.Where(u => u.UserName.Contains(queryName)).ToList();
+            }
+            if (!string.IsNullOrEmpty(queryPhone))
+            {
+                queryPhone = System.Web.HttpUtility.UrlDecode(queryPhone);
+                data = data.Where(u => u.UserName.Contains(queryPhone)).ToList();
+            }
+
+            var userPagedList = data.AsQueryable().ProjectTo<UserDto>(_mapper.Value.ConfigurationProvider).ToPagedList(pageIndex, pageSize);
+            foreach (var u in userPagedList.Item)
+            {
+                await UserDtoSetClaimExtras(u);
             }
 
             return ResultModel.Success(userPagedList);

@@ -12,6 +12,9 @@ using MiniShop.Model.Enums;
 using AutoMapper;
 using MiniShop.Mvc.Code;
 using MiniShop.Model.Code;
+using Orm.Core.Result;
+using Orm.Core;
+using System;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -230,30 +233,26 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPageAsync(int page, int limit)
         {
-            if (_userInfo.Rank == EnumRole.ShopManager)
+            ResultModel<PagedList<UserDto>> result = new ResultModel<PagedList<UserDto>>();
+            switch (_userInfo.Rank)
             {
-                var result = await _userApi.GetPageByShopIdAsync(page, limit, _userInfo.ShopId);
-                return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
+                case EnumRole.ShopManager:
+                case EnumRole.ShopAssistant:
+                    result = await _userApi.GetPageAsync(page, limit, _userInfo.ShopId, _userInfo.Rank);
+                    break;
+                case EnumRole.StoreManager:
+                case EnumRole.StoreAssistant:
+                case EnumRole.Cashier:
+                    result = await _userApi.GetPageAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId, _userInfo.Rank);
+                    break;
             }
-            else
-            {
-                var result = await _userApi.GetPageByShopIdStoreIdAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId);
-                return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
-            }
+            return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
-        public async Task<IActionResult> GetPageWhereQueryAsync(int page, int limit, string store, string name, string phone, string rank)
+        public async Task<IActionResult> GetPageWhereQueryAsync(int page, int limit, Guid? store, EnumRole? rank, string name, string phone)
         {
-            if (string.IsNullOrEmpty(store))
-            {
-                store = " ";
-            }
-            else
-            {
-                store = System.Web.HttpUtility.UrlEncode(store);
-            }
             if (string.IsNullOrEmpty(name))
             {
                 name = " ";
@@ -270,24 +269,31 @@ namespace MiniShop.Mvc.Controllers
             {
                 phone = System.Web.HttpUtility.UrlEncode(phone);
             }
-            if (string.IsNullOrEmpty(rank))
+
+            ResultModel<PagedList<UserDto>> result = new ResultModel<PagedList<UserDto>>();
+            switch (_userInfo.Rank)
             {
-                rank = " ";
-            }
-            else
-            {
-                rank = System.Web.HttpUtility.UrlEncode(rank);
+                case EnumRole.ShopManager:
+                case EnumRole.ShopAssistant:
+                    result = await _userApi.GetPageWhereQueryAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, store, rank, name, phone);
+                    break;
+                case EnumRole.StoreManager:
+                case EnumRole.StoreAssistant:
+                case EnumRole.Cashier:
+                    result = await _userApi.GetPageWhereQueryAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, _userInfo.StoreId, rank, name, phone);
+                    break;
+                default:
+                    break;
             }
 
             if (_userInfo.Rank == EnumRole.ShopManager)
             {
-                //var result = await _userApi.GetPageByShopIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, name, phone, rank);
-                var result = await _userApi.GetPageByShopIdStoreIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, System.Guid.Parse(store), name, phone, rank);
+
                 return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
             }
             else
             {
-                var result = await _userApi.GetPageByShopIdStoreIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId, name, phone, rank);
+                result = await _userApi.GetPageWhereQueryAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, _userInfo.StoreId, rank, name, phone);
                 return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
             }
 
@@ -349,7 +355,7 @@ namespace MiniShop.Mvc.Controllers
 
 
     //备注：
-    //老板查全部商店所有门店用户，非老板用户查所在当前门店下所有用户
+    //老板和老板助理职位能查全部商店所有门店用户，其他职位用户查所在当前门店下该职位以下（包含该职位）的所有用户
     //一个商店只有一个老板，可以有多个老板助理；一个商店可以有多个门店，一个门店只有一个店长，可以有多个店长助理，可以有多个收银员
-    //职位的管理范围是该职位下的所有职位，如添加修改删除用户只能操作该职位以下的所有职位用户
+    //职位的管理范围是该职位下的所有职位，如添加修改删除用户只能操作该职位以下的所有职位用户（同职位用户不能修改删除）
 }

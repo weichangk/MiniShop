@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using MiniShop.Dto;
+using MiniShop.Model.Enums;
 using MiniShop.Mvc.Code;
 using Orm.Core;
 using Orm.Core.Result;
@@ -17,17 +18,17 @@ namespace MiniShop.Mvc.HttpApis
         [HttpGet("/api/User/{name}")]
         ITask<ResultModel<UserDto>> GetByNameAsync(string name);
 
-        [HttpGet("/api/User/GetPageByShopId/{pageIndex}/{pageSize}/{shopId}")]
-        ITask<ResultModel<PagedList<UserDto>>> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId);
+        [HttpGet("/api/User/GetPage/{pageIndex}/{pageSize}/{shopId}/{rank}")]
+        ITask<ResultModel<PagedList<UserDto>>> GetPageAsync(int pageIndex, int pageSize, Guid shopId, EnumRole rank);
 
-        [HttpGet("/api/User/GetPageByShopIdStoreId/{pageIndex}/{pageSize}/{shopId}/{storeId}")]
-        ITask<ResultModel<PagedList<UserDto>>> GetPageByShopIdStoreIdAsync(int pageIndex, int pageSize, Guid shopId, Guid storeId);
+        [HttpGet("/api/User/GetPage/{pageIndex}/{pageSize}/{shopId}/{storeId}/{rank}")]
+        ITask<ResultModel<PagedList<UserDto>>> GetPageAsync(int pageIndex, int pageSize, Guid shopId, Guid storeId, EnumRole rank);
 
-        [HttpGet("/api/User/GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}/{phone}/{rank}")]
-        ITask<ResultModel<PagedList<UserDto>>> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name, string phone, string rank);
+        [HttpGet("/api/User/GetPageWhereQuery/{pageIndex}/{pageSize}/{shopId}/{rank}/{queryRank}/{queryName}/{queryPhone}")]
+        ITask<ResultModel<PagedList<UserDto>>> GetPageWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, EnumRole rank, EnumRole? queryRank, string queryName, string queryPhone);
 
-        [HttpGet("/api/User/GetPageByShopIdStoreIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{storeId}/{name}/{phone}/{rank}")]
-        ITask<ResultModel<PagedList<UserDto>>> GetPageByShopIdStoreIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, Guid storeId, string name, string phone, string rank);
+        [HttpGet("/api/User/GetPageWhereQuery/{pageIndex}/{pageSize}/{shopId}/{rank}/{queryStore}/{queryRank}/{queryName}/{queryPhone}")]
+        ITask<ResultModel<PagedList<UserDto>>> GetPageWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, EnumRole rank, Guid? queryStore, EnumRole? queryRank, string queryName, string queryPhone);
 
         [HttpDelete("/api/User/{name}")]
         ITask<ResultModel<string>> DeleteAsync(string name);
