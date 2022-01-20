@@ -241,6 +241,7 @@ namespace IdentityServerHost.Quickstart.UI
                 {
                     UserName = model.Username,
                     Email = model.Email,
+                    PhoneNumber = model.Phone,
                 };
                 //将用户数据存储在AspNetUsers数据库表中
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -251,7 +252,19 @@ namespace IdentityServerHost.Quickstart.UI
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-                result = await _userManager.AddClaimsAsync(user, new Claim[] { new Claim(JwtClaimTypes.Role, "ShopManager") });
+                result = await _userManager.AddToRolesAsync(user, new System.Collections.Generic.List<string> { "ShopManager" });
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                var shopId = Guid.NewGuid();
+                result = await _userManager.AddClaimsAsync(user, new Claim[]{
+                            new Claim("rank", "ShopManager"),
+                            new Claim("shopid", shopId.ToString()),
+                            new Claim("storeid", shopId.ToString()),
+                            new Claim("isfreeze", "false"),
+                            new Claim("createdtime", DateTime.Now.ToString()),
+                        });
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);

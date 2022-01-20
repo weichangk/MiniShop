@@ -35,7 +35,7 @@ namespace MiniShop.Ids
 
             services.Configure<IdentityOptions>(options =>
             {
-                options.User.RequireUniqueEmail = true;
+                options.User.RequireUniqueEmail = false;//为true时发现注册时不能有重复邮件，但是修改时可以修改为重复邮件！！！
                 //最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符
                 options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 1;

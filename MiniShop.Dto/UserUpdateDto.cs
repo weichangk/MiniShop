@@ -6,6 +6,10 @@ namespace MiniShop.Dto
 {
     public class UserUpdateDto
     {
+        [Display(Name = "用户ID")]
+        [Required(ErrorMessage = "{0},不能为空")]
+        public string Id { get; set; }
+
         [Display(Name = "用户名")]
         [RegularExpression(@"^[a-zA-Z0-9_-]{4,16}$", ErrorMessage = "{0}的格式不正确，4到16位（字母，数字，下划线，减号）")]
         public string UserName { get; set; }

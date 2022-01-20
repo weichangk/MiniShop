@@ -14,17 +14,18 @@
             <div class="main-container">
                 <div class="main-container">
                     <input type="hidden" id="Id" name="Id" value="@Model.Id" />
-                    <input type="hidden" id="Role" name="Role" value="@Model.Rank" />
+                    <input type="hidden" id="Rank" name="Rank" value="@Model.Rank" />
+                    <input type="hidden" id="IsFreeze" name="IsFreeze" value="@Model.IsFreeze" />
                     <div class="layui-form-item">
                         <label class="layui-form-label" style="width: 20%">用户名</label>
                         <div class="layui-input-block">
-                            <input type="text" name="Name" value="@Model.UserName" lay-verify="userName" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+                            <input type="text" name="UserName" value="@Model.UserName" lay-verify="userName" autocomplete="off" placeholder="请输入用户名" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label" style="width: 20%">手机号</label>
                         <div class="layui-input-block">
-                            <input type="text" name="Phone" value="@Model.PhoneNumber" lay-verify="nullablePhone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
+                            <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" lay-verify="nullablePhone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -33,16 +34,14 @@
                             <input type="text" name="Email" value="@Model.Email" lay-verify="nullableEmail" autocomplete="off" placeholder="请输入邮箱" class="layui-input">
                         </div>
                     </div>
-                    @* 店长角色屏蔽角色修改选择 *@
+                    @* 老板职位屏蔽职位修改选择 *@
                     @if (Model.Rank != MiniShop.Model.Enums.EnumRole.ShopManager)
                     {
                         <div class="layui-form-item">
-                            <label class="layui-form-label" style="width: 20%">角色</label>
+                            <label class="layui-form-label" style="width: 20%">职位</label>
                             <div class="layui-input-block">
-                                <select id="OptionRole" name="OptionRole" lay-filter="SelectRole" lay-verify="required">
-                                    <option value="">请选择一个角色</option>
-                                    <option value="Admin">管理员</option>
-                                    <option value="Cashier">收银员</option>
+                                <select id="OptionRank" lay-filter="SelectRank" lay-verify="required">
+                                    <option value="">请选择一个职位</option>
                                 </select>
                             </div>
                         </div>
@@ -90,14 +89,12 @@
                 },
             });
 
-            //选中当前角色
-            var value =  $('#Role').val();
-            $('#OptionRole').find("option[value="+value+"]").attr("selected",true);
-            form.render('select');
+            //绑定职位
+            BindRank();
 
-            //选择角色更新@Model.Role
-	        form.on('select(SelectRole)', function(data){
-                $('#Role').val(data.value);
+            //选择职位更新@Model.Rank
+            form.on('select(SelectRank)', function(data){
+                $('#Rank').val(data.value);
 	        });
 
         });
@@ -130,6 +127,26 @@
                     layer.msg(result.msg, { icon: 2, time: 5000 });
                 }
             }
+        };
+
+        function BindRank() {
+            $.get('GetRankScopeByCurrentRankForUpdateUser', function (result) {
+                layui.use('form', function () {
+                    var form = layui.form;
+                    if (result.success) {
+                        var str = ''; //声明字符串
+                        var currentRank = $('#Rank').val();//当前职位
+                        //var data = $.parseJSON(result.data);//转成Json对象
+                        $("#OptionRank option:gt(0)").remove();//重新加载前，移除第一个以外的option
+                        $.each(result.data, function (i, obj) {
+                            str += '<option value="' + obj.opValue + '">' + obj.opName + '</option>';
+                        });//遍历循环遍历
+                        $(str).appendTo("#OptionRank");//绑定
+                        $('#OptionRank').find("option[value=" + currentRank + "]").attr("selected", true); //默认选择
+                        form.render("select");//注意：最后必须重新渲染下拉框，否则没有任何效果。
+                    }
+                });
+            });
         };
 
     </script>

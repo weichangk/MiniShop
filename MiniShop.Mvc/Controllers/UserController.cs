@@ -93,6 +93,7 @@ namespace MiniShop.Mvc.Controllers
         public IActionResult GetRankScopeByCurrentRankForUpdateUser()
         {
             List<dynamic> rankSelect = new List<dynamic>();
+            var shopManagerOp = new { opValue = EnumRole.ShopManager.ToString(), opName = EnumRole.ShopManager.ToDescription() };
             var shopAssistantOp = new { opValue = EnumRole.ShopAssistant.ToString(), opName = EnumRole.ShopAssistant.ToDescription() };
             var storeManagerOp = new { opValue = EnumRole.StoreManager.ToString(), opName = EnumRole.StoreManager.ToDescription() };
             var storeAssistantOp = new { opValue = EnumRole.StoreAssistant.ToString(), opName = EnumRole.StoreAssistant.ToDescription() };
@@ -100,21 +101,25 @@ namespace MiniShop.Mvc.Controllers
             switch (_userInfo.Rank)
             {
                 case EnumRole.ShopManager:
+                    rankSelect.Add(shopManagerOp);
                     rankSelect.Add(shopAssistantOp);
                     rankSelect.Add(storeManagerOp);
                     rankSelect.Add(storeAssistantOp);
                     rankSelect.Add(cashierOp);
                     break;
                 case EnumRole.ShopAssistant:
+                    rankSelect.Add(shopAssistantOp);
                     rankSelect.Add(storeManagerOp);
                     rankSelect.Add(storeAssistantOp);
                     rankSelect.Add(cashierOp);
                     break;
                 case EnumRole.StoreManager:
+                    rankSelect.Add(storeManagerOp);
                     rankSelect.Add(storeAssistantOp);
                     rankSelect.Add(cashierOp);
                     break;
                 case EnumRole.StoreAssistant:
+                    rankSelect.Add(storeAssistantOp);
                     rankSelect.Add(cashierOp);
                     break;
                 //case EnumRole.Cashier:
@@ -200,7 +205,7 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> UpdateAsync(UserDto model)
         {
             var dto = _mapper.Map<UserUpdateDto>(model);
-            var result = await _userApi.UpdateAsync(dto);
+            var result = await _userApi.PutUpdateAsync(dto);
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
@@ -220,7 +225,7 @@ namespace MiniShop.Mvc.Controllers
                 }
                 var doc = new JsonPatchDocument<UserUpdateDto>();
                 doc.Replace(item => item.IsFreeze, enable);
-                var result = await _userApi.PatchUpdateAsync(name, doc);
+                var result = await _userApi.PatchUpdateByNameAsync(name, doc);
                 return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
             }
             else
@@ -238,12 +243,12 @@ namespace MiniShop.Mvc.Controllers
             {
                 case EnumRole.ShopManager:
                 case EnumRole.ShopAssistant:
-                    result = await _userApi.GetPageAsync(page, limit, _userInfo.ShopId, _userInfo.Rank);
+                    result = await _userApi.GetPageByRankOnShopAsync(page, limit, _userInfo.ShopId, _userInfo.Rank);
                     break;
                 case EnumRole.StoreManager:
                 case EnumRole.StoreAssistant:
                 case EnumRole.Cashier:
-                    result = await _userApi.GetPageAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId, _userInfo.Rank);
+                    result = await _userApi.GetPageByRankOnStoreAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId, _userInfo.Rank);
                     break;
             }
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
@@ -253,50 +258,25 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPageWhereQueryAsync(int page, int limit, Guid? store, EnumRole? rank, string name, string phone)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                name = " ";
-            }
-            else
-            {
-                name = System.Web.HttpUtility.UrlEncode(name);
-            }
-            if (string.IsNullOrEmpty(phone))
-            {
-                phone = " ";
-            }
-            else
-            {
-                phone = System.Web.HttpUtility.UrlEncode(phone);
-            }
+            name = System.Web.HttpUtility.UrlEncode(name);
+            phone = System.Web.HttpUtility.UrlEncode(phone);
 
             ResultModel<PagedList<UserDto>> result = new ResultModel<PagedList<UserDto>>();
             switch (_userInfo.Rank)
             {
                 case EnumRole.ShopManager:
                 case EnumRole.ShopAssistant:
-                    result = await _userApi.GetPageWhereQueryAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, store, rank, name, phone);
+                    result = await _userApi.GetPageByRankOnShopWhereQueryStoreOrRankOrNameOrPhoneAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, store, rank, name, phone);
                     break;
                 case EnumRole.StoreManager:
                 case EnumRole.StoreAssistant:
                 case EnumRole.Cashier:
-                    result = await _userApi.GetPageWhereQueryAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, _userInfo.StoreId, rank, name, phone);
+                    result = await _userApi.GetPageByRankOnShopWhereQueryStoreOrRankOrNameOrPhoneAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, _userInfo.StoreId, rank, name, phone);
                     break;
                 default:
                     break;
             }
-
-            if (_userInfo.Rank == EnumRole.ShopManager)
-            {
-
-                return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
-            }
-            else
-            {
-                result = await _userApi.GetPageWhereQueryAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, _userInfo.StoreId, rank, name, phone);
-                return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
-            }
-
+            return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
         [HttpDelete]
@@ -314,7 +294,7 @@ namespace MiniShop.Mvc.Controllers
                     return Json(new Result() { Success = false, Msg = $"不能删除当前登录用户：{userDto.Data.UserName}" });
                 }
 
-                var result = await _userApi.DeleteAsync(name);
+                var result = await _userApi.DeleteByNameAsync(name);
                 return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
             }
             else
@@ -347,7 +327,7 @@ namespace MiniShop.Mvc.Controllers
                 }
             }
 
-            var result = await _userApi.BatchDeleteAsync(namesList);
+            var result = await _userApi.BatchDeleteByNamesAsync(namesList);
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
@@ -355,7 +335,9 @@ namespace MiniShop.Mvc.Controllers
 
 
     //备注：
-    //老板和老板助理职位能查全部商店所有门店用户，其他职位用户查所在当前门店下该职位以下（包含该职位）的所有用户
-    //一个商店只有一个老板，可以有多个老板助理；一个商店可以有多个门店，一个门店只有一个店长，可以有多个店长助理，可以有多个收银员
+    //一个商店只有一个老板（在注册时创建），可以有多个老板助理（所属门店应为总部，即门店id=商店id）；一个商店可以有多个门店，一个门店只有一个店长（要做唯一处理），可以有多个店长助理，可以有多个收银员
+    //老板和老板助理职位能查全部商店所有门店用户，其他职位用户查所在当前门店下该职位以下（包含该职位）的所有用户。  
     //职位的管理范围是该职位下的所有职位，如添加修改删除用户只能操作该职位以下的所有职位用户（同职位用户不能修改删除）
+    //在用户列表中按条件搜索用户时，是在该用户职位下可见的用户进行搜索，所以按职位搜索时，搜索的职位条件不可以大于该用户职位。
+
 }
