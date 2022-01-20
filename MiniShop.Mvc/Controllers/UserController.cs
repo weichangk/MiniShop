@@ -210,21 +210,21 @@ namespace MiniShop.Mvc.Controllers
         }
 
         [HttpPatch]
-        public async Task<IActionResult> ChangeFreezeStateAsync(string name, bool enable)
+        public async Task<IActionResult> ChangeFreezeStateAsync(string name, bool freeze)
         {
             var userDto = await _userApi.GetByNameAsync(name);
             if (userDto.Data != null)
             {
-                if (userDto.Data.Rank == EnumRole.ShopManager)
+                if (userDto.Data.Rank == EnumRole.ShopManager && freeze)
                 {
                     return Json(new Result() { Success = false, Msg = "不能禁用老板" });
                 }
-                if (userDto.Data.UserName == _userInfo.UserName)
+                if (userDto.Data.UserName == _userInfo.UserName && freeze)
                 {
                     return Json(new Result() { Success = false, Msg = $"不能禁用当前登录用户：{userDto.Data.UserName}" });
                 }
                 var doc = new JsonPatchDocument<UserUpdateDto>();
-                doc.Replace(item => item.IsFreeze, enable);
+                doc.Replace(item => item.IsFreeze, freeze);
                 var result = await _userApi.PatchUpdateByNameAsync(name, doc);
                 return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
             }
@@ -332,12 +332,5 @@ namespace MiniShop.Mvc.Controllers
         }
 
     }
-
-
-    //备注：
-    //一个商店只有一个老板（在注册时创建），可以有多个老板助理（所属门店应为总部，即门店id=商店id）；一个商店可以有多个门店，一个门店只有一个店长（要做唯一处理），可以有多个店长助理，可以有多个收银员
-    //老板和老板助理职位能查全部商店所有门店用户，其他职位用户查所在当前门店下该职位以下（包含该职位）的所有用户。  
-    //职位的管理范围是该职位下的所有职位，如添加修改删除用户只能操作该职位以下的所有职位用户（同职位用户不能修改删除）
-    //在用户列表中按条件搜索用户时，是在该用户职位下可见的用户进行搜索，所以按职位搜索时，搜索的职位条件不可以大于该用户职位。
 
 }

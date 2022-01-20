@@ -78,11 +78,11 @@
         </script>
 
         <script type="text/html" id="user-enable">
-            <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.enable== true ? 'checked' : '' }} />
+            <input type="checkbox" name="isFreeze" value="{{d.userName}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.isFreeze== false ? 'checked' : '' }} />
         </script>
 
         <script type="text/html" id="user-createTime">
-            {{layui.util.toDateString(d.createTime, 'yyyy-MM-dd')}}
+            {{layui.util.toDateString(d.createdTime, 'yyyy-MM-dd')}}
         </script>
 
         <script src="~/component/layui/layui.js"></script>
@@ -119,12 +119,12 @@
                         align: 'center'
                     },
                     {
-                        title: '职称',
+                        title: '职位',
                         field: 'rankDes',
                         align: 'center'
                     },
                     {
-                        title: '禁用',
+                        title: '启用',
                         field: 'isFreeze',
                         align: 'center',
                         templet: '#user-enable'
@@ -213,7 +213,7 @@
 
                 window.changeEnable = function (obj) {
                     $.ajax({
-                        url: "/User/ChangeFreezeState?id=" + obj.value + "&enable=" + obj.elem.checked,
+                        url: "/User/ChangeFreezeState?name=" + obj.value + "&freeze=" + !obj.elem.checked,
                         dataType: 'json',
                         type: 'patch',
                         success: function (result) {
@@ -237,7 +237,7 @@
                         layer.close(index);
                         let loading = layer.load();
                         $.ajax({
-                            url: "/user/delete/" + obj.data['id'],
+                            url: "/user/delete?name=" + obj.data['userName'],
                             dataType: 'json',
                             type: 'delete',
                             success: function (result) {
@@ -263,9 +263,9 @@
 
                 window.batchRemove = function (obj) {
 
-                    var checkIds = common.checkField(obj, 'id');
+                    var checkUserNames = common.checkField(obj, 'userName');
 
-                    if (checkIds === "") {
+                    if (checkUserNames === "") {
                         layer.msg("未选中数据", {
                             icon: 3,
                             time: 1000
@@ -280,7 +280,7 @@
                         layer.close(index);
                         let loading = layer.load();
                         $.ajax({
-                            url: "/user/batchDelete?ids=" + checkIds,
+                            url: "/user/batchDelete?names=" + checkUserNames,
                             dataType: 'json',
                             type: 'delete',
                             success: function (result) {

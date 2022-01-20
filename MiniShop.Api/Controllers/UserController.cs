@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +47,7 @@ namespace MiniShop.Api.Controllers
             var data = await _userManager.Value.FindByNameAsync(name);
             if (data == null)
             {
-                return ResultModel.NotExists;
+                return ResultModel.Failed($"用户：{name} 不存在");
             }
             var userDto = _mapper.Value.Map<UserDto>(data);
             await UserDtoSetClaimExtras(userDto);
@@ -197,19 +196,19 @@ namespace MiniShop.Api.Controllers
         public async Task<IResultModel> DeleteByName([Required] string name)
         {
             _logger.LogDebug("删除用户");
-            var data = await _userManager.Value.FindByNameAsync(name);
-            if (data == null)
+            var user = await _userManager.Value.FindByNameAsync(name);
+            if (user == null)
             {
-                _logger.LogError($"删除错误：用户：{name} 不存在");
-                return ResultModel.NotExists;
+                _logger.LogError($"用户删除错误：{name} 不存在");
+                return ResultModel.Failed($"用户删除错误：{name} 不存在");
             }
             else
             {
-                var result = await _userManager.Value.DeleteAsync(data);
+                var result = await _userManager.Value.DeleteAsync(user);
                 if (!result.Succeeded)
                 {
-                    _logger.LogError($"删除错误：{result.Errors.FirstOrDefault().Description}");
-                    return ResultModel.Failed($"删除错误：用户：{name} 删除失败", 500);
+                    _logger.LogError($"用户删除错误：{result.Errors.FirstOrDefault().Description}");
+                    return ResultModel.Failed($"用户删除错误：{name} 删除失败", (int)HttpStatusCode.InternalServerError);
                 }
             }
             return ResultModel.Success();
@@ -222,22 +221,24 @@ namespace MiniShop.Api.Controllers
         public async Task<IResultModel> BatchDeleteByNames([FromBody] List<string> names)
         {
             _logger.LogDebug("批量删除用户");
+            List<IdentityUser> users = new List<IdentityUser>();
             foreach (var name in names)
             {
-                var data = await _userManager.Value.FindByNameAsync(name);
-                if (data == null)
+                var user = await _userManager.Value.FindByNameAsync(name);
+                if (user == null)
                 {
-                    _logger.LogError($"删除错误：用户：{name} 不存在");
-                    return ResultModel.NotExists;
+                    _logger.LogError($"用户删除错误：{name} 不存在");
+                    return ResultModel.Failed($"用户删除错误：{name} 不存在");
                 }
-                else
+                users.Add(user);
+            }
+            foreach (var u in users)
+            {
+                var result = await _userManager.Value.DeleteAsync(u);
+                if (!result.Succeeded)
                 {
-                    var result = await _userManager.Value.DeleteAsync(data);
-                    if (!result.Succeeded)
-                    {
-                        _logger.LogError($"删除错误：{result.Errors.FirstOrDefault().Description}");
-                        return ResultModel.Failed("删除错误：用户：{name} 删除失败", 500);
-                    }
+                    _logger.LogError($"用户删除错误：{result.Errors.FirstOrDefault().Description}");
+                    return ResultModel.Failed("用户删除错误：{name} 删除失败", (int)HttpStatusCode.InternalServerError);
                 }
             }
             return ResultModel.Success();
@@ -254,10 +255,36 @@ namespace MiniShop.Api.Controllers
                 var user = await _userManager.Value.FindByNameAsync(model.UserName);
                 if (user != null)
                 {
-                    _logger.LogError($"添加错误：用户：{model.UserName} 已存在");
-                    return ResultModel.HasExists;
+                    _logger.LogError($"用户添加错误：{model.UserName} 已存在");
+                    return ResultModel.Failed($"用户添加错误：{model.UserName} 已存在");
                 }
-
+                if (model.Rank == EnumRole.StoreManager)
+                {
+                    var storeManagerExist = await CheckStoreManagerExistByShopIdAndStoreId(model.ShopId.ToString(), model.StoreId.ToString());
+                    if (storeManagerExist)
+                    {
+                        _logger.LogError($"用户添加错误：店长已经存在，{model.UserName} 不能再添加为店长职位");
+                        return ResultModel.Failed($"用户添加错误：店长已经存在，{model.UserName} 不能再添加为店长职位");
+                    }
+                }
+                if (model.Rank == EnumRole.ShopManager)
+                {
+                    var shopManagerExist = await CheckShopManagerExistByShopId(model.ShopId.ToString());
+                    if (shopManagerExist)
+                    {
+                        _logger.LogError($"用户添加错误：老板已经存在，{model.UserName} 不能再添加为老板职位");
+                        return ResultModel.Failed($"用户添加错误：老板已经存在，{model.UserName} 不能再添加为老板职位");
+                    }
+                }
+                if (model.Rank == EnumRole.ShopAssistant)
+                {
+                    if (model.ShopId != model.StoreId)
+                    {
+                        //通过商店id 也是门店id 获取门店 门店名称
+                        _logger.LogError($"用户添加错误：老板助理需要添加到 {model.UserName} 门店下");
+                        return ResultModel.Failed($"用户添加错误：老板助理需要添加到 {model.UserName} 门店下");
+                    }
+                }
                 user = new IdentityUser
                 {
                     UserName = model.UserName,
@@ -268,22 +295,22 @@ namespace MiniShop.Api.Controllers
                 var result = await _userManager.Value.CreateAsync(user, model.PassWord);
                 if (!result.Succeeded)
                 {
-                    _logger.LogError($"添加错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"添加错误：{result.Errors.First().Description}");
+                    _logger.LogError($"用户添加错误：{result.Errors.First().Description}");
+                    return ResultModel.Failed($"用户添加错误：{result.Errors.First().Description}");
                 }
 
                 result = await _userManager.Value.AddToRolesAsync(user, new List<string> { model.Rank.ToString() });
                 if (!result.Succeeded)
                 {
-                    _logger.LogError($"添加错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"添加错误：{result.Errors.First().Description}");
+                    _logger.LogError($"用户添加错误：{result.Errors.First().Description}");
+                    return ResultModel.Failed($"用户添加错误：{result.Errors.First().Description}");
                 }
 
                 result = await AddUserClaimExtras(user, model);
                 if (!result.Succeeded)
                 {
-                    _logger.LogError($"添加错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"添加错误：{result.Errors.First().Description}");
+                    _logger.LogError($"用户添加错误：{result.Errors.First().Description}");
+                    return ResultModel.Failed($"用户添加错误：{result.Errors.First().Description}");
                 }
 
                 var data = await _userManager.Value.FindByNameAsync(model.UserName);
@@ -298,14 +325,14 @@ namespace MiniShop.Api.Controllers
         [HttpPut]
         public async Task<IResultModel> PutUpdate([FromBody] UserUpdateDto model)
         {
-            _logger.LogDebug("修改用户");
+            _logger.LogDebug("Put修改用户");
             if (ModelState.IsValid)
             {
                 var user = await _userManager.Value.FindByIdAsync(model.Id);
                 if (user == null)
                 {
                     _logger.LogError($"用户修改错误：{model.UserName} 不存在");
-                    return ResultModel.NotExists;
+                    return ResultModel.Failed($"用户修改错误：{model.UserName} 不存在");
                 }
                 if (user.UserName != model.UserName)
                 {
@@ -386,33 +413,56 @@ namespace MiniShop.Api.Controllers
         [OperationId("Patch修改用户")]
         [Parameters(name = "name", param = "用户名")]
         [HttpPatch]
-        public async Task<IResultModel> PatchUpdateByName([FromRoute] string name, [FromBody] JsonPatchDocument<UserUpdateDto> patchDocument)
+        public async Task<IResultModel> PatchUpdateByName([Required] string name, [FromBody] JsonPatchDocument<UserUpdateDto> patchDocument)
         {
-            _logger.LogDebug("修改用户");
+            _logger.LogDebug("Patch修改用户");
             if (ModelState.IsValid)
             {
                 var user = await _userManager.Value.FindByNameAsync(name);
                 if (user == null)
                 {
-                    _logger.LogError($"修改错误：用户：{name} 不存在");
-                    return ResultModel.NotExists;
+                    _logger.LogError($"用户修改错误：{name} 不存在");
+                    return ResultModel.Failed($"用户修改错误：{name} 不存在");
                 }
                 var modelRouteToPatch = _mapper.Value.Map<UserUpdateDto>(user);
                 await UserUpdateDtoSetClaimExtras(modelRouteToPatch);
                 patchDocument.ApplyTo(modelRouteToPatch);
-                _mapper.Value.Map(modelRouteToPatch, user);
-                var result = await _userManager.Value.UpdateAsync(user);
-                if (!result.Succeeded)
+
+                //_mapper.Value.Map(modelRouteToPatch, user);
+                //var result = await _userManager.Value.UpdateAsync(user);//不能整个model更新！！！
+                //if (!result.Succeeded)
+                //{
+                //    _logger.LogError($"用户修改错误：{result.Errors.First().Description}");
+                //    return ResultModel.Failed($"用户修改错误：{result.Errors.First().Description}");
+                //}
+                //目前只需要对 IdentityUser 的用户名、邮箱，手机号进行更新操作
+                if (user.UserName != modelRouteToPatch.UserName || user.Email != modelRouteToPatch.Email)
                 {
-                    _logger.LogError($"修改错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"修改错误：{result.Errors.First().Description}");
+                    user.UserName = modelRouteToPatch.UserName;
+                    user.Email = modelRouteToPatch.Email;
+                    var resultUpdateAsync = await _userManager.Value.UpdateAsync(user);//Called to update the user after validating and updating the normalized email/user name.
+                    if (!resultUpdateAsync.Succeeded)
+                    {
+                        _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
+                        return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
+                    }
+                }
+                if (user.PhoneNumber != modelRouteToPatch.PhoneNumber)
+                {
+                    var changePhoneNumberToken = await _userManager.Value.GenerateChangePhoneNumberTokenAsync(user, modelRouteToPatch.PhoneNumber);
+                    var resultUpdateAsync = await _userManager.Value.ChangePhoneNumberAsync(user, modelRouteToPatch.PhoneNumber, changePhoneNumberToken);
+                    if (!resultUpdateAsync.Succeeded)
+                    {
+                        _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
+                        return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
+                    }
                 }
 
-                result = await UpdateUserClaimExtras(user, modelRouteToPatch);
+                var result = await UpdateUserClaimExtras(user, modelRouteToPatch);
                 if (!result.Succeeded)
                 {
-                    _logger.LogError($"修改错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"修改错误：{result.Errors.First().Description}");
+                    _logger.LogError($"用户修改错误：{result.Errors.First().Description}");
+                    return ResultModel.Failed($"用户修改错误：{result.Errors.First().Description}");
                 }
 
                 var data = await _userManager.Value.FindByNameAsync(name);
@@ -479,8 +529,6 @@ namespace MiniShop.Api.Controllers
                     case "rank":
                         dto.Rank = (EnumRole)Enum.Parse(typeof(EnumRole), c.Value);
                         break;
-                    case "":
-                        break;
                     case "isfreeze":
                         dto.IsFreeze = bool.Parse(c.Value);
                         break;
@@ -494,15 +542,14 @@ namespace MiniShop.Api.Controllers
         {
             var userDto = _mapper.Value.Map<UserDto>(user);
             await UserDtoSetClaimExtras(userDto);
-            var result =  await _userManager.Value.ReplaceClaimAsync(user, new Claim("rank", userDto.Rank.ToString()), new Claim("rank", model.Rank.ToString()));
-            if (!result.Succeeded)
+            IdentityResult result = IdentityResult.Success;
+            if (userDto.Rank != model.Rank)
             {
-                return result;
-            }
-
-            var claims = await _userManager.Value.GetClaimsAsync(user);
-            if (claims.FirstOrDefault(c => c.Type == "rank")?.Value != model.Rank.ToString())
-            {
+                result = await _userManager.Value.ReplaceClaimAsync(user, new Claim("rank", userDto.Rank.ToString()), new Claim("rank", model.Rank.ToString()));
+                if (!result.Succeeded)
+                {
+                    return result;
+                }
                 var roles = await _userManager.Value.GetRolesAsync(user);
                 result = await _userManager.Value.RemoveFromRolesAsync(user, roles);
                 if (!result.Succeeded)
@@ -515,11 +562,13 @@ namespace MiniShop.Api.Controllers
                     return result;
                 }
             }
-
-            await _userManager.Value.ReplaceClaimAsync(user, new Claim("isfreeze", userDto.IsFreeze.ToString()), new Claim("isfreeze", model.IsFreeze.ToString()));
-            if (!result.Succeeded)
+            if (userDto.IsFreeze != model.IsFreeze)
             {
-                return result;
+                await _userManager.Value.ReplaceClaimAsync(user, new Claim("isfreeze", userDto.IsFreeze.ToString()), new Claim("isfreeze", model.IsFreeze.ToString()));
+                if (!result.Succeeded)
+                {
+                    return result;
+                }
             }
             return result;
         }
@@ -531,6 +580,31 @@ namespace MiniShop.Api.Controllers
             var dataByStoreId = await _userManager.Value.GetUsersForClaimAsync(new Claim("storeid", userClaims.FirstOrDefault(c => c.Type == "storeid").Value));
             var storeManagerList = dataByShopId.Intersect(dataByStoreId).Intersect(dataStoreManager).ToList();
             if (storeManagerList == null || storeManagerList.Count == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private async Task<bool> CheckStoreManagerExistByShopIdAndStoreId(string shopid, string storeid)
+        {
+            var dataStoreManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", EnumRole.StoreManager.ToString()));
+            var dataByShopId = await _userManager.Value.GetUsersForClaimAsync(new Claim("shopid", shopid));
+            var dataByStoreId = await _userManager.Value.GetUsersForClaimAsync(new Claim("storeid", storeid));
+            var storeManagerList = dataByShopId.Intersect(dataByStoreId).Intersect(dataStoreManager).ToList();
+            if (storeManagerList == null || storeManagerList.Count == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private async Task<bool> CheckShopManagerExistByShopId(string shopid)
+        {
+            var dataShopManager = await _userManager.Value.GetUsersForClaimAsync(new Claim("rank", EnumRole.ShopManager.ToString()));
+            var dataByShopId = await _userManager.Value.GetUsersForClaimAsync(new Claim("shopid", shopid));
+            var shopManagerList = dataByShopId.Intersect(dataShopManager).ToList();
+            if (shopManagerList == null || shopManagerList.Count == 0)
             {
                 return false;
             }
@@ -578,3 +652,10 @@ namespace MiniShop.Api.Controllers
         }
     }
 }
+
+
+//备注：
+//一个商店只有一个老板（在注册时创建），可以有多个老板助理（所属门店应为总部，即门店id=商店id）；一个商店可以有多个门店，一个门店只有一个店长（要做唯一处理），可以有多个店长助理，可以有多个收银员
+//老板和老板助理职位能查全部商店所有门店用户，其他职位用户查所在当前门店下该职位以下（包含该职位）的所有用户。  
+//职位的管理范围是该职位下的所有职位，如添加修改删除用户只能操作该职位以下的所有职位用户（同职位用户不能修改删除）
+//在用户列表中按条件搜索用户时，是在该用户职位下可见的用户进行搜索，所以按职位搜索时，搜索的职位条件不可以大于该用户职位，否则将搜索不到数据（职位搜索约束需要前端控制）。
