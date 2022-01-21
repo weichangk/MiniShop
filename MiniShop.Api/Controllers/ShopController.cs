@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Orm.Core.Result;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Net;
+using MiniShop.Model.Enums;
 
 namespace MiniShop.Api.Controllers
 {
@@ -69,6 +70,7 @@ namespace MiniShop.Api.Controllers
 
         [Description("Put修改商店，成功返回商店信息")]
         [OperationId("Put修改商店")]
+        [Authorize(Roles = nameof(EnumRole.ShopManager))]
         [HttpPut]
         public async Task<IResultModel> Update([FromBody] ShopUpdateDto model)
         {
@@ -83,6 +85,7 @@ namespace MiniShop.Api.Controllers
         [Description("Patch修改商店，成功返回商店信息")]
         [OperationId("Patch修改商店")]
         [Parameters(name = "id", param = "商店ID")]
+        [Authorize(Roles = nameof(EnumRole.ShopManager))]
         [HttpPatch]
         public async Task<IResultModel> PatchUpdateById([Required] int id, [FromBody] JsonPatchDocument<ShopUpdateDto> patchDocument)
         {

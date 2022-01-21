@@ -16,6 +16,7 @@
             <div class="main-container">
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="ShopId" />
+                <input type="hidden" asp-for="ValidDate" />
                 <div class="layui-form-item">
                     <label class="layui-form-label">商店名</label>
                     <div class="layui-input-block">
@@ -31,13 +32,13 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">手机号</label>
                     <div class="layui-input-block">
-                        <input type="text" name="Phone" value="@Model.Phone" lay-verify="phone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
+                        <input type="text" name="Phone" value="@Model.Phone" lay-verify="nullablePhone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">邮  箱</label>
                     <div class="layui-input-block">
-                        <input type="text" name="Email" value="@Model.Email" lay-verify="email" autocomplete="off" placeholder="请输入邮箱" class="layui-input">
+                        <input type="text" name="Email" value="@Model.Email" lay-verify="nullableEmail" autocomplete="off" placeholder="请输入邮箱" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -86,6 +87,14 @@
                 addressCheck: function (value) {
                     if (!str_0_64_len(value))
                         return '请输入正确的地址！0到64位！';
+                },
+                nullableEmail: function (value) {
+                    if (!nullableEmailCheck(value))
+                        return '请输入正确的邮箱！';
+                },
+                nullablePhone: function (value) {
+                    if (!nullablePhoneCheck(value))
+                        return '请输入正确的手机号！';
                 },
             });
         });

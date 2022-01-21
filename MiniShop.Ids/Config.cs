@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Models;
+﻿using IdentityModel;
+using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 
@@ -21,6 +22,7 @@ namespace MiniShop.Ids
             new IdentityResources.Profile(),
             new IdentityResources.Phone(),
             new IdentityResources.Email(),
+            new IdentityResource("roles", "user roles", new List<string> { JwtClaimTypes.Role }),
             new IdentityResource(
                 name: _configuration["UserClaimExtras:Name"],
                 displayName: _configuration["UserClaimExtras:DisplayName"],
@@ -47,6 +49,7 @@ namespace MiniShop.Ids
             {
                 ApiSecrets = { new Secret(_configuration["MiniShopApiResourceConfig:Secret"].Sha256()) },
                 Scopes = _configuration["MiniShopApiResourceConfig:Scopes"].Split(" "),
+                UserClaims = new [] { JwtClaimTypes.Role }
             }
         };
 

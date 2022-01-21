@@ -76,6 +76,7 @@ namespace MiniShop.Mvc.Controllers
                         Contacts = _userInfo.UserName,
                         Phone = _userInfo.PhoneNumber,
                         Email = _userInfo.Email,
+                        ValidDate = System.DateTime.Now.AddDays(7),
                     };
                     var addShop =  await _shopApi.AddAsync(shopCreateDto);
                     if (!addShop.Success)
