@@ -4,6 +4,7 @@ using System;
 using WebApiClient;
 using WebApiClient.Attributes;
 using Orm.Core.Result;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace MiniShop.Mvc.HttpApis
 {
@@ -11,16 +12,19 @@ namespace MiniShop.Mvc.HttpApis
     [JsonReturn]
     public interface IShopApi : IHttpApi
     {
-        [HttpGet("/api/Shop/{id}")]
+        [HttpGet("/api/Shop")]
         ITask<ResultModel<ShopDto>> GetByIdAsync(int id);
 
-        [HttpGet("/api/Shop/GetByShopId/{shopId}")]
+        [HttpGet("/api/Shop/GetByShopId")]
         ITask<ResultModel<ShopDto>> GetByShopIdAsync(Guid shopId);
  
         [HttpPost("/api/Shop")]
         ITask<ResultModel<ShopCreateDto>> AddAsync([JsonContent] ShopCreateDto model);
 
         [HttpPut("/api/Shop")]
-        ITask<ResultModel<ShopUpdateDto>> UpdateAsync([JsonContent] ShopUpdateDto model);
+        ITask<ResultModel<ShopUpdateDto>> PutUpdateAsync([JsonContent] ShopUpdateDto model);
+
+        [HttpPatch("/api/Shop")]
+        ITask<ResultModel<UserDto>> PatchUpdateByIdAsync(int id, [JsonContent] JsonPatchDocument<ShopUpdateDto> doc);
     }
 }

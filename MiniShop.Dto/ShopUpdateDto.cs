@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MiniShop.Dto
 {
@@ -29,5 +30,9 @@ namespace MiniShop.Dto
         [Display(Name = "地址")]
         [StringLength(64, ErrorMessage = "{0},不能大于{1}")]
         public string Address { get; set; }
+
+        [Display(Name = "有效期")]
+        [Required(ErrorMessage = "{0},不能为空")]
+        public DateTime ValidDate { get; set; }
     }
 }

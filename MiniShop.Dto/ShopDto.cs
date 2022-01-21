@@ -25,5 +25,8 @@ namespace MiniShop.Dto
 
         [Display(Name = "地址")]
         public string Address { get; set; }
+
+        [Display(Name = "有效期")]
+        public DateTime ValidDate { get; set; }
     }
 }

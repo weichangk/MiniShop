@@ -31,18 +31,18 @@ namespace MiniShop.Mvc.HttpApis
         ITask<ResultModel<PagedList<UserDto>>> GetPageByRankOnShopWhereQueryStoreOrRankOrNameOrPhoneAsync(int pageIndex, int pageSize, Guid shopId, EnumRole rank, Guid? queryStore, EnumRole? queryRank, string queryName, string queryPhone);
 
         [HttpDelete("/api/User")]
-        ITask<ResultModel<string>> DeleteByNameAsync(string name);
+        ITask<ResultModel<string>> DeleteByNameAsync(EnumRole rank, string name);
 
         [HttpDelete("/api/User/BatchDelete")]
-        ITask<ResultModel<string>> BatchDeleteByNamesAsync([JsonContent] List<string> names);
+        ITask<ResultModel<string>> BatchDeleteByNamesAsync(EnumRole rank, [JsonContent] List<string> names);
 
         [HttpPost("/api/User")]
-        ITask<ResultModel<UserDto>> AddAsync([JsonContent] UserCreateDto model);
+        ITask<ResultModel<UserDto>> AddAsync(EnumRole rank, [JsonContent] UserCreateDto model);
 
         [HttpPut("/api/User")]
-        ITask<ResultModel<UserDto>> PutUpdateAsync([JsonContent] UserUpdateDto model);
+        ITask<ResultModel<UserDto>> PutUpdateAsync(EnumRole rank, [JsonContent] UserUpdateDto model);
 
         [HttpPatch("/api/User")]
-        ITask<ResultModel<UserDto>> PatchUpdateByNameAsync(string name, [JsonContent] JsonPatchDocument<UserUpdateDto> doc);
+        ITask<ResultModel<UserDto>> PatchUpdateByNameAsync(EnumRole rank, string name, [JsonContent] JsonPatchDocument<UserUpdateDto> doc);
     }
 }

@@ -171,69 +171,6 @@ namespace MiniShop.Mvc.Controllers
             return Json(new Result() { Success = true, Data = rankSelect });
         }
 
-        [HttpGet]
-        public IActionResult Add()
-        {
-            UserCreateDto model = new UserCreateDto 
-            { 
-                ShopId = _userInfo.ShopId,
-                StoreId = _userInfo.StoreId,
-                //Rank = EnumRole.Cashier, 
-            };
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddAsync(UserCreateDto model)
-        {
-            var result = await _userApi.AddAsync(model);
-            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> UpdateAsync(string name)
-        {
-            var result =  await _userApi.GetByNameAsync(name);
-            if (result.Success)
-            {
-                return View(result.Data);
-            }
-            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateAsync(UserDto model)
-        {
-            var dto = _mapper.Map<UserUpdateDto>(model);
-            var result = await _userApi.PutUpdateAsync(dto);
-            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
-        }
-
-        [HttpPatch]
-        public async Task<IActionResult> ChangeFreezeStateAsync(string name, bool freeze)
-        {
-            var userDto = await _userApi.GetByNameAsync(name);
-            if (userDto.Data != null)
-            {
-                if (userDto.Data.Rank == EnumRole.ShopManager && freeze)
-                {
-                    return Json(new Result() { Success = false, Msg = "不能禁用老板" });
-                }
-                if (userDto.Data.UserName == _userInfo.UserName && freeze)
-                {
-                    return Json(new Result() { Success = false, Msg = $"不能禁用当前登录用户：{userDto.Data.UserName}" });
-                }
-                var doc = new JsonPatchDocument<UserUpdateDto>();
-                doc.Replace(item => item.IsFreeze, freeze);
-                var result = await _userApi.PatchUpdateByNameAsync(name, doc);
-                return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
-            }
-            else
-            {
-                return Json(new Result() { Success = false, Msg = "查找不到要修改的用户", Status = (int)HttpStatusCode.NotFound });
-            }
-        }
-
         [ResponseCache(Duration = 0)]
         [HttpGet]
         public async Task<IActionResult> GetPageAsync(int page, int limit)
@@ -279,55 +216,65 @@ namespace MiniShop.Mvc.Controllers
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
+        [HttpGet]
+        public IActionResult Add()
+        {
+            UserCreateDto model = new UserCreateDto 
+            { 
+                ShopId = _userInfo.ShopId,
+                StoreId = _userInfo.StoreId,
+                //Rank = EnumRole.Cashier, 
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAsync(UserCreateDto model)
+        {
+            var result = await _userApi.AddAsync(_userInfo.Rank, model);
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateAsync(string name)
+        {
+            var result =  await _userApi.GetByNameAsync(name);
+            if (result.Success)
+            {
+                return View(result.Data);
+            }
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateAsync(UserDto model)
+        {
+            var dto = _mapper.Map<UserUpdateDto>(model);
+            var result = await _userApi.PutUpdateAsync(_userInfo.Rank, dto);
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> ChangeFreezeStateAsync(string name, bool freeze)
+        {
+            var doc = new JsonPatchDocument<UserUpdateDto>();
+            doc.Replace(item => item.IsFreeze, freeze);
+            var result = await _userApi.PatchUpdateByNameAsync(_userInfo.Rank, name, doc);
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
+        }
+
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(string name)
         {
-            var userDto = await _userApi.GetByNameAsync(name);
-            if (userDto.Data != null)
-            {
-                if (userDto.Data.Rank == EnumRole.ShopManager)
-                {
-                    return Json(new Result() { Success = false, Msg = $"不能删除老板：{userDto.Data.UserName}" });
-                }
-                if (userDto.Data.UserName == _userInfo.UserName)
-                {
-                    return Json(new Result() { Success = false, Msg = $"不能删除当前登录用户：{userDto.Data.UserName}" });
-                }
-
-                var result = await _userApi.DeleteByNameAsync(name);
-                return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
-            }
-            else
-            {
-                return Json(new Result() { Success = false, Msg = "查找不到要删除的用户", Status = (int)HttpStatusCode.NotFound });
-            }
+            var result = await _userApi.DeleteByNameAsync(_userInfo.Rank, name);
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         [HttpDelete]
         public async Task<IActionResult> BatchDeleteAsync(string names)
         {
             List<string> namesList = names.Split(",").ToList();
-            foreach (var item in namesList)
-            {
-                var userDto = await _userApi.GetByNameAsync(item);
-                if (userDto.Data != null)
-                {
-                    if (userDto.Data.Rank == EnumRole.ShopManager)
-                    {
-                        return Json(new Result() { Success = false, Msg = $"不能删除老板：{userDto.Data.UserName}" });
-                    }
-                    if (userDto.Data.UserName == _userInfo.UserName)
-                    {
-                        return Json(new Result() { Success = false, Msg = $"不能删除当前登录用户：{userDto.Data.UserName}" });
-                    }
-                }
-                else
-                {
-                    return Json(new Result() { Success = false, Msg = "查找不到要删除的用户", Status = (int)HttpStatusCode.NotFound });
-                }
-            }
-
-            var result = await _userApi.BatchDeleteByNamesAsync(namesList);
+            var result = await _userApi.BatchDeleteByNamesAsync(_userInfo.Rank, namesList);
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 

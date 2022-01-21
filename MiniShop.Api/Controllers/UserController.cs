@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniShop.Dto;
 using MiniShop.IServices;
+using MiniShop.Model.Code;
 using MiniShop.Model.Enums;
 using Orm.Core;
 using Orm.Core.Result;
@@ -54,13 +55,13 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success(userDto);
         }
 
-        [Description("根据商店ID、分页条件、职位等级获取商店用户分页列表")]
-        [OperationId("根据商店ID、分页条件、职位等级获取商店用户分页列表")]
+        [Description("根据商店ID、分页条件、请求者职位等级获取商店用户分页列表")]
+        [OperationId("根据商店ID、分页条件、请求者职位等级获取商店用户分页列表")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "pageIndex", param = "索引页")]
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
-        [Parameters(name = "rank", param = "职位等级")]
+        [Parameters(name = "rank", param = "请求者职位等级")]
         [HttpGet("GetPageByRankOnShop")]
         public async Task<IResultModel> GetPageByRankOnShop([Required] int pageIndex, int pageSize, Guid shopId, EnumRole rank)
         {
@@ -75,14 +76,14 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success(userPagedList);
         }
 
-        [Description("根据商店ID、门店ID、分页条件、职位等级获取门店用户分页列表")]
-        [OperationId("根据商店ID、门店ID、分页条件、职位等级获取门店用户分页列表")]
+        [Description("根据商店ID、门店ID、分页条件、请求者职位等级获取门店用户分页列表")]
+        [OperationId("根据商店ID、门店ID、分页条件、请求者职位等级获取门店用户分页列表")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "pageIndex", param = "索引页")]
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
         [Parameters(name = "storeId", param = "门店ID")]
-        [Parameters(name = "rank", param = "职位等级")]
+        [Parameters(name = "rank", param = "请求者职位等级")]
         [HttpGet("GetPageByRankOnStore")]
         public async Task<IResultModel> GetPageByRankOnStore([Required] int pageIndex, int pageSize, Guid shopId, Guid storeId, EnumRole rank)
         {
@@ -99,13 +100,13 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success(userPagedList);
         }
 
-        [Description("根据商店ID、分页条件、职位等级，和职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
-        [OperationId("根据商店ID、分页条件、职位等级，和职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
+        [Description("根据商店ID、分页条件、请求者职位等级，和职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
+        [OperationId("根据商店ID、分页条件、请求者职位等级，和职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "pageIndex", param = "索引页")]
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
-        [Parameters(name = "rank", param = "职位等级")]
+        [Parameters(name = "rank", param = "请求者职位等级")]
         [Parameters(name = "queryRank", param = "职位查询")]
         [Parameters(name = "queryName", param = "用户名查询")]
         [Parameters(name = "queryPhone", param = "手机号查询")]
@@ -141,13 +142,13 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success(userPagedList);
         }
 
-        [Description("根据商店ID、分页条件、职位等级，和门店、职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
-        [OperationId("根据商店ID、分页条件、职位等级，和门店、职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
+        [Description("根据商店ID、分页条件、请求者职位等级，和门店、职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
+        [OperationId("根据商店ID、分页条件、请求者职位等级，和门店、职位、用户名、手机号模糊查询条件获取商店用户分页列表")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "pageIndex", param = "索引页")]
         [Parameters(name = "pageSize", param = "单页条数")]
         [Parameters(name = "shopId", param = "商店ID")]
-        [Parameters(name = "rank", param = "职位等级")]
+        [Parameters(name = "rank", param = "请求者职位等级")]
         [Parameters(name = "queryStore", param = "职位门店")]
         [Parameters(name = "queryRank", param = "职位查询")]
         [Parameters(name = "queryName", param = "用户名查询")]
@@ -189,11 +190,12 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success(userPagedList);
         }
 
-        [Description("根据用户名删除用户")]
-        [OperationId("根据用户名删除用户")]
+        [Description("根据请求者职位等级、用户名删除用户")]
+        [OperationId("根据请求者职位等级、用户名删除用户")]
+        [Parameters(name = "rank", param = "请求者职位等级")]
         [Parameters(name = "name", param = "用户名")]
         [HttpDelete]
-        public async Task<IResultModel> DeleteByName([Required] string name)
+        public async Task<IResultModel> DeleteByName([Required] EnumRole rank, string name)
         {
             _logger.LogDebug("删除用户");
             var user = await _userManager.Value.FindByNameAsync(name);
@@ -204,6 +206,12 @@ namespace MiniShop.Api.Controllers
             }
             else
             {
+                var verification = await DeleteUserBeforeVerification(rank, user);
+                if (!verification.Success)
+                {
+                    return verification;
+                }
+
                 var result = await _userManager.Value.DeleteAsync(user);
                 if (!result.Succeeded)
                 {
@@ -214,11 +222,12 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success();
         }
 
-        [Description("根据用户名列表批量删除用户")]
-        [OperationId("根据用户名列表批量删除用户")]
+        [Description("根据请求者职位等级、用户名列表批量删除用户")]
+        [OperationId("根据请求者职位等级、用户名列表批量删除用户")]
+        [Parameters(name = "rank", param = "请求者职位等级")]
         [Parameters(name = "names", param = "用户名列表")]
         [HttpDelete("BatchDelete")]
-        public async Task<IResultModel> BatchDeleteByNames([FromBody] List<string> names)
+        public async Task<IResultModel> BatchDeleteByNames([Required] EnumRole rank, [FromBody] List<string> names)
         {
             _logger.LogDebug("批量删除用户");
             List<IdentityUser> users = new List<IdentityUser>();
@@ -229,6 +238,11 @@ namespace MiniShop.Api.Controllers
                 {
                     _logger.LogError($"用户删除错误：{name} 不存在");
                     return ResultModel.Failed($"用户删除错误：{name} 不存在");
+                }
+                var verification = await DeleteUserBeforeVerification(rank, user);
+                if (!verification.Success)
+                {
+                    return verification;
                 }
                 users.Add(user);
             }
@@ -244,47 +258,28 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Success();
         }
 
-        [Description("添加用户，成功返回用户信息")]
-        [OperationId("添加用户")]
+        [Description("根据请求者职位等级新增用户，成功返回用户信息")]
+        [OperationId("根据请求者职位等级新增用户")]
+        [Parameters(name = "rank", param = "请求者职位等级")]
         [HttpPost]
-        public async Task<IResultModel> Add([FromBody] UserCreateDto model)
+        public async Task<IResultModel> Add([Required] EnumRole rank, [FromBody] UserCreateDto model)
         {
-            _logger.LogDebug("添加用户");
+            _logger.LogDebug("新增用户");
             if (ModelState.IsValid)
             {
                 var user = await _userManager.Value.FindByNameAsync(model.UserName);
                 if (user != null)
                 {
-                    _logger.LogError($"用户添加错误：{model.UserName} 已存在");
-                    return ResultModel.Failed($"用户添加错误：{model.UserName} 已存在");
+                    _logger.LogError($"用户新增错误：{model.UserName} 已存在");
+                    return ResultModel.Failed($"用户新增错误：{model.UserName} 已存在");
                 }
-                if (model.Rank == EnumRole.StoreManager)
+
+                var verification = await AddUserBeforeVerification(rank, model);
+                if (!verification.Success)
                 {
-                    var storeManagerExist = await CheckStoreManagerExistByShopIdAndStoreId(model.ShopId.ToString(), model.StoreId.ToString());
-                    if (storeManagerExist)
-                    {
-                        _logger.LogError($"用户添加错误：店长已经存在，{model.UserName} 不能再添加为店长职位");
-                        return ResultModel.Failed($"用户添加错误：店长已经存在，{model.UserName} 不能再添加为店长职位");
-                    }
+                    return verification;
                 }
-                if (model.Rank == EnumRole.ShopManager)
-                {
-                    var shopManagerExist = await CheckShopManagerExistByShopId(model.ShopId.ToString());
-                    if (shopManagerExist)
-                    {
-                        _logger.LogError($"用户添加错误：老板已经存在，{model.UserName} 不能再添加为老板职位");
-                        return ResultModel.Failed($"用户添加错误：老板已经存在，{model.UserName} 不能再添加为老板职位");
-                    }
-                }
-                if (model.Rank == EnumRole.ShopAssistant)
-                {
-                    if (model.ShopId != model.StoreId)
-                    {
-                        //通过商店id 也是门店id 获取门店 门店名称
-                        _logger.LogError($"用户添加错误：老板助理需要添加到 {model.UserName} 门店下");
-                        return ResultModel.Failed($"用户添加错误：老板助理需要添加到 {model.UserName} 门店下");
-                    }
-                }
+
                 user = new IdentityUser
                 {
                     UserName = model.UserName,
@@ -295,22 +290,22 @@ namespace MiniShop.Api.Controllers
                 var result = await _userManager.Value.CreateAsync(user, model.PassWord);
                 if (!result.Succeeded)
                 {
-                    _logger.LogError($"用户添加错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"用户添加错误：{result.Errors.First().Description}");
+                    _logger.LogError($"用户新增错误：{result.Errors.First().Description}");
+                    return ResultModel.Failed($"用户新增错误：{result.Errors.First().Description}");
                 }
 
                 result = await _userManager.Value.AddToRolesAsync(user, new List<string> { model.Rank.ToString() });
                 if (!result.Succeeded)
                 {
-                    _logger.LogError($"用户添加错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"用户添加错误：{result.Errors.First().Description}");
+                    _logger.LogError($"用户新增错误：{result.Errors.First().Description}");
+                    return ResultModel.Failed($"用户新增错误：{result.Errors.First().Description}");
                 }
 
                 result = await AddUserClaimExtras(user, model);
                 if (!result.Succeeded)
                 {
-                    _logger.LogError($"用户添加错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"用户添加错误：{result.Errors.First().Description}");
+                    _logger.LogError($"用户新增错误：{result.Errors.First().Description}");
+                    return ResultModel.Failed($"用户新增错误：{result.Errors.First().Description}");
                 }
 
                 var data = await _userManager.Value.FindByNameAsync(model.UserName);
@@ -320,10 +315,11 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
         }
 
-        [Description("Put修改用户，成功返回用户信息")]
-        [OperationId("Put修改用户")]
+        [Description("根据请求者职位等级Put修改用户，成功返回用户信息")]
+        [OperationId("根据请求者职位等级Put修改用户")]
+        [Parameters(name = "rank", param = "请求者职位等级")]
         [HttpPut]
-        public async Task<IResultModel> PutUpdate([FromBody] UserUpdateDto model)
+        public async Task<IResultModel> PutUpdate([Required] EnumRole rank, [FromBody] UserUpdateDto model)
         {
             _logger.LogDebug("Put修改用户");
             if (ModelState.IsValid)
@@ -334,39 +330,11 @@ namespace MiniShop.Api.Controllers
                     _logger.LogError($"用户修改错误：{model.UserName} 不存在");
                     return ResultModel.Failed($"用户修改错误：{model.UserName} 不存在");
                 }
-                if (user.UserName != model.UserName)
+
+                var verification = await UpdateUserBeforeVerification(rank, user, model);
+                if (!verification.Success)
                 {
-                    var userExist = await _userManager.Value.FindByNameAsync(model.UserName);
-                    if (userExist != null)
-                    {
-                        _logger.LogError($"用户修改错误：{model.UserName} 已被占用");
-                        return ResultModel.Failed($"用户修改错误：{model.UserName} 已被占用");
-                    }
-                }
-                var userClaims = await _userManager.Value.GetClaimsAsync(user);
-                if (userClaims.FirstOrDefault(c => c.Type == "rank").Value == EnumRole.ShopManager.ToString() && model.IsFreeze)
-                {
-                    _logger.LogError($"用户修改错误：{user.UserName} 是老板职位不能被禁用");
-                    return ResultModel.Failed($"用户修改错误：{user.UserName} 是老板职位不能被禁用");
-                }
-                if (userClaims.FirstOrDefault(c => c.Type == "rank").Value == EnumRole.ShopManager.ToString() && model.Rank != EnumRole.ShopManager)
-                {
-                    _logger.LogError($"用户修改错误：{user.UserName} 是老板职位不能更改自己的职位");
-                    return ResultModel.Failed($"用户修改错误：{user.UserName} 是老板职位不能更改自己的职位");
-                }
-                if (userClaims.FirstOrDefault(c => c.Type == "rank").Value != EnumRole.ShopManager.ToString() && model.Rank == EnumRole.ShopManager)
-                {
-                    _logger.LogError($"用户修改错误：{user.UserName} 不能更改为老板职位");
-                    return ResultModel.Failed($"用户修改错误：{user.UserName} 不能更改为老板职位");
-                }
-                if (userClaims.FirstOrDefault(c => c.Type == "rank").Value != EnumRole.StoreManager.ToString() && model.Rank == EnumRole.StoreManager)
-                {
-                    var storeManagerExist = await CheckStoreManagerExistByUserClaims(userClaims);
-                    if (storeManagerExist)
-                    {
-                        _logger.LogError($"用户修改错误：店长已经存在，{user.UserName} 不能更改为店长职位");
-                        return ResultModel.Failed($"用户修改错误：店长已经存在，{user.UserName} 不能更改为店长职位");
-                    }
+                    return verification;
                 }
 
                 //user = _mapper.Value.Map<IdentityUser>(model);
@@ -409,11 +377,12 @@ namespace MiniShop.Api.Controllers
             return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
         }
 
-        [Description("Patch修改用户，成功返回用户信息")]
-        [OperationId("Patch修改用户")]
+        [Description("根据请求者职位等级Patch修改用户，成功返回用户信息")]
+        [OperationId("根据请求者职位等级Patch修改用户")]
+        [Parameters(name = "rank", param = "请求者职位等级")]
         [Parameters(name = "name", param = "用户名")]
         [HttpPatch]
-        public async Task<IResultModel> PatchUpdateByName([Required] string name, [FromBody] JsonPatchDocument<UserUpdateDto> patchDocument)
+        public async Task<IResultModel> PatchUpdateByName([Required] EnumRole rank, string name, [FromBody] JsonPatchDocument<UserUpdateDto> patchDocument)
         {
             _logger.LogDebug("Patch修改用户");
             if (ModelState.IsValid)
@@ -427,6 +396,12 @@ namespace MiniShop.Api.Controllers
                 var modelRouteToPatch = _mapper.Value.Map<UserUpdateDto>(user);
                 await UserUpdateDtoSetClaimExtras(modelRouteToPatch);
                 patchDocument.ApplyTo(modelRouteToPatch);
+
+                var verification = await UpdateUserBeforeVerification(rank, user, modelRouteToPatch);
+                if (!verification.Success)
+                {
+                    return verification;
+                }
 
                 //_mapper.Value.Map(modelRouteToPatch, user);
                 //var result = await _userManager.Value.UpdateAsync(user);//不能整个model更新！！！
@@ -650,12 +625,112 @@ namespace MiniShop.Api.Controllers
             }
             return data;
         }
+
+        private async Task<IResultModel> UpdateUserBeforeVerification(EnumRole rank, IdentityUser user, UserUpdateDto model)
+        {
+            var userClaims = await _userManager.Value.GetClaimsAsync(user);
+            var userRank = (EnumRole)Enum.Parse(typeof(EnumRole), userClaims.FirstOrDefault(c => c.Type == "rank").Value);
+            var modelRank = model.Rank;
+            if (rank >= userRank && userRank != EnumRole.ShopManager)
+            {
+                _logger.LogError($"用户修改错误：{rank.ToDescription()} 操作权限有限");
+                return ResultModel.Failed($"用户修改错误：{rank.ToDescription()} 操作权限有限");
+            }
+            if (user.UserName != model.UserName)
+            {
+                var userExist = await _userManager.Value.FindByNameAsync(model.UserName);
+                if (userExist != null)
+                {
+                    _logger.LogError($"用户修改错误：{model.UserName} 已被占用");
+                    return ResultModel.Failed($"用户修改错误：{model.UserName} 已被占用");
+                }
+            }
+            if (userRank == EnumRole.ShopManager && model.IsFreeze)
+            {
+                _logger.LogError($"用户修改错误：{user.UserName} 是老板职位不能被禁用");
+                return ResultModel.Failed($"用户修改错误：{user.UserName} 是老板职位不能被禁用");
+            }
+            if (userRank == EnumRole.ShopManager && model.Rank != EnumRole.ShopManager)
+            {
+                _logger.LogError($"用户修改错误：{user.UserName} 是老板职位不能更改自己的职位");
+                return ResultModel.Failed($"用户修改错误：{user.UserName} 是老板职位不能更改自己的职位");
+            }
+            if (userRank != EnumRole.ShopManager && model.Rank == EnumRole.ShopManager)
+            {
+                _logger.LogError($"用户修改错误：{user.UserName} 不能更改为老板职位");
+                return ResultModel.Failed($"用户修改错误：{user.UserName} 不能更改为老板职位");
+            }
+            if (userRank != EnumRole.StoreManager && model.Rank == EnumRole.StoreManager)
+            {
+                var storeManagerExist = await CheckStoreManagerExistByUserClaims(userClaims);
+                if (storeManagerExist)
+                {
+                    _logger.LogError($"用户修改错误：店长已经存在，{user.UserName} 不能更改为店长职位");
+                    return ResultModel.Failed($"用户修改错误：店长已经存在，{user.UserName} 不能更改为店长职位");
+                }
+            }
+            return ResultModel.Success();
+        }
+
+        private async Task<IResultModel> DeleteUserBeforeVerification(EnumRole rank, IdentityUser user)
+        {
+            var userClaims = await _userManager.Value.GetClaimsAsync(user);         
+            if (rank >= (EnumRole)Enum.Parse(typeof(EnumRole), userClaims.FirstOrDefault(c => c.Type == "rank").Value))
+            {
+                _logger.LogError($"用户删除错误：{rank.ToDescription()} 操作权限有限");
+                return ResultModel.Failed($"用户删除错误：{rank.ToDescription()} 操作权限有限");
+            }
+            return ResultModel.Success();
+        }
+
+        private async Task<IResultModel> AddUserBeforeVerification(EnumRole rank, UserCreateDto model)
+        {
+            if (rank >= model.Rank)
+            {
+                _logger.LogError($"用户新增错误：{rank.ToDescription()} 操作权限有限");
+                return ResultModel.Failed($"用户新增错误：{rank.ToDescription()} 操作权限有限");
+            }
+            if (model.Rank == EnumRole.StoreManager)
+            {
+                var storeManagerExist = await CheckStoreManagerExistByShopIdAndStoreId(model.ShopId.ToString(), model.StoreId.ToString());
+                if (storeManagerExist)
+                {
+                    _logger.LogError($"用户新增错误：店长已经存在，{model.UserName} 不能再新增为店长职位");
+                    return ResultModel.Failed($"用户新增错误：店长已经存在，{model.UserName} 不能再新增为店长职位");
+                }
+            }
+            if (model.Rank == EnumRole.ShopManager)
+            {
+                var shopManagerExist = await CheckShopManagerExistByShopId(model.ShopId.ToString());
+                if (shopManagerExist)
+                {
+                    _logger.LogError($"用户新增错误：老板已经存在，{model.UserName} 不能再新增为老板职位");
+                    return ResultModel.Failed($"用户新增错误：老板已经存在，{model.UserName} 不能再新增为老板职位");
+                }
+            }
+            if (model.Rank == EnumRole.ShopAssistant)
+            {
+                if (model.ShopId != model.StoreId)//默认总部门店id=商店id
+                {
+                    //通过商店id 也是门店id 获取门店 门店名称
+                    var result = await _storeService.Value.GetByStoreIdAsync(model.ShopId);
+                    var storeName = ((IResultModel<StoreDto>)result)?.Data?.Name;
+                    _logger.LogError($"用户新增错误：老板助理需要新增到 {storeName} 门店下");
+                    return ResultModel.Failed($"用户新增错误：老板助理需要新增到 {storeName} 门店下");
+                }
+            }
+            return ResultModel.Success();
+        }
     }
 }
 
 
-//备注：
-//一个商店只有一个老板（在注册时创建），可以有多个老板助理（所属门店应为总部，即门店id=商店id）；一个商店可以有多个门店，一个门店只有一个店长（要做唯一处理），可以有多个店长助理，可以有多个收银员
-//老板和老板助理职位能查全部商店所有门店用户，其他职位用户查所在当前门店下该职位以下（包含该职位）的所有用户。  
-//职位的管理范围是该职位下的所有职位，如添加修改删除用户只能操作该职位以下的所有职位用户（同职位用户不能修改删除）
+//固定业务备注：
+
+//一个商店只有一个老板（在注册时创建，删除添加要做约束处理），可以有多个老板助理（所属门店应为总部，即门店id=商店id，添加要做约束处理）；
+//一个商店可以有多个门店（必须要有最多一个总部门店，即门店id=商店id，删除门店要做处理），一个门店最多只有一个店长（添加要做约束处理），可以有多个店长助理，可以有多个收银员
+//老板和老板助理职位能查全部商店所有门店用户，其他职位用户查所在当前门店下该职位下（包含该职位）的所有用户。  
+//职位的管理范围是该职位下的所有职位，如添加修改删除用户只能操作该职位以下（不包含该职位）的所有职位用户（同职位用户不能被添加修改删除，也就是说自己也不能修改删除自己，需要上级修改；老板可以自己修改，但是不能删除；所有用户密码开放为自己修改）
 //在用户列表中按条件搜索用户时，是在该用户职位下可见的用户进行搜索，所以按职位搜索时，搜索的职位条件不可以大于该用户职位，否则将搜索不到数据（职位搜索约束需要前端控制）。
+
+//后面使用消息推送，商店下的用户有更新时通知其他登录用户刷新或重启（如果更新的是已登录用户）

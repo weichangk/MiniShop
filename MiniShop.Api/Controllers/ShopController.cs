@@ -10,6 +10,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Orm.Core.Result;
+using Microsoft.AspNetCore.JsonPatch;
+using System.Net;
 
 namespace MiniShop.Api.Controllers
 {
@@ -30,44 +32,67 @@ namespace MiniShop.Api.Controllers
             _shopUpdateService = shopUpdateService;
         }
 
-        [Description("根据商店ID查询商店")]
-        [OperationId("查询商店")]
+        [Description("根据商店ID获取商店")]
+        [OperationId("根据商店ID获取商店")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "id", param = "商店ID")]
-        [HttpGet("{id}")]
-        public async Task<IResultModel> Query([Required] int id)
+        [HttpGet]
+        public async Task<IResultModel> GetById([Required] int id)
         {
-            _logger.LogDebug($"根据商店ID：{id } 查询商店");
+            _logger.LogDebug($"根据商店ID：{id } 获取商店");
             return await _shopService.Value.GetByIdAsync(id);
         }
 
-        [Description("根据ShopId查询商店")]
-        [OperationId("查询商店")]
+        [Description("根据ShopId获取商店")]
+        [OperationId("根据ShopId获取商店")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "shopId", param = "ShopId")]
-        [HttpGet("GetByShopId/{shopId}")]
-        public async Task<IResultModel> Query([Required] Guid shopId)
+        [HttpGet("GetByShopId")]
+        public async Task<IResultModel> GetByShopId([Required] Guid shopId)
         {
-            _logger.LogDebug($"根据ShopId：{shopId } 查询商店");
+            _logger.LogDebug($"根据ShopId：{shopId } 获取商店");
             return await _shopService.Value.GetByShopIdAsync(shopId);
         }
 
-        [Description("添加商店，成功返回商店信息")]
-        [OperationId("添加商店")]
+        [Description("新增商店，成功返回商店信息")]
+        [OperationId("新增商店")]
         [HttpPost]
         public async Task<IResultModel> Add([FromBody] ShopCreateDto model)
         {
             _logger.LogDebug("新增商店");
-            return await _shopCreateService.Value.InsertAsync(model);
+            if (ModelState.IsValid)
+            {
+                return await _shopCreateService.Value.InsertAsync(model);
+            }
+            return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
         }
 
-        [Description("修改商店，成功返回商店信息")]
-        [OperationId("修改商店")]
+        [Description("Put修改商店，成功返回商店信息")]
+        [OperationId("Put修改商店")]
         [HttpPut]
         public async Task<IResultModel> Update([FromBody] ShopUpdateDto model)
         {
-            _logger.LogDebug("修改商店");
-            return await _shopUpdateService.Value.UpdateAsync(model);
+            _logger.LogDebug("Put修改商店");
+            if (ModelState.IsValid)
+            {
+                return await _shopUpdateService.Value.UpdateAsync(model);
+            }
+            return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
         }
+
+        [Description("Patch修改商店，成功返回商店信息")]
+        [OperationId("Patch修改商店")]
+        [Parameters(name = "id", param = "商店ID")]
+        [HttpPatch]
+        public async Task<IResultModel> PatchUpdateById([Required] int id, [FromBody] JsonPatchDocument<ShopUpdateDto> patchDocument)
+        {
+            _logger.LogDebug("Patch修改商店");
+            if (ModelState.IsValid)
+            {
+                return await _shopUpdateService.Value.PatchAsync(id, patchDocument);
+            }
+            return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
+        }
+
     }
 }
