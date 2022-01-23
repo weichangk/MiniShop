@@ -26,5 +26,8 @@ namespace MiniShop.Mvc.HttpApis
 
         [HttpPatch("/api/Shop")]
         ITask<ResultModel<UserDto>> PatchUpdateByIdAsync(int id, [JsonContent] JsonPatchDocument<ShopUpdateDto> doc);
+
+        [HttpGet("/api/Shop/GetRenews")]
+        ITask<ResultModel<ShopDto>> GetRenewsAsync();
     }
 }

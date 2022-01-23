@@ -6,6 +6,7 @@ using MiniShop.Dto;
 using MiniShop.Mvc.Code;
 using MiniShop.Mvc.HttpApis;
 using MiniShop.Mvc.Models;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -42,16 +43,24 @@ namespace MiniShop.Mvc.Controllers
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
-        [HttpPatch]
-        public async Task<IActionResult> RenewAsync(int id, int day)
-        {
-            var shop = (await _shopApi.GetByIdAsync(id)).Data;
+        [HttpGet]
+        public async Task<IActionResult> Renew()
+        { 
+            var shop = (await _shopApi.GetByShopIdAsync(_userInfo.ShopId)).Data;
             if (shop == null)
             {
                 return Json(new Result() { Success = false, Msg = "商店不存在！", Status = (int)HttpStatusCode.NotFound });
             }
+            ViewBag.ShopKey = shop.Id;
+            ViewBag.ShopValidDate = shop.ValidDate;
+            return View();
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> RenewAsync(int id, DateTime validDate, int day)
+        {
             var doc = new JsonPatchDocument<ShopUpdateDto>();
-            doc.Replace(item => item.ValidDate, shop.ValidDate.AddDays(day));
+            doc.Replace(item => item.ValidDate, validDate.AddDays(day));
             var result = await _shopApi.PatchUpdateByIdAsync(id, doc);
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
