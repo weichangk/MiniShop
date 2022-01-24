@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MiniShopAdmin.Api.Models;
 
 namespace MiniShopAdmin.Api.Dtos.Profiles
 {
@@ -6,7 +7,9 @@ namespace MiniShopAdmin.Api.Dtos.Profiles
     {
         public AutoMapperProfiles()
         {
-
+            CreateMap<RenewPackage, RenewPackageDto>();
+            CreateMap<RenewPackageCreateDto, RenewPackage>();
+            CreateMap<RenewPackageUpdateDto, RenewPackage>();
         }
     }
 }

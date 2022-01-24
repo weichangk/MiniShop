@@ -32,16 +32,11 @@ namespace MiniShopAdmin.Api.Config
         /// </summary>
         public string ApiUrl { get; set; }
 
-        /// <summary>
-        /// Ids数据库连接字符串
-        /// </summary>
-        public string IdsConnectionString { get; set; }
-
         public string AuthenticationAuthority { get; set; }
 
-        public string AuthenticationMiniShopApiName { get; set; }
+        public string AuthenticationMiniShopAdminApiName { get; set; }
 
-        public string AuthenticationMiniShopApiSecret { get; set; }
+        public string AuthenticationMiniShopAdminApiSecret { get; set; }
 
         /// <summary>
         /// 

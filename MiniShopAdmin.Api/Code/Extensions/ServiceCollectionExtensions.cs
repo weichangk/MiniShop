@@ -73,9 +73,9 @@ namespace Microsoft.Extensions.DependencyInjection
             .AddIdentityServerAuthentication(options =>
             {
                 options.Authority = BasicSetting.Setting.AuthenticationAuthority;
-                options.ApiName = BasicSetting.Setting.AuthenticationMiniShopApiName;
+                options.ApiName = BasicSetting.Setting.AuthenticationMiniShopAdminApiName;
                 options.RequireHttpsMetadata = false;
-                options.ApiSecret = BasicSetting.Setting.AuthenticationMiniShopApiSecret;
+                options.ApiSecret = BasicSetting.Setting.AuthenticationMiniShopAdminApiSecret;
                 //options.JwtValidationClockSkew = TimeSpan.FromSeconds(0);//时间偏移
             });
 

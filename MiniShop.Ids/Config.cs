@@ -38,6 +38,12 @@ namespace MiniShop.Ids
                 apiScope.Add(new ApiScope {Name = miniShopApiScopes[i] });
             }
 
+            var miniShopAdminApiScopes = _configuration["MiniShopAdminApiResourceConfig:Scopes"].Split(" ");
+            for (int i = 0; i < miniShopAdminApiScopes.Length; i++)
+            {
+                apiScope.Add(new ApiScope { Name = miniShopAdminApiScopes[i] });
+            }
+
             return apiScope;
         }
 
@@ -49,6 +55,12 @@ namespace MiniShop.Ids
             {
                 ApiSecrets = { new Secret(_configuration["MiniShopApiResourceConfig:Secret"].Sha256()) },
                 Scopes = _configuration["MiniShopApiResourceConfig:Scopes"].Split(" "),
+                UserClaims = new [] { JwtClaimTypes.Role }
+            },
+            new ApiResource(_configuration["MiniShopAdminApiResourceConfig:Name"], _configuration["MiniShopAdminApiResourceConfig:DisplayName"])
+            {
+                ApiSecrets = { new Secret(_configuration["MiniShopAdminApiResourceConfig:Secret"].Sha256()) },
+                Scopes = _configuration["MiniShopAdminApiResourceConfig:Scopes"].Split(" "),
                 UserClaims = new [] { JwtClaimTypes.Role }
             }
         };

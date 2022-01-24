@@ -6,7 +6,7 @@ namespace MiniShopAdmin.Api.Models.Code
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<User>().HasData(InitializationData.Initialization.User);
+            modelBuilder.Entity<RenewPackage>().HasData(InitializationData.Initialization.RenewPackage);
         }
     }
 }

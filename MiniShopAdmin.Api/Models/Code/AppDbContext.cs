@@ -24,7 +24,11 @@ namespace MiniShopAdmin.Api.Models.Code
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Seed();
+            modelBuilder.Entity<RenewPackage>()
+                .HasIndex(m => m.Name)
+                .IsUnique();
+
+            modelBuilder.Seed();
         }
     }
 }

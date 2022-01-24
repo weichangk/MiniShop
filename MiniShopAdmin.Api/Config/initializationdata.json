@@ -1,0 +1,27 @@
+{
+  //初始化数据
+  "Initialization": {
+    "RenewPackage": [
+      {
+        "Id": 1,
+        "Name": "半年",
+        "Price": 299
+      },
+      {
+        "Id": 2,
+        "Name": "一年",
+        "Price": 499
+      },
+      {
+        "Id": 3,
+        "Name": "两年",
+        "Price": 799
+      },
+      {
+        "Id": 4,
+        "Name": "三年",
+        "Price": 1099
+      }
+    ]
+  }
+}
