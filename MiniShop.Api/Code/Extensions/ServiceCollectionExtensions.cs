@@ -114,8 +114,6 @@ namespace Microsoft.Extensions.DependencyInjection
                         Version = version,
                         Title = $"{BasicSetting.Setting.AssemblyName} 接口文档 - NetCore 3.1",
                         Description = $"{BasicSetting.Setting.AssemblyName} HTTP API " + version,
-                        Contact = new OpenApiContact { Name = "一如既往", Email = "h_gxi@foxmail.com", Url = new Uri("https://www.cnblogs.com/han1982") },
-                        //License = new OpenApiLicense { Name = BasicSetting.Setting.AssemblyName + " 官方文档", Url = new Uri("https://www.cnblogs.com/han1982") }
                     });
                     c.OrderActionsBy(o => o.RelativePath);
                 });

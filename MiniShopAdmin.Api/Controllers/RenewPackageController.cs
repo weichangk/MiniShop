@@ -25,11 +25,21 @@ namespace MiniShopAdmin.Api.Controllers
             _renewPackageUpdateService = renewPackageUpdateService;
         }
 
+        [Description("获取续费包列表")]
+        [OperationId("获取续费包列表")]
+        [ResponseCache(Duration = 0)]
+        [HttpGet]
+        public async Task<IResultModel> GetAll()
+        {
+            _logger.LogDebug($"获取续费包列表");
+            return await _renewPackageService.Value.GetListAllAsync();
+        }
+
         [Description("根据ID获取续费包")]
         [OperationId("根据ID获取续费包")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "id", param = "ID")]
-        [HttpGet]
+        [HttpGet("GetById")]
         public async Task<IResultModel> GetById([Required] int id)
         {
             _logger.LogDebug($"根据ID：{id } 获取续费包");

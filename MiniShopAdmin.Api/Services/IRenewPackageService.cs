@@ -1,5 +1,5 @@
-﻿using MiniShopAdmin.Api.Dtos;
-using MiniShopAdmin.Api.Models;
+﻿using MiniShopAdmin.Dto;
+using MiniShopAdmin.Model;
 
 namespace MiniShopAdmin.Api.Services
 {

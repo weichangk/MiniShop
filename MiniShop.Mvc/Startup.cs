@@ -69,16 +69,30 @@ namespace MiniShop.Mvc
             services.AddControllersWithViews();
 
             //Ìí¼ÓHttpClientÏà¹Ø
-            var types = typeof(Startup).Assembly.GetTypes()
+            var miniShopApiTypes = typeof(Startup).Assembly.GetTypes()
                         .Where(type => type.IsInterface
                         && ((System.Reflection.TypeInfo)type).ImplementedInterfaces != null
-                        && type.GetInterfaces().Any(a => a.FullName == typeof(IHttpApi).FullName));
-            foreach (var type in types)
+                        && type.GetInterfaces().Any(a => a.FullName == typeof(IHttpApi).FullName)
+                        && type.IsDefined(typeof(MiniShopApiAttribute), false));
+            foreach (var type in miniShopApiTypes)
             {
                 services.AddHttpApi(type);
                 services.ConfigureHttpApi(type, o =>
                 {
-                    o.HttpHost = new Uri(_configuration["ApiUrl:Urls"]);
+                    o.HttpHost = new Uri(_configuration["MiniShopApi:Urls"]);
+                });
+            }
+            var miniShopAdminApiTypes = typeof(Startup).Assembly.GetTypes()
+            .Where(type => type.IsInterface
+            && ((System.Reflection.TypeInfo)type).ImplementedInterfaces != null
+            && type.GetInterfaces().Any(a => a.FullName == typeof(IHttpApi).FullName)
+            && type.IsDefined(typeof(MiniShopAdminApiAttribute), false));
+            foreach (var type in miniShopAdminApiTypes)
+            {
+                services.AddHttpApi(type);
+                services.ConfigureHttpApi(type, o =>
+                {
+                    o.HttpHost = new Uri(_configuration["MiniShopAdminApi:Urls"]);
                 });
             }
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace MiniShopAdmin.Api.Models.Code
+namespace MiniShopAdmin.Model.Code
 {
     public static class ModelBuilderExtensions
     {

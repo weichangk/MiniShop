@@ -30,10 +30,10 @@ namespace MiniShopAdmin.Api.Migrations
                 columns: new[] { "Id", "CreatedTime", "ModifiedTime", "Name", "OperatorName", "Price" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2022, 1, 24, 13, 40, 56, 73, DateTimeKind.Local).AddTicks(8431), new DateTime(2022, 1, 24, 13, 40, 56, 76, DateTimeKind.Local).AddTicks(5401), "半年", null, 299m },
-                    { 2, new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(2492), new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(2512), "一年", null, 499m },
-                    { 3, new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(4836), new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(4841), "两年", null, 799m },
-                    { 4, new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(7544), new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(7553), "三年", null, 1099m }
+                    { 1, new DateTime(2022, 1, 25, 11, 5, 42, 990, DateTimeKind.Local).AddTicks(919), new DateTime(2022, 1, 25, 11, 5, 42, 994, DateTimeKind.Local).AddTicks(2763), "半年", null, 299m },
+                    { 2, new DateTime(2022, 1, 25, 11, 5, 42, 998, DateTimeKind.Local).AddTicks(5570), new DateTime(2022, 1, 25, 11, 5, 42, 998, DateTimeKind.Local).AddTicks(5599), "一年", null, 499m },
+                    { 3, new DateTime(2022, 1, 25, 11, 5, 42, 998, DateTimeKind.Local).AddTicks(8988), new DateTime(2022, 1, 25, 11, 5, 42, 998, DateTimeKind.Local).AddTicks(8996), "两年", null, 799m },
+                    { 4, new DateTime(2022, 1, 25, 11, 5, 42, 999, DateTimeKind.Local).AddTicks(2828), new DateTime(2022, 1, 25, 11, 5, 42, 999, DateTimeKind.Local).AddTicks(2842), "三年", null, 1099m }
                 });
 
             migrationBuilder.CreateIndex(

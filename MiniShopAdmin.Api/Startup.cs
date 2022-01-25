@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using MiniShopAdmin.Api.Code.Core;
 using MiniShopAdmin.Api.Config;
-using MiniShopAdmin.Api.Models.Code;
+using MiniShopAdmin.Model.Code;
 
 namespace MiniShopAdmin.Api
 {

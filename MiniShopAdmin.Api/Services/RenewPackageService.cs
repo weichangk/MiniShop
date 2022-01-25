@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using MiniShopAdmin.Api.Dtos;
-using MiniShopAdmin.Api.Models;
+using MiniShopAdmin.Dto;
+using MiniShopAdmin.Model;
 using Orm.Core;
 using System;
 

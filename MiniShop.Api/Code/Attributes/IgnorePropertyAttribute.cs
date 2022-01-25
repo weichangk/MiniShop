@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MiniShop.Dto.Attributes
+namespace MiniShop.Api.Code.Attributes
 {
     /// <summary>
     /// Swagger：隐藏属性

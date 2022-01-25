@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MiniShopAdmin.Api.Models
+namespace MiniShopAdmin.Model
 {
     /// <summary>
     /// 包含通用模型实体基类，主键int类型自增

@@ -9,11 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Config\initializationdata.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="3.1.21" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.5">
@@ -28,13 +23,7 @@
     <ProjectReference Include="..\Cache.MemoryCache\Cache.MemoryCache.csproj" />
     <ProjectReference Include="..\CommonTools.Core\CommonTools.Core.csproj" />
     <ProjectReference Include="..\Logging.Serilog\Logging.Serilog.csproj" />
-    <ProjectReference Include="..\Orm.Core\Orm.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Config\initializationdata.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\MiniShopAdmin.Dto\MiniShopAdmin.Dto.csproj" />
   </ItemGroup>
 
 

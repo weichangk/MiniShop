@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CommonTools.Core\CommonTools.Core.csproj" />
     <ProjectReference Include="..\MiniShop.Dto\MiniShop.Dto.csproj" />
+    <ProjectReference Include="..\MiniShopAdmin.Dto\MiniShopAdmin.Dto.csproj" />
   </ItemGroup>
 
 </Project>

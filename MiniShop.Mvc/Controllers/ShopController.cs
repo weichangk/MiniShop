@@ -15,9 +15,12 @@ namespace MiniShop.Mvc.Controllers
     public class ShopController : BaseController
     {
         private readonly IShopApi _shopApi;
-        public ShopController(ILogger<ShopController> logger, IMapper mapper, IUserInfo userInfo, IShopApi shopApi) : base(logger, mapper, userInfo)
+        private readonly IRenewPackageApi _renewPackageApi;
+        public ShopController(ILogger<ShopController> logger, IMapper mapper, IUserInfo userInfo, 
+            IShopApi shopApi, IRenewPackageApi renewPackageApi) : base(logger, mapper, userInfo)
         {
             _shopApi = shopApi;
+            _renewPackageApi = renewPackageApi;
         }
 
         [HttpGet]
@@ -53,7 +56,9 @@ namespace MiniShop.Mvc.Controllers
             }
             ViewBag.ShopKey = shop.Id;
             ViewBag.ShopValidDate = shop.ValidDate;
-            return View();
+            var renews = await _renewPackageApi.GetRenewPackagesAsync();
+            var renew = await _renewPackageApi.GetRenewPackageByIdAsync(1);
+            return View(renews.Data);
         }
 
         [HttpPatch]

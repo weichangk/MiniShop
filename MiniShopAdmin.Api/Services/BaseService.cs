@@ -3,7 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Cache.MemoryCache;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MiniShopAdmin.Api.Models;
+using MiniShopAdmin.Model;
 using Orm.Core;
 using Orm.Core.Result;
 using System;

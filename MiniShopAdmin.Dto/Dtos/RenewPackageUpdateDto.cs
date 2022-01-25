@@ -1,11 +1,14 @@
 ﻿using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace MiniShopAdmin.Api.Dtos
+namespace MiniShopAdmin.Dto
 {
-    public class RenewPackageCreateDto
+    public class RenewPackageUpdateDto
     {
+        [Display(Name = "ID")]
+        [Required(ErrorMessage = "{0},不能为空")]
+        public int Id { get; set; }
+
         [Display(Name = "续费包名称")]
         [Required(ErrorMessage = "{0},不能为空")]
         public string Name { get; set; }
@@ -14,8 +17,8 @@ namespace MiniShopAdmin.Api.Dtos
         [Required(ErrorMessage = "{0},不能为空")]
         public decimal Price { get; set; }
 
-        [Display(Name = "创建时间")]
-        public DateTime CreatedTime { get; set; } = DateTime.Now;
+        [Display(Name = "修改时间")]
+        public DateTime ModifiedTime { get; set; } = DateTime.Now;
 
         [Display(Name = "操作人")]
         public string OperatorName { get; set; }

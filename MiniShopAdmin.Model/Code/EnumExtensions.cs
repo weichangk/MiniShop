@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 
-namespace MiniShopAdmin.Api.Models.Code
+namespace MiniShopAdmin.Model.Code
 {
     public static class EnumExtensions
     {

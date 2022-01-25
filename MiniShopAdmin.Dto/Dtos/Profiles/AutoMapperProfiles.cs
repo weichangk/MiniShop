@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using MiniShopAdmin.Api.Models;
+using MiniShopAdmin.Model;
 
-namespace MiniShopAdmin.Api.Dtos.Profiles
+namespace MiniShopAdmin.Dto.Profiles
 {
     public class AutoMapperProfiles : Profile
     {

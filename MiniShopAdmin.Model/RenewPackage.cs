@@ -1,4 +1,4 @@
-﻿namespace MiniShopAdmin.Api.Models
+﻿namespace MiniShopAdmin.Model
 {
     public class RenewPackage : EntityBaseNoDeleted<int>
     {

@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MiniShopAdmin.Api.Models.Code;
+using MiniShopAdmin.Model.Code;
 
 namespace MiniShopAdmin.Api.Migrations
 {
@@ -17,7 +17,7 @@ namespace MiniShopAdmin.Api.Migrations
                 .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("MiniShopAdmin.Api.Models.RenewPackage", b =>
+            modelBuilder.Entity("MiniShopAdmin.Model.RenewPackage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,32 +49,32 @@ namespace MiniShopAdmin.Api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedTime = new DateTime(2022, 1, 24, 13, 40, 56, 73, DateTimeKind.Local).AddTicks(8431),
-                            ModifiedTime = new DateTime(2022, 1, 24, 13, 40, 56, 76, DateTimeKind.Local).AddTicks(5401),
+                            CreatedTime = new DateTime(2022, 1, 25, 11, 5, 42, 990, DateTimeKind.Local).AddTicks(919),
+                            ModifiedTime = new DateTime(2022, 1, 25, 11, 5, 42, 994, DateTimeKind.Local).AddTicks(2763),
                             Name = "半年",
                             Price = 299m
                         },
                         new
                         {
                             Id = 2,
-                            CreatedTime = new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(2492),
-                            ModifiedTime = new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(2512),
+                            CreatedTime = new DateTime(2022, 1, 25, 11, 5, 42, 998, DateTimeKind.Local).AddTicks(5570),
+                            ModifiedTime = new DateTime(2022, 1, 25, 11, 5, 42, 998, DateTimeKind.Local).AddTicks(5599),
                             Name = "一年",
                             Price = 499m
                         },
                         new
                         {
                             Id = 3,
-                            CreatedTime = new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(4836),
-                            ModifiedTime = new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(4841),
+                            CreatedTime = new DateTime(2022, 1, 25, 11, 5, 42, 998, DateTimeKind.Local).AddTicks(8988),
+                            ModifiedTime = new DateTime(2022, 1, 25, 11, 5, 42, 998, DateTimeKind.Local).AddTicks(8996),
                             Name = "两年",
                             Price = 799m
                         },
                         new
                         {
                             Id = 4,
-                            CreatedTime = new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(7544),
-                            ModifiedTime = new DateTime(2022, 1, 24, 13, 40, 56, 78, DateTimeKind.Local).AddTicks(7553),
+                            CreatedTime = new DateTime(2022, 1, 25, 11, 5, 42, 999, DateTimeKind.Local).AddTicks(2828),
+                            ModifiedTime = new DateTime(2022, 1, 25, 11, 5, 42, 999, DateTimeKind.Local).AddTicks(2842),
                             Name = "三年",
                             Price = 1099m
                         });

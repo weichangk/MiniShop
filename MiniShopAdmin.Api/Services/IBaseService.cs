@@ -1,4 +1,4 @@
-﻿using MiniShopAdmin.Api.Models;
+﻿using MiniShopAdmin.Model;
 using Orm.Core.Result;
 using System.Collections.Generic;
 using System.Threading.Tasks;

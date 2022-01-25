@@ -11,6 +11,7 @@ using WebApiClient.Attributes;
 
 namespace MiniShop.Mvc.HttpApis
 {
+    [MiniShopApi]
     [SetAccessTokenFilter]
     [JsonReturn]
     public interface IUserApi : IHttpApi

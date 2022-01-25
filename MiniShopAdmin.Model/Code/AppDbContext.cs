@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Orm.Core;
 
-namespace MiniShopAdmin.Api.Models.Code
+namespace MiniShopAdmin.Model.Code
 {
     public class AppDbContext : BaseDbContext
     {

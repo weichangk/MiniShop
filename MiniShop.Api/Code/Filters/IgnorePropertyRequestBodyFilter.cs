@@ -1,5 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
-using MiniShop.Dto.Attributes;
+using MiniShop.Api.Code.Attributes;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.ComponentModel;
