@@ -26,4 +26,12 @@ namespace MiniShop.Mvc.Models
         public dynamic Data { get; set; }
         public int Status { get; set; } = 200;
     }
+
+    public class Card
+    { 
+        public int Id { get; set; }
+        public string Image { get; set; }
+        public string Title { get; set; }
+        public string Remark { get; set; }
+    }
 }

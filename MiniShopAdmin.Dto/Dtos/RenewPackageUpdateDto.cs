@@ -22,5 +22,8 @@ namespace MiniShopAdmin.Dto
 
         [Display(Name = "操作人")]
         public string OperatorName { get; set; }
+
+        [Display(Name = "续费包图片")]
+        public string Image { get; set; }
     }
 }

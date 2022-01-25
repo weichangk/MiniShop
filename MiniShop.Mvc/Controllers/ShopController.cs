@@ -7,6 +7,7 @@ using MiniShop.Mvc.Code;
 using MiniShop.Mvc.HttpApis;
 using MiniShop.Mvc.Models;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -59,6 +60,24 @@ namespace MiniShop.Mvc.Controllers
             var renews = await _renewPackageApi.GetRenewPackagesAsync();
             var renew = await _renewPackageApi.GetRenewPackageByIdAsync(1);
             return View(renews.Data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetRenews()
+        {
+            var renews = await _renewPackageApi.GetRenewPackagesAsync();
+            List<Card> cards = new List<Card>();
+            foreach (var item in renews.Data)
+            {
+                Card card = new Card
+                {
+                    Id = item.Id,
+                    Title = $"￥{item.Price:F2} / {item.Name}",
+                    Image = item.Image,
+                };
+                cards.Add(card);
+            }
+            return Json(cards);
         }
 
         [HttpPatch]
