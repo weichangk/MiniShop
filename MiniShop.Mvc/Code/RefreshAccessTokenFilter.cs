@@ -1,6 +1,7 @@
 ﻿using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -33,9 +34,10 @@ namespace MiniShop.Mvc.Code
                 var client = new HttpClient();
                 var disco = client.GetDiscoveryDocumentAsync(_configuration["IdsConfig:Authority"]).Result;
                 if (disco.IsError)
-                {         
+                {
                     throw new Exception(disco.Error);
                 }
+                // refreshToken 只能用一次，刷新后更新refreshToken
                 var refreshToken = filterContext.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken).Result;
 
                 // Refresh Access Token
@@ -51,6 +53,8 @@ namespace MiniShop.Mvc.Code
 
                 if (tokenResult.IsError)
                 {
+                    //filterContext.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    //filterContext.HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
                     throw new Exception(tokenResult.Error);
                 }
                 else

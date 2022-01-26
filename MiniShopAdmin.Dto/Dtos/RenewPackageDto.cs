@@ -25,5 +25,11 @@ namespace MiniShopAdmin.Dto
 
         [Display(Name = "续费包图片")]
         public string Image { get; set; }
+
+        [Display(Name = "续费包月数")]
+        public int Months { get; set; }
+
+        [Display(Name = "备注")]
+        public string Remark { get; set; }
     }
 }

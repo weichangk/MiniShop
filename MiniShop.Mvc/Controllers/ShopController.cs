@@ -57,27 +57,27 @@ namespace MiniShop.Mvc.Controllers
             }
             ViewBag.ShopKey = shop.Id;
             ViewBag.ShopValidDate = shop.ValidDate;
-            var renews = await _renewPackageApi.GetRenewPackagesAsync();
-            var renew = await _renewPackageApi.GetRenewPackageByIdAsync(1);
-            return View(renews.Data);
+            return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetRenews()
         {
             var renews = await _renewPackageApi.GetRenewPackagesAsync();
-            List<Card> cards = new List<Card>();
+            List<CardInfo> cards = new List<CardInfo>();
             foreach (var item in renews.Data)
             {
-                Card card = new Card
+                CardInfo card = new CardInfo
                 {
                     Id = item.Id,
-                    Title = $"￥{item.Price:F2} / {item.Name}",
+                    Title = $"￥{item.Price:F2}元 / {item.Name}",
                     Image = item.Image,
+                    Remark = item.Remark,
+                    Time = $"{item.Price:F2}元 / {item.Months}月",
                 };
                 cards.Add(card);
             }
-            return Json(cards);
+            return Json(new Card() { Count = cards.Count, Data = cards });
         }
 
         [HttpPatch]

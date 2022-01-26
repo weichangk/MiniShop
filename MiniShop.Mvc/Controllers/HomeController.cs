@@ -52,6 +52,7 @@ namespace MiniShop.Mvc.Controllers
             ViewBag.Email = _userInfo.Email;
             ViewBag.IsFreeze = _userInfo.IsFreeze;
             ViewBag.CreatedTime = _userInfo.CreatedTime;
+            ViewBag.RefreshToken = HttpContext.GetTokenAsync(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.RefreshToken).Result;
 
             return View();
         }

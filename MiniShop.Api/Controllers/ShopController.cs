@@ -57,6 +57,7 @@ namespace MiniShop.Api.Controllers
 
         [Description("新增商店，成功返回商店信息")]
         [OperationId("新增商店")]
+        [Authorize(Roles = nameof(EnumRole.ShopManager))]
         [HttpPost]
         public async Task<IResultModel> Add([FromBody] ShopCreateDto model)
         {

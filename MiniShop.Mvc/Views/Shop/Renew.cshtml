@@ -1,5 +1,4 @@
-﻿@model IEnumerable<RenewPackageDto>
-@{
+﻿@{
     ViewData["Title"] = "Renew Page";
 }
 <html>
@@ -11,15 +10,6 @@
 </head>
 <body>
     <div class="main-container">
-        <div class="main-container">
-            <dl>
-                @foreach (var m in Model)
-                {
-                    <dt>@m.Name</dt>
-                    <dd>@m.Price</dd>
-                }
-            </dl>
-        </div>
         <div class="layui-card">
             <div class="layui-card-body">
                 <form class="layui-card-body" asp-controller="Shop" asp-action="Renew" data-ajax="true" data-ajax-method="post" data-ajax-success="onSuccess">
