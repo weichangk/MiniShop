@@ -45,6 +45,12 @@ namespace Microsoft.Extensions.DependencyInjection
             }).SetCompatibilityVersion(AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
             services.AddOptions();
 
+            services.AddMvcCore(options =>
+            {
+                options.Filters.Add<ApiAuthorizationFilter>();
+                options.Filters.Add<ApiResultFilter>();
+                options.Filters.Add<ApiExceptionFilter>();
+            });
             //添加所有通过特性注入的服务
             services.AddNetModularServices();
 
