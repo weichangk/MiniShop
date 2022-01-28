@@ -17,5 +17,10 @@ namespace MiniShop.Mvc.Controllers
         {
             return View();
         }
+
+        public IActionResult Error403()
+        {
+            return View();
+        }
     }
 }

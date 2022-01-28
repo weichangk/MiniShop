@@ -117,6 +117,17 @@
 						content: '/Error/Error500'
                     });
                 }
+                else if (result.status == 403)
+                {
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+					parent.layer.open({
+						type: 2,
+						title: '',
+						shade: 0.1,
+                        area: ['900px', '600px'],
+						content: '/Error/Error403'
+                    });
+                }
                 else
                 {
                     layer.msg(result.msg, { icon: 2, time: 3000 });

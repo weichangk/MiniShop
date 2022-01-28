@@ -113,10 +113,10 @@ namespace MiniShop.Mvc.Code
             get
             {
                 var value = _contextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(c => c.Type == JwtClaimTypes.PhoneNumber)?.Value;
-                if (value == null || string.IsNullOrWhiteSpace(value))
-                {
-                    throw new Exception("LoginPhone Not Found");
-                }
+                //if (value == null || string.IsNullOrWhiteSpace(value))
+                //{
+                //    throw new Exception("LoginPhone Not Found");
+                //}
                 return value;
             }
         }
@@ -126,10 +126,10 @@ namespace MiniShop.Mvc.Code
             get
             {
                 var value = _contextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(c => c.Type == JwtClaimTypes.Email)?.Value;
-                if (value == null || string.IsNullOrWhiteSpace(value))
-                {
-                    throw new Exception("Email Not Found");
-                }
+                //if (value == null || string.IsNullOrWhiteSpace(value))
+                //{
+                //    throw new Exception("Email Not Found");
+                //}
                 return value;
             }
         }
