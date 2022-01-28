@@ -3,15 +3,15 @@ using MiniShop.Dto;
 using MiniShop.Mvc.Code;
 using System;
 using System.Collections.Generic;
-using WebApiClient;
-using WebApiClient.Attributes;
 using Orm.Core;
 using Orm.Core.Result;
+using WebApiClientCore.Attributes;
+using WebApiClientCore;
 
 namespace MiniShop.Mvc.HttpApis
 {
     [MiniShopApi]
-    [SetAccessTokenFilter]
+    [SetAccessToken]
     [JsonReturn]
     public interface IStoreApi : IHttpApi
     {

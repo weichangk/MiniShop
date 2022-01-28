@@ -9,7 +9,10 @@ using MiniShop.Mvc.Models;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Net.Sockets;
 using System.Threading.Tasks;
+using WebApiClientCore.Exceptions;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -43,8 +46,41 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> SaveAsync(ShopDto model)
         {
             var dto = _mapper.Map<ShopUpdateDto>(model);
-            var result = await _shopApi.PutUpdateAsync(dto);
-            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
+            try
+            {
+                var result = await _shopApi.PutUpdateAsync(dto);
+                return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
+            }
+            catch (HttpRequestException ex) when (ex.InnerException is ApiInvalidConfigException configException)
+            {
+                // 请求配置异常
+                return Json(new Result() { Success = false, Msg = configException.Message, Status = 500});
+            }
+            catch (HttpRequestException ex) when (ex.InnerException is ApiResponseStatusException statusException)
+            {
+                // 响应状态码异常
+                Redirect("Error/Error500");
+            }
+            catch (HttpRequestException ex) when (ex.InnerException is ApiException apiException)
+            {
+                // 抽象的api异常
+                return Json(new Result() { Success = false, Msg = apiException.Message, Status = 500 });
+            }
+            catch (HttpRequestException ex) when (ex.InnerException is SocketException socketException)
+            {
+                // socket连接层异常
+                return Json(new Result() { Success = false, Msg = socketException.Message, Status = 500 });
+            }
+            catch (HttpRequestException ex)
+            {
+                // 请求异常
+                return Json(new Result() { Success = false, Msg = ex.Message, Status = 500 });
+            }
+            catch (Exception ex)
+            {
+                return Json(new Result() { Success = false, Msg = ex.Message, Status = 500 });
+            }
+            return Json(new Result() { Success = false, Msg = "请求异常", Status = 500 });
         }
 
         [HttpGet]

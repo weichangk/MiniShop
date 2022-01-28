@@ -6,13 +6,13 @@ using Orm.Core;
 using Orm.Core.Result;
 using System;
 using System.Collections.Generic;
-using WebApiClient;
-using WebApiClient.Attributes;
+using WebApiClientCore;
+using WebApiClientCore.Attributes;
 
 namespace MiniShop.Mvc.HttpApis
 {
     [MiniShopApi]
-    [SetAccessTokenFilter]
+    [SetAccessToken]
     [JsonReturn]
     public interface IUserApi : IHttpApi
     {

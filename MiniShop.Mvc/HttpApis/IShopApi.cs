@@ -1,15 +1,15 @@
 ﻿using MiniShop.Dto;
 using MiniShop.Mvc.Code;
 using System;
-using WebApiClient;
-using WebApiClient.Attributes;
 using Orm.Core.Result;
 using Microsoft.AspNetCore.JsonPatch;
+using WebApiClientCore;
+using WebApiClientCore.Attributes;
 
 namespace MiniShop.Mvc.HttpApis
 {
     [MiniShopApi]
-    [SetAccessTokenFilter]
+    [SetAccessToken]
     [JsonReturn]
     public interface IShopApi : IHttpApi
     {

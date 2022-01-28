@@ -7,7 +7,7 @@ using MiniShop.Mvc.Code;
 namespace MiniShop.Mvc.Controllers
 {
     [Authorize]
-    [ServiceFilter(typeof(RefreshAccessTokenFilter))]
+    [ServiceFilter(typeof(RefreshAccessTokenAttribute))]
     public class BaseController : Controller
     {
         protected readonly ILogger<BaseController> _logger;

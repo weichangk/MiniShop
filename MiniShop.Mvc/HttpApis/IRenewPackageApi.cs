@@ -2,13 +2,13 @@
 using MiniShopAdmin.Dto;
 using Orm.Core.Result;
 using System.Collections.Generic;
-using WebApiClient;
-using WebApiClient.Attributes;
+using WebApiClientCore;
+using WebApiClientCore.Attributes;
 
 namespace MiniShop.Mvc.HttpApis
 {
     [MiniShopAdminApi]
-    [SetAccessTokenFilter]
+    [SetAccessToken]
     [JsonReturn]
     public interface IRenewPackageApi : IHttpApi
     {

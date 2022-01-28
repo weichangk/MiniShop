@@ -1,10 +1,11 @@
-﻿using MiniShop.Mvc.Code;
-using WebApiClient;
-using WebApiClient.Attributes;
+﻿using Microsoft.AspNetCore.Mvc;
+using MiniShop.Mvc.Code;
+using WebApiClientCore;
+using WebApiClientCore.Attributes;
 
 namespace MiniShop.Mvc.HttpApis
 {
-    [SetAccessTokenFilter]
+    [SetAccessToken]
     [JsonReturn]
     public interface IBaseHttpApi : IHttpApi
     {

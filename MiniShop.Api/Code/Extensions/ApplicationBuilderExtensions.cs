@@ -189,7 +189,6 @@ namespace Microsoft.AspNetCore.Builder
             {
                 if (context.HttpContext.Response.StatusCode != 200)
                 {
-
                     if (context.HttpContext.Request.Path.Value.ToLower().StartsWith("/upload/"))
                     {
                         context.HttpContext.Response.Redirect("/Upload/upload-404.png");
@@ -198,8 +197,8 @@ namespace Microsoft.AspNetCore.Builder
                     {
                         context.HttpContext.Response.ContentType = "application/json";
                         await context.HttpContext.Response.WriteAsync(
-                            JsonHelper.SerializeJSON(ResultModel.Failed($"Status code page, status code: {context.HttpContext.Response.StatusCode}"))
-                            );
+                            JsonHelper.SerializeJSON(ResultModel.Failed($"Status code page, status code: {context.HttpContext.Response.StatusCode}", 
+                            context.HttpContext.Response.StatusCode)));
                     }
 
                 }

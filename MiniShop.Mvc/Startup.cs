@@ -10,7 +10,7 @@ using MiniShop.Mvc.Code;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using WebApiClient;
+using WebApiClientCore;
 
 namespace MiniShop.Mvc
 {
@@ -96,7 +96,7 @@ namespace MiniShop.Mvc
                 });
             }
 
-            services.AddScoped(typeof(RefreshAccessTokenFilter));
+            services.AddScoped(typeof(RefreshAccessTokenAttribute));
 
             //Ìí¼ÓAutoMapper
             services.AddAutoMapper(typeof(Dto.Profiles.AutoMapperProfiles).Assembly);
