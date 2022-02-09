@@ -44,13 +44,13 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAsync(StoreCreateDto model)
         {
-            var result = await _storeApi.AddAsync(model);
+            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.AddAsync(model); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         public async Task<IActionResult> UpdateAsync(int id)
         {
-            var result = await _storeApi.GetByIdAsync(id);
+            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetByIdAsync(id); });
             if (result.Success)
             {
                 return View(result.Data);
@@ -62,7 +62,7 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> UpdateAsync(StoreDto model)
         {
             var dto = _mapper.Map<StoreUpdateDto>(model);
-            var result = await _storeApi.UpdateAsync(dto);
+            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.UpdateAsync(dto); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
@@ -70,7 +70,7 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPageByShopIdAsync(int page, int limit)
         {
-            var result = await _storeApi.GetPageByShopIdAsync(page, limit, _userInfo.ShopId);
+            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetPageByShopIdAsync(page, limit, _userInfo.ShopId); });
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
@@ -86,21 +86,21 @@ namespace MiniShop.Mvc.Controllers
             {
                 name = System.Web.HttpUtility.UrlEncode(name);
             }
-            var result = await _storeApi.GetPageByShopIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, name);
+            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetPageByShopIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, name); });
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var storeDto = await _storeApi.GetByIdAsync(id);
+            var storeDto = await ExecuteApiResultModelAsync(() => { return _storeApi.GetByIdAsync(id); });
             if (storeDto.Data != null)
             {
                 if (storeDto.Data.StoreId == _userInfo.ShopId)
                 {
                     return Json(new Result() { Success = false, Msg = $"不能删除总部门店：{storeDto.Data.Name}" });
                 }
-                var result = await _storeApi.DeleteAsync(id);
+                var result = await ExecuteApiResultModelAsync(() => { return _storeApi.DeleteAsync(id); });
                 return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
             }
             else
@@ -117,7 +117,7 @@ namespace MiniShop.Mvc.Controllers
             ResultModel<StoreDto> resultModel = new ResultModel<StoreDto>();
             foreach (var id in idsStrList)
             {
-                resultModel = await _storeApi.GetByIdAsync(int.Parse(id));
+                resultModel = await ExecuteApiResultModelAsync(() => { return _storeApi.GetByIdAsync(int.Parse(id)); });
                 if (resultModel.Data != null)
                 {
                     idsIntList.Add(int.Parse(id));
@@ -130,7 +130,7 @@ namespace MiniShop.Mvc.Controllers
 
             if (idsIntList.Count > 0)
             {
-                var result = await _storeApi.BatchDeleteAsync(idsIntList);
+                var result = await ExecuteApiResultModelAsync(() => { return _storeApi.BatchDeleteAsync(idsIntList); });
                 return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
             }
             else

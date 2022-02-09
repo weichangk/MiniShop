@@ -9,10 +9,7 @@ using MiniShop.Mvc.Models;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Net.Sockets;
 using System.Threading.Tasks;
-using WebApiClientCore.Exceptions;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -30,7 +27,7 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var result = await _shopApi.GetByShopIdAsync(_userInfo.ShopId);
+            var result = await ExecuteApiResultModelAsync(() => { return _shopApi.GetByShopIdAsync(_userInfo.ShopId); });
             if (result.Success && result.Data != null)
             {
                 if (result.Data != null)
@@ -52,8 +49,9 @@ namespace MiniShop.Mvc.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Renew()
-        { 
-            var shop = (await _shopApi.GetByShopIdAsync(_userInfo.ShopId)).Data;
+        {
+            var result = await ExecuteApiResultModelAsync(() => { return _shopApi.GetByShopIdAsync(_userInfo.ShopId); });
+            var shop = result.Data;
             if (shop == null)
             {
                 return Json(new Result() { Success = false, Msg = "商店不存在！", Status = (int)HttpStatusCode.NotFound });
@@ -66,9 +64,9 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRenews()
         {
-            var renews = await _renewPackageApi.GetRenewPackagesAsync();
+            var result = await ExecuteApiResultModelAsync(() => { return _renewPackageApi.GetRenewPackagesAsync(); });
             List<CardInfo> cards = new List<CardInfo>();
-            foreach (var item in renews.Data)
+            foreach (var item in result.Data)
             {
                 CardInfo card = new CardInfo
                 {
@@ -88,7 +86,7 @@ namespace MiniShop.Mvc.Controllers
         {
             var doc = new JsonPatchDocument<ShopUpdateDto>();
             doc.Replace(item => item.ValidDate, validDate.AddDays(day));
-            var result = await _shopApi.PatchUpdateByIdAsync(id, doc);
+            var result = await ExecuteApiResultModelAsync(() => { return _shopApi.PatchUpdateByIdAsync(id, doc); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
     }

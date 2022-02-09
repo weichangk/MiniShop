@@ -6,7 +6,6 @@ using MiniShop.Mvc.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
-using System.Net;
 using System.Collections.Generic;
 using MiniShop.Model.Enums;
 using AutoMapper;
@@ -39,7 +38,7 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStoresByCurrentShopAsync()
         {
-            var result = await _storeApi.GetByShopIdAsync(_userInfo.ShopId);
+            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetByShopIdAsync(_userInfo.ShopId); });
             if (result.Data != null)
             {
                 List<dynamic> rankSelect = new List<dynamic>();
@@ -180,12 +179,12 @@ namespace MiniShop.Mvc.Controllers
             {
                 case EnumRole.ShopManager:
                 case EnumRole.ShopAssistant:
-                    result = await _userApi.GetPageByRankOnShopAsync(page, limit, _userInfo.ShopId, _userInfo.Rank);
+                    result = await ExecuteApiResultModelAsync(() => { return _userApi.GetPageByRankOnShopAsync(page, limit, _userInfo.ShopId, _userInfo.Rank); });
                     break;
                 case EnumRole.StoreManager:
                 case EnumRole.StoreAssistant:
                 case EnumRole.Cashier:
-                    result = await _userApi.GetPageByRankOnStoreAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId, _userInfo.Rank);
+                    result = await ExecuteApiResultModelAsync(() => { return _userApi.GetPageByRankOnStoreAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId, _userInfo.Rank); });
                     break;
             }
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
@@ -203,12 +202,12 @@ namespace MiniShop.Mvc.Controllers
             {
                 case EnumRole.ShopManager:
                 case EnumRole.ShopAssistant:
-                    result = await _userApi.GetPageByRankOnShopWhereQueryStoreOrRankOrNameOrPhoneAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, store, rank, name, phone);
+                    result = await ExecuteApiResultModelAsync(() => { return _userApi.GetPageByRankOnShopWhereQueryStoreOrRankOrNameOrPhoneAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, store, rank, name, phone); });
                     break;
                 case EnumRole.StoreManager:
                 case EnumRole.StoreAssistant:
                 case EnumRole.Cashier:
-                    result = await _userApi.GetPageByRankOnShopWhereQueryStoreOrRankOrNameOrPhoneAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, _userInfo.StoreId, rank, name, phone);
+                     result = await ExecuteApiResultModelAsync(() => { return _userApi.GetPageByRankOnShopWhereQueryStoreOrRankOrNameOrPhoneAsync(page, limit, _userInfo.ShopId, _userInfo.Rank, _userInfo.StoreId, rank, name, phone); });
                     break;
                 default:
                     break;
@@ -231,14 +230,14 @@ namespace MiniShop.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAsync(UserCreateDto model)
         {
-            var result = await _userApi.AddAsync(_userInfo.Rank, model);
+            var result = await ExecuteApiResultModelAsync(() => { return _userApi.AddAsync(_userInfo.Rank, model); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateAsync(string name)
         {
-            var result =  await _userApi.GetByNameAsync(name);
+            var result = await ExecuteApiResultModelAsync(() => { return _userApi.GetByNameAsync(name); });
             if (result.Success)
             {
                 return View(result.Data);
@@ -250,7 +249,7 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> UpdateAsync(UserDto model)
         {
             var dto = _mapper.Map<UserUpdateDto>(model);
-            var result = await _userApi.PutUpdateAsync(_userInfo.Rank, dto);
+            var result = await ExecuteApiResultModelAsync(() => { return _userApi.PutUpdateAsync(_userInfo.Rank, dto); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
@@ -259,14 +258,14 @@ namespace MiniShop.Mvc.Controllers
         {
             var doc = new JsonPatchDocument<UserUpdateDto>();
             doc.Replace(item => item.IsFreeze, freeze);
-            var result = await _userApi.PatchUpdateByNameAsync(_userInfo.Rank, name, doc);
+            var result = await ExecuteApiResultModelAsync(() => { return _userApi.PatchUpdateByNameAsync(_userInfo.Rank, name, doc); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(string name)
         {
-            var result = await _userApi.DeleteByNameAsync(_userInfo.Rank, name);
+            var result = await ExecuteApiResultModelAsync(() => { return _userApi.DeleteByNameAsync(_userInfo.Rank, name); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
@@ -274,7 +273,7 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> BatchDeleteAsync(string names)
         {
             List<string> namesList = names.Split(",").ToList();
-            var result = await _userApi.BatchDeleteByNamesAsync(_userInfo.Rank, namesList);
+            var result = await ExecuteApiResultModelAsync(() => { return _userApi.BatchDeleteByNamesAsync(_userInfo.Rank, namesList); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 

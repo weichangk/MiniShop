@@ -634,7 +634,7 @@ namespace MiniShop.Api.Controllers
             if (rank >= userRank && userRank != EnumRole.ShopManager)
             {
                 _logger.LogError($"用户修改错误：{rank.ToDescription()} 操作权限有限");
-                return ResultModel.Failed($"用户修改错误：{rank.ToDescription()} 操作权限有限");
+                return ResultModel.Failed($"用户修改错误：{rank.ToDescription()} 操作权限有限", 403);
             }
             if (user.UserName != model.UserName)
             {
@@ -648,17 +648,17 @@ namespace MiniShop.Api.Controllers
             if (userRank == EnumRole.ShopManager && model.IsFreeze)
             {
                 _logger.LogError($"用户修改错误：{user.UserName} 是老板职位不能被禁用");
-                return ResultModel.Failed($"用户修改错误：{user.UserName} 是老板职位不能被禁用");
+                return ResultModel.Failed($"用户修改错误：{user.UserName} 是老板职位不能被禁用", 403);
             }
             if (userRank == EnumRole.ShopManager && model.Rank != EnumRole.ShopManager)
             {
                 _logger.LogError($"用户修改错误：{user.UserName} 是老板职位不能更改自己的职位");
-                return ResultModel.Failed($"用户修改错误：{user.UserName} 是老板职位不能更改自己的职位");
+                return ResultModel.Failed($"用户修改错误：{user.UserName} 是老板职位不能更改自己的职位", 403);
             }
             if (userRank != EnumRole.ShopManager && model.Rank == EnumRole.ShopManager)
             {
                 _logger.LogError($"用户修改错误：{user.UserName} 不能更改为老板职位");
-                return ResultModel.Failed($"用户修改错误：{user.UserName} 不能更改为老板职位");
+                return ResultModel.Failed($"用户修改错误：{user.UserName} 不能更改为老板职位", 403);
             }
             if (userRank != EnumRole.StoreManager && model.Rank == EnumRole.StoreManager)
             {
@@ -666,7 +666,7 @@ namespace MiniShop.Api.Controllers
                 if (storeManagerExist)
                 {
                     _logger.LogError($"用户修改错误：店长已经存在，{user.UserName} 不能更改为店长职位");
-                    return ResultModel.Failed($"用户修改错误：店长已经存在，{user.UserName} 不能更改为店长职位");
+                    return ResultModel.Failed($"用户修改错误：店长已经存在，{user.UserName} 不能更改为店长职位", 403);
                 }
             }
             return ResultModel.Success();
@@ -678,7 +678,7 @@ namespace MiniShop.Api.Controllers
             if (rank >= (EnumRole)Enum.Parse(typeof(EnumRole), userClaims.FirstOrDefault(c => c.Type == "rank").Value))
             {
                 _logger.LogError($"用户删除错误：{rank.ToDescription()} 操作权限有限");
-                return ResultModel.Failed($"用户删除错误：{rank.ToDescription()} 操作权限有限");
+                return ResultModel.Failed($"用户删除错误：{rank.ToDescription()} 操作权限有限", 403);
             }
             return ResultModel.Success();
         }
@@ -688,7 +688,7 @@ namespace MiniShop.Api.Controllers
             if (rank >= model.Rank)
             {
                 _logger.LogError($"用户新增错误：{rank.ToDescription()} 操作权限有限");
-                return ResultModel.Failed($"用户新增错误：{rank.ToDescription()} 操作权限有限");
+                return ResultModel.Failed($"用户新增错误：{rank.ToDescription()} 操作权限有限", 403);
             }
             if (model.Rank == EnumRole.StoreManager)
             {
