@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniShop.Mvc.Code;
+using MiniShop.Mvc.Models;
 
 namespace MiniShop.Mvc.Controllers
 {
@@ -13,14 +14,14 @@ namespace MiniShop.Mvc.Controllers
         {
         }
 
-        public IActionResult Error500()
+        public IActionResult Error(string statusCode, string errorMsg)
         {
-            return View();
-        }
+            if (string.IsNullOrEmpty(statusCode))
+            {
+                statusCode = "500";
+            }
 
-        public IActionResult Error403()
-        {
-            return View();
+            return View(new ErrorViewModel(statusCode, errorMsg));
         }
     }
 }

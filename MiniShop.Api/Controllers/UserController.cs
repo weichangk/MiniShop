@@ -382,7 +382,7 @@ namespace MiniShop.Api.Controllers
         [Parameters(name = "rank", param = "请求者职位等级")]
         [Parameters(name = "name", param = "用户名")]
         [HttpPatch]
-        public async Task<IResultModel> PatchUpdateByName([Required] EnumRole rank, string name, [FromBody] JsonPatchDocument<UserUpdateDto> patchDocument)
+        public async Task<IResultModel> PatchUpdateByName(EnumRole rank, string name, [FromBody] JsonPatchDocument<UserUpdateDto> patchDocument)
         {
             _logger.LogDebug("Patch修改用户");
             if (ModelState.IsValid)

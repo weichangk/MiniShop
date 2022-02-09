@@ -222,7 +222,15 @@
                                     parent.layer.close(parent.layer.getFrameIndex(window.name));
                                 });
                             } else {
-                                layer.msg(result.msg, { icon: 2, time: 1000 });
+                                //layer.msg(result.msg, { icon: 2, time: 1000 });
+                                parent.layer.close(parent.layer.getFrameIndex(window.name));
+                                parent.layer.open({
+                                    type: 2,
+                                    title: '',
+                                    shade: 0.1,
+                                    area: ['900px', '600px'],
+                                    content: '/Error/Error?statusCode=' + result.status + '&errorMsg=' + result.msg,
+                                });
                                 window.refresh();//暂时找不到如果屏蔽角色为店长禁止更改checked，或还原checked的办法，目前就先刷新还原吧。。
                             }
                         }
@@ -251,9 +259,17 @@
                                         table.reload('user-table');
                                     });
                                 } else {
-                                    layer.msg(result.msg, {
-                                        icon: 2,
-                                        time: 1000
+                                    //layer.msg(result.msg, {
+                                    //    icon: 2,
+                                    //    time: 1000
+                                    //});
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                                    parent.layer.open({
+                                        type: 2,
+                                        title: '',
+                                        shade: 0.1,
+                                        area: ['900px', '600px'],
+                                        content: '/Error/Error?statusCode=' + result.status + '&errorMsg=' + result.msg,
                                     });
                                 }
                             }
@@ -293,9 +309,17 @@
                                         table.reload('user-table');
                                     });
                                 } else {
-                                    layer.msg(result.msg, {
-                                        icon: 2,
-                                        time: 1000
+                                    //layer.msg(result.msg, {
+                                    //    icon: 2,
+                                    //    time: 1000
+                                    //});
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                                    parent.layer.open({
+                                        type: 2,
+                                        title: '',
+                                        shade: 0.1,
+                                        area: ['900px', '600px'],
+                                        content: '/Error/Error?statusCode=' + result.status + '&errorMsg=' + result.msg,
                                     });
                                 }
                             }

@@ -1,0 +1,68 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="~/component/pear/css/pear.css" rel="stylesheet" />
+    <link href="~/admin/css/other/error.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="content">
+        <img src=@Model.ErrorImgSrc alt="">
+        <div class="content-r">
+            <br />
+            <br />
+            <h1>@Model.StatusCode</h1>
+            <br />
+
+            @* TODO *@
+            @switch (Model.StatusCode)
+            {
+                case "200":
+                    <p>@Model.ErrorMsg</p>
+                    break;
+                case "500":
+                    if (@Model.ErrorMsg != "failed")@* 如果是自定义错误信息 *@
+                    {
+                        <p>@Model.ErrorMsg</p>
+                    }
+                    else
+                    {
+                        <p>抱歉，服务器出错了</p>
+                    }
+                    break;
+                case "403":
+                    if (@Model.ErrorMsg != "failed")
+                    {
+                        <p>@Model.ErrorMsg</p>
+                    }
+                    else
+                    {
+                        <p>抱歉，你无权限访问</p>
+                    }
+                    break;
+                case "404":
+                    if (@Model.ErrorMsg != "failed")
+                    {
+                        <p>@Model.ErrorMsg</p>
+                    }
+                    else
+                    {
+                        <p>抱歉，你访问的页面不存在</p>
+                    }
+                    break;
+                default:
+                    <p>@Model.ErrorMsg</p>
+                    break;
+            }
+        </div>
+    </div>
+    <script src="~/component/layui/layui.js"></script>
+    <script src="~/component/pear/pear.js"></script>
+</body>
+</html>
