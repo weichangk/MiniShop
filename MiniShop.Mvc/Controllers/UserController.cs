@@ -5,7 +5,6 @@ using MiniShop.Mvc.HttpApis;
 using MiniShop.Mvc.Models;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.JsonPatch;
 using System.Collections.Generic;
 using MiniShop.Model.Enums;
 using AutoMapper;
@@ -14,6 +13,7 @@ using MiniShop.Model.Code;
 using Orm.Core.Result;
 using Orm.Core;
 using System;
+using WebApiClientCore.Parameters;
 
 namespace MiniShop.Mvc.Controllers
 {

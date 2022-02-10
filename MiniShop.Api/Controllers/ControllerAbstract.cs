@@ -39,12 +39,6 @@ namespace MiniShop.Api.Controllers
             _mapper = mapper;
         }
 
-        protected string ModelStateErrorMessage(ModelStateDictionary modelState)
-        {
-            var message = string.Join(" | ", modelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-            return message;
-        }
-
         /// <summary>
         /// 导出Excel
         /// </summary>

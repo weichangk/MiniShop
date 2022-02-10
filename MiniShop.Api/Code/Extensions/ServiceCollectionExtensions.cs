@@ -38,7 +38,10 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddIdsConn(BasicSetting.Setting);
 
             //将控制器的寄宿器转为注册的服务
-            services.AddControllers().AddControllersAsServices().AddNewtonsoftJson(options =>
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<ActionFilter>();
+            }).AddControllersAsServices().AddNewtonsoftJson(options =>
             {
                 //设置日期格式化
                 options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";

@@ -80,19 +80,24 @@ namespace MiniShop.Mvc
                 services.ConfigureHttpApi(type, o =>
                 {
                     o.HttpHost = new Uri(_configuration["MiniShopApi:Urls"]);
+                    // 符合国情的不标准时间格式，有些接口就是这么要求必须不标准
+                    o.JsonSerializeOptions.Converters.Add(new WebApiClientCore.Serialization.JsonConverters.JsonDateTimeConverter("yyyy-MM-dd HH:mm:ss"));
                 });
             }
+
             var miniShopAdminApiTypes = typeof(Startup).Assembly.GetTypes()
-            .Where(type => type.IsInterface
-            && ((System.Reflection.TypeInfo)type).ImplementedInterfaces != null
-            && type.GetInterfaces().Any(a => a.FullName == typeof(IHttpApi).FullName)
-            && type.IsDefined(typeof(MiniShopAdminApiAttribute), false));
+                        .Where(type => type.IsInterface
+                        && ((System.Reflection.TypeInfo)type).ImplementedInterfaces != null
+                        && type.GetInterfaces().Any(a => a.FullName == typeof(IHttpApi).FullName)
+                        && type.IsDefined(typeof(MiniShopAdminApiAttribute), false));
             foreach (var type in miniShopAdminApiTypes)
             {
                 services.AddHttpApi(type);
                 services.ConfigureHttpApi(type, o =>
                 {
                     o.HttpHost = new Uri(_configuration["MiniShopAdminApi:Urls"]);
+                    // 符合国情的不标准时间格式，有些接口就是这么要求必须不标准
+                    o.JsonSerializeOptions.Converters.Add(new WebApiClientCore.Serialization.JsonConverters.JsonDateTimeConverter("yyyy-MM-dd HH:mm:ss"));
                 });
             }
 

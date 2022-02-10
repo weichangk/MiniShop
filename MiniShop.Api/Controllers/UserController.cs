@@ -265,54 +265,51 @@ namespace MiniShop.Api.Controllers
         public async Task<IResultModel> Add([Required] EnumRole rank, [FromBody] UserCreateDto model)
         {
             _logger.LogDebug("新增用户");
-            if (ModelState.IsValid)
+
+            var user = await _userManager.Value.FindByNameAsync(model.UserName);
+            if (user != null)
             {
-                var user = await _userManager.Value.FindByNameAsync(model.UserName);
-                if (user != null)
-                {
-                    _logger.LogError($"用户新增错误：{model.UserName} 已存在");
-                    return ResultModel.Failed($"用户新增错误：{model.UserName} 已存在");
-                }
-
-                var verification = await AddUserBeforeVerification(rank, model);
-                if (!verification.Success)
-                {
-                    return verification;
-                }
-
-                user = new IdentityUser
-                {
-                    UserName = model.UserName,
-                    PhoneNumber = model.PhoneNumber,
-                    Email = model.Email,
-                };
-
-                var result = await _userManager.Value.CreateAsync(user, model.PassWord);
-                if (!result.Succeeded)
-                {
-                    _logger.LogError($"用户新增错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"用户新增错误：{result.Errors.First().Description}");
-                }
-
-                result = await _userManager.Value.AddToRolesAsync(user, new List<string> { model.Rank.ToString() });
-                if (!result.Succeeded)
-                {
-                    _logger.LogError($"用户新增错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"用户新增错误：{result.Errors.First().Description}");
-                }
-
-                result = await AddUserClaimExtras(user, model);
-                if (!result.Succeeded)
-                {
-                    _logger.LogError($"用户新增错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"用户新增错误：{result.Errors.First().Description}");
-                }
-
-                var data = await _userManager.Value.FindByNameAsync(model.UserName);
-                var userDto = _mapper.Value.Map<UserDto>(data);
-                return ResultModel.Success(userDto);
+                _logger.LogError($"用户新增错误：{model.UserName} 已存在");
+                return ResultModel.Failed($"用户新增错误：{model.UserName} 已存在");
             }
-            return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
+
+            var verification = await AddUserBeforeVerification(rank, model);
+            if (!verification.Success)
+            {
+                return verification;
+            }
+
+            user = new IdentityUser
+            {
+                UserName = model.UserName,
+                PhoneNumber = model.PhoneNumber,
+                Email = model.Email,
+            };
+
+            var result = await _userManager.Value.CreateAsync(user, model.PassWord);
+            if (!result.Succeeded)
+            {
+                _logger.LogError($"用户新增错误：{result.Errors.First().Description}");
+                return ResultModel.Failed($"用户新增错误：{result.Errors.First().Description}");
+            }
+
+            result = await _userManager.Value.AddToRolesAsync(user, new List<string> { model.Rank.ToString() });
+            if (!result.Succeeded)
+            {
+                _logger.LogError($"用户新增错误：{result.Errors.First().Description}");
+                return ResultModel.Failed($"用户新增错误：{result.Errors.First().Description}");
+            }
+
+            result = await AddUserClaimExtras(user, model);
+            if (!result.Succeeded)
+            {
+                _logger.LogError($"用户新增错误：{result.Errors.First().Description}");
+                return ResultModel.Failed($"用户新增错误：{result.Errors.First().Description}");
+            }
+
+            var data = await _userManager.Value.FindByNameAsync(model.UserName);
+            var userDto = _mapper.Value.Map<UserDto>(data);
+            return ResultModel.Success(userDto);
         }
 
         [Description("根据请求者职位等级Put修改用户，成功返回用户信息")]
@@ -322,59 +319,56 @@ namespace MiniShop.Api.Controllers
         public async Task<IResultModel> PutUpdate([Required] EnumRole rank, [FromBody] UserUpdateDto model)
         {
             _logger.LogDebug("Put修改用户");
-            if (ModelState.IsValid)
+
+            var user = await _userManager.Value.FindByIdAsync(model.Id);
+            if (user == null)
             {
-                var user = await _userManager.Value.FindByIdAsync(model.Id);
-                if (user == null)
-                {
-                    _logger.LogError($"用户修改错误：{model.UserName} 不存在");
-                    return ResultModel.Failed($"用户修改错误：{model.UserName} 不存在");
-                }
-
-                var verification = await UpdateUserBeforeVerification(rank, user, model);
-                if (!verification.Success)
-                {
-                    return verification;
-                }
-
-                //user = _mapper.Value.Map<IdentityUser>(model);
-                //var result = await _userManager.Value.UpdateAsync(user);//不能整个model更新！！！
-                //目前只需要对 IdentityUser 的用户名、邮箱，手机号进行更新操作
-                if (user.UserName != model.UserName || user.Email != model.Email)
-                {
-                    user.UserName = model.UserName;
-                    user.Email = model.Email;
-                    var resultUpdateAsync = await _userManager.Value.UpdateAsync(user);//Called to update the user after validating and updating the normalized email/user name.
-                    if (!resultUpdateAsync.Succeeded)
-                    {
-                        _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
-                        return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
-                    }
-                }
-                if (user.PhoneNumber != model.PhoneNumber)
-                {
-                    var changePhoneNumberToken = await _userManager.Value.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
-                    var resultUpdateAsync = await _userManager.Value.ChangePhoneNumberAsync(user, model.PhoneNumber, changePhoneNumberToken);
-                    if (!resultUpdateAsync.Succeeded)
-                    {
-                        _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
-                        return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
-                    }
-                }
-
-                var resultUpdateUserClaimExtras = await UpdateUserClaimExtras(user, model);
-                if (!resultUpdateUserClaimExtras.Succeeded)
-                {
-                    _logger.LogError($"用户修改错误：{resultUpdateUserClaimExtras.Errors.First().Description}");
-                    return ResultModel.Failed($"用户修改错误：{resultUpdateUserClaimExtras.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
-                }
-
-                var data = await _userManager.Value.FindByNameAsync(model.UserName);
-                var userDto = _mapper.Value.Map<UserDto>(data);
-                await UserDtoSetClaimExtras(userDto);
-                return ResultModel.Success(userDto);
+                _logger.LogError($"用户修改错误：{model.UserName} 不存在");
+                return ResultModel.Failed($"用户修改错误：{model.UserName} 不存在");
             }
-            return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
+
+            var verification = await UpdateUserBeforeVerification(rank, user, model);
+            if (!verification.Success)
+            {
+                return verification;
+            }
+
+            //user = _mapper.Value.Map<IdentityUser>(model);
+            //var result = await _userManager.Value.UpdateAsync(user);//不能整个model更新！！！
+            //目前只需要对 IdentityUser 的用户名、邮箱，手机号进行更新操作
+            if (user.UserName != model.UserName || user.Email != model.Email)
+            {
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+                var resultUpdateAsync = await _userManager.Value.UpdateAsync(user);//Called to update the user after validating and updating the normalized email/user name.
+                if (!resultUpdateAsync.Succeeded)
+                {
+                    _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
+                    return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
+                }
+            }
+            if (user.PhoneNumber != model.PhoneNumber)
+            {
+                var changePhoneNumberToken = await _userManager.Value.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
+                var resultUpdateAsync = await _userManager.Value.ChangePhoneNumberAsync(user, model.PhoneNumber, changePhoneNumberToken);
+                if (!resultUpdateAsync.Succeeded)
+                {
+                    _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
+                    return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
+                }
+            }
+
+            var resultUpdateUserClaimExtras = await UpdateUserClaimExtras(user, model);
+            if (!resultUpdateUserClaimExtras.Succeeded)
+            {
+                _logger.LogError($"用户修改错误：{resultUpdateUserClaimExtras.Errors.First().Description}");
+                return ResultModel.Failed($"用户修改错误：{resultUpdateUserClaimExtras.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
+            }
+
+            var data = await _userManager.Value.FindByNameAsync(model.UserName);
+            var userDto = _mapper.Value.Map<UserDto>(data);
+            await UserDtoSetClaimExtras(userDto);
+            return ResultModel.Success(userDto);
         }
 
         [Description("根据请求者职位等级Patch修改用户，成功返回用户信息")]
@@ -382,70 +376,67 @@ namespace MiniShop.Api.Controllers
         [Parameters(name = "rank", param = "请求者职位等级")]
         [Parameters(name = "name", param = "用户名")]
         [HttpPatch]
-        public async Task<IResultModel> PatchUpdateByName(EnumRole rank, string name, [FromBody] JsonPatchDocument<UserUpdateDto> patchDocument)
+        public async Task<IResultModel> PatchUpdateByName([Required] EnumRole rank, string name, [FromBody] JsonPatchDocument<UserUpdateDto> doc)
         {
             _logger.LogDebug("Patch修改用户");
-            if (ModelState.IsValid)
+
+            var user = await _userManager.Value.FindByNameAsync(name);
+            if (user == null)
             {
-                var user = await _userManager.Value.FindByNameAsync(name);
-                if (user == null)
-                {
-                    _logger.LogError($"用户修改错误：{name} 不存在");
-                    return ResultModel.Failed($"用户修改错误：{name} 不存在");
-                }
-                var modelRouteToPatch = _mapper.Value.Map<UserUpdateDto>(user);
-                await UserUpdateDtoSetClaimExtras(modelRouteToPatch);
-                patchDocument.ApplyTo(modelRouteToPatch);
-
-                var verification = await UpdateUserBeforeVerification(rank, user, modelRouteToPatch);
-                if (!verification.Success)
-                {
-                    return verification;
-                }
-
-                //_mapper.Value.Map(modelRouteToPatch, user);
-                //var result = await _userManager.Value.UpdateAsync(user);//不能整个model更新！！！
-                //if (!result.Succeeded)
-                //{
-                //    _logger.LogError($"用户修改错误：{result.Errors.First().Description}");
-                //    return ResultModel.Failed($"用户修改错误：{result.Errors.First().Description}");
-                //}
-                //目前只需要对 IdentityUser 的用户名、邮箱，手机号进行更新操作
-                if (user.UserName != modelRouteToPatch.UserName || user.Email != modelRouteToPatch.Email)
-                {
-                    user.UserName = modelRouteToPatch.UserName;
-                    user.Email = modelRouteToPatch.Email;
-                    var resultUpdateAsync = await _userManager.Value.UpdateAsync(user);//Called to update the user after validating and updating the normalized email/user name.
-                    if (!resultUpdateAsync.Succeeded)
-                    {
-                        _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
-                        return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
-                    }
-                }
-                if (user.PhoneNumber != modelRouteToPatch.PhoneNumber)
-                {
-                    var changePhoneNumberToken = await _userManager.Value.GenerateChangePhoneNumberTokenAsync(user, modelRouteToPatch.PhoneNumber);
-                    var resultUpdateAsync = await _userManager.Value.ChangePhoneNumberAsync(user, modelRouteToPatch.PhoneNumber, changePhoneNumberToken);
-                    if (!resultUpdateAsync.Succeeded)
-                    {
-                        _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
-                        return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
-                    }
-                }
-
-                var result = await UpdateUserClaimExtras(user, modelRouteToPatch);
-                if (!result.Succeeded)
-                {
-                    _logger.LogError($"用户修改错误：{result.Errors.First().Description}");
-                    return ResultModel.Failed($"用户修改错误：{result.Errors.First().Description}");
-                }
-
-                var data = await _userManager.Value.FindByNameAsync(name);
-                var userDto = _mapper.Value.Map<UserDto>(data);
-                await UserDtoSetClaimExtras(userDto);
-                return ResultModel.Success(userDto);
+                _logger.LogError($"用户修改错误：{name} 不存在");
+                return ResultModel.Failed($"用户修改错误：{name} 不存在");
             }
-            return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
+            var modelRouteToPatch = _mapper.Value.Map<UserUpdateDto>(user);
+            await UserUpdateDtoSetClaimExtras(modelRouteToPatch);
+            doc.ApplyTo(modelRouteToPatch);
+
+            var verification = await UpdateUserBeforeVerification(rank, user, modelRouteToPatch);
+            if (!verification.Success)
+            {
+                return verification;
+            }
+
+            //_mapper.Value.Map(modelRouteToPatch, user);
+            //var result = await _userManager.Value.UpdateAsync(user);//不能整个model更新！！！
+            //if (!result.Succeeded)
+            //{
+            //    _logger.LogError($"用户修改错误：{result.Errors.First().Description}");
+            //    return ResultModel.Failed($"用户修改错误：{result.Errors.First().Description}");
+            //}
+            //目前只需要对 IdentityUser 的用户名、邮箱，手机号进行更新操作
+            if (user.UserName != modelRouteToPatch.UserName || user.Email != modelRouteToPatch.Email)
+            {
+                user.UserName = modelRouteToPatch.UserName;
+                user.Email = modelRouteToPatch.Email;
+                var resultUpdateAsync = await _userManager.Value.UpdateAsync(user);//Called to update the user after validating and updating the normalized email/user name.
+                if (!resultUpdateAsync.Succeeded)
+                {
+                    _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
+                    return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
+                }
+            }
+            if (user.PhoneNumber != modelRouteToPatch.PhoneNumber)
+            {
+                var changePhoneNumberToken = await _userManager.Value.GenerateChangePhoneNumberTokenAsync(user, modelRouteToPatch.PhoneNumber);
+                var resultUpdateAsync = await _userManager.Value.ChangePhoneNumberAsync(user, modelRouteToPatch.PhoneNumber, changePhoneNumberToken);
+                if (!resultUpdateAsync.Succeeded)
+                {
+                    _logger.LogError($"用户修改错误：{resultUpdateAsync.Errors.First().Description}");
+                    return ResultModel.Failed($"用户修改错误：{resultUpdateAsync.Errors.First().Description}", (int)HttpStatusCode.InternalServerError);
+                }
+            }
+
+            var result = await UpdateUserClaimExtras(user, modelRouteToPatch);
+            if (!result.Succeeded)
+            {
+                _logger.LogError($"用户修改错误：{result.Errors.First().Description}");
+                return ResultModel.Failed($"用户修改错误：{result.Errors.First().Description}");
+            }
+
+            var data = await _userManager.Value.FindByNameAsync(name);
+            var userDto = _mapper.Value.Map<UserDto>(data);
+            await UserDtoSetClaimExtras(userDto);
+            return ResultModel.Success(userDto);
         }
 
         private async Task UserDtoSetClaimExtras(UserDto dto)

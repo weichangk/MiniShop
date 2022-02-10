@@ -62,11 +62,7 @@ namespace MiniShop.Api.Controllers
         public async Task<IResultModel> Add([FromBody] ShopCreateDto model)
         {
             _logger.LogDebug("新增商店");
-            if (ModelState.IsValid)
-            {
-                return await _shopCreateService.Value.InsertAsync(model);
-            }
-            return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
+            return await _shopCreateService.Value.InsertAsync(model);
         }
 
         [Description("Put修改商店，成功返回商店信息")]
@@ -76,11 +72,7 @@ namespace MiniShop.Api.Controllers
         public async Task<IResultModel> Update([FromBody] ShopUpdateDto model)
         {
             _logger.LogDebug("Put修改商店");
-            if (ModelState.IsValid)
-            {
-                return await _shopUpdateService.Value.UpdateAsync(model);
-            }
-            return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
+            return await _shopUpdateService.Value.UpdateAsync(model);
         }
 
         [Description("Patch修改商店，成功返回商店信息")]
@@ -91,11 +83,7 @@ namespace MiniShop.Api.Controllers
         public async Task<IResultModel> PatchUpdateById([Required] int id, [FromBody] JsonPatchDocument<ShopUpdateDto> patchDocument)
         {
             _logger.LogDebug("Patch修改商店");
-            if (ModelState.IsValid)
-            {
-                return await _shopUpdateService.Value.PatchAsync(id, patchDocument);
-            }
-            return ResultModel.Failed(ModelStateErrorMessage(ModelState), (int)HttpStatusCode.BadRequest);
+            return await _shopUpdateService.Value.PatchAsync(id, patchDocument);
         }
 
     }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
-using MiniShop.Dto;
+﻿using MiniShop.Dto;
 using MiniShop.Model.Enums;
 using MiniShop.Mvc.Code;
 using Orm.Core;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using WebApiClientCore;
 using WebApiClientCore.Attributes;
+using WebApiClientCore.Parameters;
 
 namespace MiniShop.Mvc.HttpApis
 {
@@ -44,6 +44,6 @@ namespace MiniShop.Mvc.HttpApis
         ITask<ResultModel<UserDto>> PutUpdateAsync(EnumRole rank, [JsonContent] UserUpdateDto model);
 
         [HttpPatch("/api/User")]
-        ITask<ResultModel<UserDto>> PatchUpdateByNameAsync(EnumRole rank, string name, [JsonContent] JsonPatchDocument<UserUpdateDto> doc);
+        ITask<ResultModel<UserDto>> PatchUpdateByNameAsync(EnumRole rank, string name, JsonPatchDocument<UserUpdateDto> doc);
     }
 }
