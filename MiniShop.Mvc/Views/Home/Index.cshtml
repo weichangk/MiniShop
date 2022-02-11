@@ -34,17 +34,19 @@
 				<!-- 顶 部 右 侧 菜 单 -->
 				<ul class="layui-nav layui-layout-right">
 					<li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
-					<li class="layui-nav-item layui-hide-xs"><a href="http://www.pearadmin.com" class="layui-icon layui-icon-website"></a></li>
+					@*<li class="layui-nav-item layui-hide-xs"><a href="http://www.pearadmin.com" class="layui-icon layui-icon-website"></a></li>*@
 					<li class="layui-nav-item layui-hide-xs message"></li>
-					<li class="layui-nav-item user">
-						<!-- 头 像 -->
-						<a class="layui-icon layui-icon-username" href="javascript:;"></a>
-						<!-- 功 能 菜 单 -->
-						<dl class="layui-nav-child">
-							<dd><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="基本资料">基本资料</a></dd>
-							<dd><a asp-area="" asp-controller="Home" asp-action="Logout" class="logout">注销登录</a></dd>
-						</dl>
-					</li>
+                    <li class="layui-nav-item user">
+                        <!-- 头 像 -->
+                        <a href="javascript:;">
+                            <img src="admin/images/avatar.jpg" class="layui-nav-img">
+                        </a>
+                        <!-- 功 能 菜 单 -->
+                        <dl class="layui-nav-child">
+                            <dd><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="基本资料">基本资料</a></dd>
+                            <dd><a asp-area="" asp-controller="Home" asp-action="Logout" class="logout">注销登录</a></dd>
+                        </dl>
+                    </li>
 					<!-- 主 题 配 置 -->
 					<li class="layui-nav-item setting"><a href="#" class="layui-icon layui-icon-more-vertical"></a></li>
 				</ul>
@@ -84,18 +86,30 @@
 		<script src="component/layui/layui.js"></script>
 		<script src="component/pear/pear.js"></script>
 		<!-- 框 架 初 始 化 -->
-		<script>
-			layui.use(['admin','jquery','popup'], function() {
+        <script>
+            layui.use(['admin', 'jquery', 'popup', 'convert'], function() {
 				var $ = layui.jquery;
 				var admin = layui.admin;
 				var popup = layui.popup;
-				
+                var convert = layui.convert;
+
+				var setAvatar = function (url, username) {
+					var image = new Image();
+					image.src = url || "admin/images/avatar.jpg";
+					image.onload = function () {
+						$(".layui-nav-img").attr("src", convert.imageToBase64(image));
+					}
+					$(".layui-nav-img").parent().append(username);
+				};
+				var	userName = '@User.Claims.FirstOrDefault(c => c.Type == "preferred_username").Value';
+                setAvatar("admin/images/avatar.jpg", userName);
+
 				admin.setConfigType("json");
 				admin.setConfigPath("config/pear.config.json");
-				
+
 				admin.render();
-				
-				// 登出逻辑 
+
+				// 登出逻辑
 				admin.logout(function(){
 					popup.success("注销成功",function(){
 						location.href = "login.html";
@@ -103,12 +117,12 @@
 					// 注销逻辑 返回 true / false
 					return true;
 				})
-				
+
 				// 初始化消息回调
 				admin.message();
-				
+
 				// admin.message(function(id, title, context, form) {});
 			})
-		</script>		
+        </script>		
 	</body>
 </html>

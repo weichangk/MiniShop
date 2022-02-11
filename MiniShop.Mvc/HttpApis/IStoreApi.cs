@@ -15,22 +15,22 @@ namespace MiniShop.Mvc.HttpApis
     [JsonReturn]
     public interface IStoreApi : IHttpApi
     {
-        [HttpGet("/api/store/{id}")]
+        [HttpGet("/api/store")]
         ITask<ResultModel<StoreDto>> GetByIdAsync(int id);
 
-        [HttpGet("/api/store/GetByStoreId/{storeId}")]
+        [HttpGet("/api/store/GetByStoreId")]
         ITask<ResultModel<StoreDto>> GetByStoreIdAsync(Guid storeId);
 
-        [HttpGet("/api/store/GetPageByShopId/{pageIndex}/{pageSize}/{shopId}")]
-        ITask<ResultModel<PagedList<StoreDto>>> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId);
+        [HttpGet("/api/store/GetPageOnShop")]
+        ITask<ResultModel<PagedList<StoreDto>>> GetPageOnShopAsync(int pageIndex, int pageSize, Guid shopId);
 
-        [HttpGet("/api/store/GetPageByShopIdAndWhereQuery/{pageIndex}/{pageSize}/{shopId}/{name}")]
-        ITask<ResultModel<PagedList<StoreDto>>> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name);
+        [HttpGet("/api/store/GetPageOnShopWhereQueryName")]
+        ITask<ResultModel<PagedList<StoreDto>>> GetPageOnShopWhereQueryNameAsync(int pageIndex, int pageSize, Guid shopId, string name);
 
-        [HttpGet("/api/store/GetByShopId/{shopId}")]
+        [HttpGet("/api/store/GetByShopId")]
         ITask<ResultModel<List<StoreDto>>> GetByShopIdAsync(Guid shopId);
 
-        [HttpDelete("/api/store/{id}")]
+        [HttpDelete("/api/store")]
         ITask<ResultModel<StoreDto>> DeleteAsync(int id);
 
         [HttpDelete("/api/store/BatchDelete")]
@@ -42,7 +42,7 @@ namespace MiniShop.Mvc.HttpApis
         [HttpPut("/api/store")]
         ITask<ResultModel<StoreUpdateDto>> UpdateAsync([JsonContent] StoreUpdateDto model);
 
-        [HttpPatch("/api/store/{id}")]
+        [HttpPatch("/api/store")]
         ITask<ResultModel<StoreDto>> PatchUpdateAsync(int id, [JsonContent] JsonPatchDocument<StoreUpdateDto> doc);
     }
 }

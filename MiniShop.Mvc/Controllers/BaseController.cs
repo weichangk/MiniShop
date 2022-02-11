@@ -8,6 +8,7 @@ using MiniShop.Mvc.Models;
 using Orm.Core;
 using Orm.Core.Result;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -63,6 +64,12 @@ namespace MiniShop.Mvc.Controllers
                 msg = socketException.Message;
                 statusCode = 500;
             }
+            catch (HttpRequestException ex) when (ex.InnerException is ValidationException validationException)
+            {
+                // 数据验证异常
+                msg = validationException.Message;
+                statusCode = 400;
+            }
             catch (HttpRequestException ex)
             {
                 // 请求异常
@@ -110,6 +117,12 @@ namespace MiniShop.Mvc.Controllers
                 msg = socketException.Message;
                 statusCode = 500;
             }
+            catch (HttpRequestException ex) when (ex.InnerException is ValidationException validationException)
+            {
+                // 数据验证异常
+                msg = validationException.Message;
+                statusCode = 400;
+            }
             catch (HttpRequestException ex)
             {
                 // 请求异常
@@ -156,6 +169,12 @@ namespace MiniShop.Mvc.Controllers
                 // socket连接层异常
                 msg = socketException.Message;
                 statusCode = 500;
+            }
+            catch (HttpRequestException ex) when (ex.InnerException is ValidationException validationException)
+            {
+                // 数据验证异常
+                msg = validationException.Message;
+                statusCode = 400;
             }
             catch (HttpRequestException ex)
             {

@@ -23,38 +23,14 @@
             @* TODO *@
             @switch (Model.StatusCode)
             {
-                case "200":
-                    <p>@Model.ErrorMsg</p>
-                    break;
                 case "500":
-                    if (@Model.ErrorMsg != "failed")@* 如果是自定义错误信息 *@
-                    {
-                        <p>@Model.ErrorMsg</p>
-                    }
-                    else
-                    {
-                        <p>抱歉，服务器出错了</p>
-                    }
+                    <p>抱歉，服务器出错了！</p>
                     break;
                 case "403":
-                    if (@Model.ErrorMsg != "failed")
-                    {
-                        <p>@Model.ErrorMsg</p>
-                    }
-                    else
-                    {
-                        <p>抱歉，你无权限访问</p>
-                    }
+                    <p>抱歉，您无权限访问！</p>
                     break;
                 case "404":
-                    if (@Model.ErrorMsg != "failed")
-                    {
-                        <p>@Model.ErrorMsg</p>
-                    }
-                    else
-                    {
-                        <p>抱歉，你访问的页面不存在</p>
-                    }
+                    <p>抱歉，您访问的页面不存在！</p>
                     break;
                 default:
                     <p>@Model.ErrorMsg</p>

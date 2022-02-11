@@ -68,15 +68,15 @@ namespace MiniShop.Mvc.Controllers
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
-        public async Task<IActionResult> GetPageByShopIdAsync(int page, int limit)
+        public async Task<IActionResult> GetPageOnShopAsync(int page, int limit)
         {
-            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetPageByShopIdAsync(page, limit, _userInfo.ShopId); });
+            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetPageOnShopAsync(page, limit, _userInfo.ShopId); });
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
         [ResponseCache(Duration = 0)]
         [HttpGet]
-        public async Task<IActionResult> GetPageByShopIdAndWhereQueryAsync(int page, int limit, string name)
+        public async Task<IActionResult> GetPageOnShopWhereQueryNameAsync(int page, int limit, string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -86,7 +86,7 @@ namespace MiniShop.Mvc.Controllers
             {
                 name = System.Web.HttpUtility.UrlEncode(name);
             }
-            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetPageByShopIdAndWhereQueryAsync(page, limit, _userInfo.ShopId, name); });
+            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetPageOnShopWhereQueryNameAsync(page, limit, _userInfo.ShopId, name); });
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 

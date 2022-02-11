@@ -113,7 +113,7 @@
 
                 table.render({
                     elem: '#store-table',
-                    url: 'GetPageByShopId',
+                    url: 'GetPageOnShop',
                     page: true,//开启分页
                     cols: cols,
                     skin: 'line',
@@ -145,7 +145,7 @@
 
                 form.on('submit(store-query)', function (data) {
                     table.reload('store-table', {
-                        url: 'GetPageByShopIdAndWhereQuery',
+                        url: 'GetPageOnShopWhereQueryName',
                         page: {
                             curr:1,//重新从第一页开始
                         },
@@ -197,9 +197,12 @@
                                         table.reload('store-table');
                                     });
                                 } else {
-                                    layer.msg(result.msg, {
-                                        icon: 2,
-                                        time: 1000
+                                    parent.layer.open({
+                                        type: 2,
+                                        title: '',
+                                        shade: 0.1,
+                                        area: ['900px', '600px'],
+                                        content: '/Error/Error?statusCode=' + result.status + '&errorMsg=' + result.msg,
                                     });
                                 }
                             }
@@ -239,9 +242,12 @@
                                             table.reload('store-table');
                                     });
                                 } else {
-                                    layer.msg(result.msg, {
-                                        icon: 2,
-                                        time: 1000
+                                    parent.layer.open({
+                                        type: 2,
+                                        title: '',
+                                        shade: 0.1,
+                                        area: ['900px', '600px'],
+                                        content: '/Error/Error?statusCode=' + result.status + '&errorMsg=' + result.msg,
                                     });
                                 }
                             }
@@ -251,7 +257,7 @@
 
                 window.refresh = function (param) {
                     table.reload('store-table',{
-                        url: 'GetPageByShopId'
+                        url: 'GetPageOnShop'
                     });
                 }
             })

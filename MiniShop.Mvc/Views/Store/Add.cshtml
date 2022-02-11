@@ -93,13 +93,12 @@
                 layer.msg(result.msg, { icon: 1, time: 1000 }, function () {
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
                     parent.layui.table.reload("store-table",{
-                        url: 'GetPageByShopId',
+                        url: 'GetPageOnShop',
                     });
                 });
             } 
             else
             {
-                parent.layer.close(parent.layer.getFrameIndex(window.name));
                 parent.layer.open({
                     type: 2,
                     title: '',
