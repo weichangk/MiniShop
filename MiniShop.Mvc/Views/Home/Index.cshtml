@@ -32,10 +32,10 @@
 				<!-- 多 系 统 菜 单 -->
 				<div id="control" class="layui-layout-control"></div>
 				<!-- 顶 部 右 侧 菜 单 -->
-				<ul class="layui-nav layui-layout-right">
-					<li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
-					@*<li class="layui-nav-item layui-hide-xs"><a href="http://www.pearadmin.com" class="layui-icon layui-icon-website"></a></li>*@
-					<li class="layui-nav-item layui-hide-xs message"></li>
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
+                    @*<li class="layui-nav-item layui-hide-xs"><a href="http://www.pearadmin.com" class="layui-icon layui-icon-website"></a></li>*@
+                    <li class="layui-nav-item layui-hide-xs message"></li>
                     <li class="layui-nav-item user">
                         <!-- 头 像 -->
                         <a href="javascript:;">
@@ -47,9 +47,18 @@
                             <dd><a asp-area="" asp-controller="Home" asp-action="Logout" class="logout">注销登录</a></dd>
                         </dl>
                     </li>
-					<!-- 主 题 配 置 -->
-					<li class="layui-nav-item setting"><a href="#" class="layui-icon layui-icon-more-vertical"></a></li>
-				</ul>
+                    <!-- 有 效 期 -->
+                    <li class="layui-nav-item validate">
+                        <a href="javascript:;" class="validatedate">
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a validate-menu-url="view/system/person.html" validate-menu-id="6666" validate-menu-title="续费管理">续费管理</a></dd>
+                        </dl>
+                        @*<a asp-area="" asp-controller="Shop" asp-action="Renew" class=""></a>*@
+                    </li>
+                    <!-- 主 题 配 置 -->
+                    <li class="layui-nav-item setting"><a href="#" class="layui-icon layui-icon-more-vertical"></a></li>
+                </ul>
 			</div>
 			<!-- 侧 边 区 域 -->
 			<div class="layui-side layui-bg-black">
@@ -93,6 +102,11 @@
 				var popup = layui.popup;
                 var convert = layui.convert;
 
+				admin.setConfigType("json");
+				admin.setConfigPath("config/pear.config.json");
+				admin.render();
+
+				// 添加用户名称
 				var setAvatar = function (url, username) {
 					var image = new Image();
 					image.src = url || "admin/images/avatar.jpg";
@@ -102,12 +116,7 @@
 					$(".layui-nav-img").parent().append(username);
 				};
 				var	userName = '@User.Claims.FirstOrDefault(c => c.Type == "preferred_username").Value';
-                setAvatar("admin/images/avatar.jpg", userName);
-
-				admin.setConfigType("json");
-				admin.setConfigPath("config/pear.config.json");
-
-				admin.render();
+				setAvatar("admin/images/avatar.jpg", userName);
 
 				// 登出逻辑
 				admin.logout(function(){
@@ -122,6 +131,28 @@
 				admin.message();
 
 				// admin.message(function(id, title, context, form) {});
+
+				// 获取有效期
+                $.ajax({
+                    url: "/Shop/GetValidDate",
+                    dataType: 'json',
+                    type: 'get',
+                    success: function (result) {
+                        if (result.success) {
+                            $(".validate .validatedate").append("有效期至：" + result.data);
+						}
+                        else {
+                            parent.layer.open({
+                                type: 2,
+                                title: '',
+                                shade: 0.1,
+                                area: ['900px', '600px'],
+                                content: '/Error/Error?statusCode=' + result.status + '&errorMsg=' + result.msg,
+                            });
+                        }
+                    }
+				})
+
 			})
         </script>		
 	</body>

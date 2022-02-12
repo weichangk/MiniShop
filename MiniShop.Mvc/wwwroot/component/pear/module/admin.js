@@ -457,6 +457,21 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 			}
 		});
 
+		//续费管理
+		body.on("click", '[validate-menu-id]', function () {
+			if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
+				bodyTab.addTabOnly({
+					id: $(this).attr("validate-menu-id"),
+					title: $(this).attr("validate-menu-title"),
+					url: $(this).attr("validate-menu-url"),
+					icon: "",
+					close: true
+				}, 300);
+			} else {
+				bodyFrame.changePage($(this).attr("validate-menu-url"), true);
+			}
+		});
+
 		body.on("click", ".setting", function() {
 
 			var menuItem =

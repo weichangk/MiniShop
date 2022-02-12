@@ -17,7 +17,7 @@ namespace MiniShop.Mvc.Controllers
     {
         private readonly IShopApi _shopApi;
         private readonly IRenewPackageApi _renewPackageApi;
-        public ShopController(ILogger<ShopController> logger, IMapper mapper, IUserInfo userInfo, 
+        public ShopController(ILogger<ShopController> logger, IMapper mapper, IUserInfo userInfo,
             IShopApi shopApi, IRenewPackageApi renewPackageApi) : base(logger, mapper, userInfo)
         {
             _shopApi = shopApi;
@@ -45,6 +45,18 @@ namespace MiniShop.Mvc.Controllers
             var dto = _mapper.Map<ShopUpdateDto>(model);
             var result = await ExecuteApiAsync(() => { return _shopApi.PutUpdateAsync(dto); });
             return result;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetValidDateAsync()
+        {
+            var result = await ExecuteApiResultModelAsync(() => { return _shopApi.GetByShopIdAsync(_userInfo.ShopId); });
+            var shop = result.Data;
+            if (shop == null)
+            {
+                return Json(new Result() { Success = false, Msg = "商店不存在！", Status = (int)HttpStatusCode.NotFound });
+            }
+            return Json(new Result() { Success = result.Success, Data = shop.ValidDate.Format("yyyy-MM-dd") });
         }
 
         [HttpGet]
