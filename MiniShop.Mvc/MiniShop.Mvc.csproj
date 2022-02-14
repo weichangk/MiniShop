@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <None Remove="Views\Error\Error.cshtml~RF657b688.TMP" />
+    <None Remove="Views\Home\Index.cshtml~RFf86ac5b.TMP" />
   </ItemGroup>
 
   <ItemGroup>
