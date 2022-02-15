@@ -8,6 +8,6 @@ namespace MiniShop.Model
     [Table("Categorie")]
     public class Categorie : EntityBaseNoDeletedStoreId<int>
     {
-
+        public string Code { get; set; }
     }
 }

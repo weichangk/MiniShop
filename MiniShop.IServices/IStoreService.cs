@@ -14,7 +14,7 @@ namespace MiniShop.IServices
 
         Task<IResultModel> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId);
 
-        Task<IResultModel> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name);
+        Task<IResultModel> GetPageByShopIdWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name);
     }
 
     public interface ICreateStoreService : IBaseService<Store, StoreCreateDto, int>

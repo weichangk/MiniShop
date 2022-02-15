@@ -43,7 +43,7 @@ namespace MiniShop.Services
             return ResultModel.Success(list);
         }
 
-        public async Task<IResultModel> GetPageByShopIdAndWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name)
+        public async Task<IResultModel> GetPageByShopIdWhereQueryAsync(int pageIndex, int pageSize, Guid shopId, string name)
         {
             var data = _repository.Value.TableNoTracking;
             data = data.Where(s => s.ShopId == shopId);
