@@ -21,11 +21,19 @@ namespace MiniShop.Services
 
         }
 
-        public async Task<IResultModel> GetByCodeAsync(string code)
+        public async Task<IResultModel> GetByCodeOnShopAsync(Guid shopId, int code)
         {
-            var data = _repository.Value.TableNoTracking.Where(s => s.Code == code);
+            var data = _repository.Value.TableNoTracking.Where(s => s.ShopId == shopId && s.Code == code);
             var categorieDto = await data.ProjectTo<CategorieDto>(_mapper.Value.ConfigurationProvider).FirstOrDefaultAsync();
             return ResultModel.Success(categorieDto);
+        }
+
+        public async Task<IResultModel> GetMaxCodeByLevelOnShop(Guid shopId, int level)
+        {
+            var data = _repository.Value.TableNoTracking.Where(s => s.ShopId == shopId && s.Level == level);
+            var list = await data.ToListAsync();
+            var maxCode = list == null || list.Count == 0 ? 0 : list.Max(s => s.Code) + 1;
+            return ResultModel.Success(maxCode);
         }
 
         public async Task<IResultModel> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId)
@@ -44,7 +52,7 @@ namespace MiniShop.Services
             code = System.Web.HttpUtility.UrlDecode(code);
             if (!string.IsNullOrEmpty(code))
             {
-                data = data.Where(s => s.Code != null && s.Code.Contains(code));
+                data = data.Where(s => s.Code.ToString().Contains(code));
             }
             name = System.Web.HttpUtility.UrlDecode(name);
             if (!string.IsNullOrEmpty(name))
