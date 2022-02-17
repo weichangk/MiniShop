@@ -6,7 +6,8 @@ namespace MiniShop.Model.Code
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<User>().HasData(InitializationData.Initialization.User);
+            //modelBuilder.Entity<Categorie>().HasData(InitializationData.Initialization.Categorie);
+            //modelBuilder.Entity<Unit>().HasData(InitializationData.Initialization.Unit);
         }
     }
 }

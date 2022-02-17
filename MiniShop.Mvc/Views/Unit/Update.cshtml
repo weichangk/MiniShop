@@ -1,4 +1,4 @@
-﻿@model CategorieDto
+﻿@model UnitDto
 
 <!DOCTYPE html>
 <html lang="en"  xmlns:th="http://www.thymeleaf.org">
@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="~/component/pear/css/pear.css" />
 </head>
 <body>
-    <form class="layui-form" asp-controller="Categorie" asp-action="Update" data-ajax="true" data-ajax-method="post" data-ajax-success="onSuccess">
+    <form class="layui-form" asp-controller="Unit" asp-action="Update" data-ajax="true" data-ajax-method="post" data-ajax-success="onSuccess">
         <div class="mainBox">
             <div class="main-container">
                 <input type="hidden" asp-for="Id" />
@@ -60,7 +60,7 @@
             {
                 layer.msg(result.msg,{icon:1,time:1000},function(){
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
-                    parent.layui.table.reload("categorie-table",{
+                    parent.layui.table.reload("unit-table",{
                         url: 'GetPageOnShop'
                     });
                 });

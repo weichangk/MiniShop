@@ -1,4 +1,4 @@
-﻿@model CategorieDto
+﻿@model UnitCreateDto
 
 <!DOCTYPE html>
 <html lang="en"  xmlns:th="http://www.thymeleaf.org">
@@ -8,15 +8,22 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="~/component/pear/css/pear.css" />
 </head>
+
 <body>
-    <form class="layui-form" asp-controller="Categorie" asp-action="Update" data-ajax="true" data-ajax-method="post" data-ajax-success="onSuccess">
+    <form class="layui-form" asp-controller="Unit" asp-action="Add" data-ajax="true" data-ajax-method="post" data-ajax-success="onSuccess">
         <div class="mainBox">
             <div class="main-container">
-                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ShopId"/>
                 <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">类别名称</label>
+                    <label class="layui-form-label" style="width: 20%">编码</label>
                     <div class="layui-input-block">
-                        <input type="text" name="Name" value="@Model.Name" lay-verify="nameCheck" autocomplete="off" placeholder="请输入门店名称" class="layui-input">
+                        <input type="text" name="Code" value="@Model.Code" readonly="readonly" lay-verify="" autocomplete="off" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="width: 20%">名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="Name" value="@Model.Name" lay-verify="" autocomplete="off" placeholder="请输入类别名称" class="layui-input">
                     </div>
                 </div>
             </div>
@@ -42,7 +49,7 @@
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
 
     <script>
-        layui.use(['form','jquery'],function(){
+        layui.use(['form', 'jquery'], function () {
             let form = layui.form;
             let $ = layui.jquery;
 
@@ -52,19 +59,18 @@
                         return '请输入正确的类别名称！2到32位！'
                 },
             });
-
         });
 
-        var onSuccess = function(result){
-            if(result.success)
+        var onSuccess = function (result) {
+            if (result.success) 
             {
-                layer.msg(result.msg,{icon:1,time:1000},function(){
+                layer.msg(result.msg, { icon: 1, time: 1000 }, function () {
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
-                    parent.layui.table.reload("categorie-table",{
-                        url: 'GetPageOnShop'
+                    parent.layui.table.reload("unit-table",{
+                        url: 'GetPageOnShop',
                     });
                 });
-            }
+            } 
             else
             {
                 parent.layer.open({
@@ -76,8 +82,8 @@
                 });
             }
         };
-
     </script>
 
 </body>
 </html>
+

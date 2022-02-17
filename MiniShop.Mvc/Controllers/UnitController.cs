@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace MiniShop.Mvc.Controllers
 {
-    public class CategorieController : BaseController
+    public class UnitController : BaseController
     {
-        private readonly ICategorieApi _categorieApi;
-        public CategorieController(ILogger<BaseController> logger, IMapper mapper, IUserInfo userInfo,
-            ICategorieApi categorieApi) : base(logger, mapper, userInfo)
+        private readonly IUnitApi _unitApi;
+        public UnitController(ILogger<BaseController> logger, IMapper mapper, IUserInfo userInfo,
+            IUnitApi unitApi) : base(logger, mapper, userInfo)
         {
-            _categorieApi = categorieApi;
+            _unitApi = unitApi;
         }
 
         [HttpGet]
@@ -30,31 +30,30 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Add()
         {
-            var MaxCodeResult = await _categorieApi.GetMaxCodeByLevelOnShop(_userInfo.ShopId, 0);
+            var MaxCodeResult = await _unitApi.GetMaxCodeByShopId(_userInfo.ShopId);
             int maxCode = MaxCodeResult.Data == 0 ? 100 : MaxCodeResult.Data;
             if (maxCode == 999)
             {
-                return Json(new Result() { Success = false, Msg = "该类别等级拥有的类别数量已达上限", Status = (int)HttpStatusCode.BadRequest });
+                return Json(new Result() { Success = false, Msg = "该商店拥有的单位数量已达上限", Status = (int)HttpStatusCode.BadRequest });
             }
-            CategorieCreateDto model = new CategorieCreateDto
+            UnitCreateDto model = new UnitCreateDto
             {
                 ShopId = _userInfo.ShopId,
                 Code = maxCode,
-                ParentCode = maxCode,//目前默认只有一级类别，且一级类别的类别编码等于父类别编码
             };
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync(CategorieCreateDto model)
+        public async Task<IActionResult> AddAsync(UnitCreateDto model)
         {
-            var result = await ExecuteApiResultModelAsync(() => { return _categorieApi.AddAsync(model); });
+            var result = await ExecuteApiResultModelAsync(() => { return _unitApi.AddAsync(model); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         public async Task<IActionResult> UpdateAsync(int id)
         {
-            var result = await ExecuteApiResultModelAsync(() => { return _categorieApi.GetByIdAsync(id); });
+            var result = await ExecuteApiResultModelAsync(() => { return _unitApi.GetByIdAsync(id); });
             if (result.Success)
             {
                 return View(result.Data);
@@ -63,10 +62,10 @@ namespace MiniShop.Mvc.Controllers
         }
       
         [HttpPost]
-        public async Task<IActionResult> UpdateAsync(CategorieDto model)
+        public async Task<IActionResult> UpdateAsync(UnitDto model)
         {
-            var dto = _mapper.Map<CategorieUpdateDto>(model);
-            var result = await ExecuteApiResultModelAsync(() => { return _categorieApi.UpdateAsync(dto); });
+            var dto = _mapper.Map<UnitUpdateDto>(model);
+            var result = await ExecuteApiResultModelAsync(() => { return _unitApi.UpdateAsync(dto); });
             return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
@@ -74,7 +73,7 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPageOnShopAsync(int page, int limit)
         {
-            var result = await ExecuteApiResultModelAsync(() => { return _categorieApi.GetPageOnShopAsync(page, limit, _userInfo.ShopId); });
+            var result = await ExecuteApiResultModelAsync(() => { return _unitApi.GetPageOnShopAsync(page, limit, _userInfo.ShopId); });
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
@@ -84,22 +83,22 @@ namespace MiniShop.Mvc.Controllers
         {
             code = System.Web.HttpUtility.UrlEncode(code);
             name = System.Web.HttpUtility.UrlEncode(name);
-            var result = await ExecuteApiResultModelAsync(() => { return _categorieApi.GetPageOnShopWhereQueryCodeOrName(page, limit, _userInfo.ShopId, code, name); });
+            var result = await ExecuteApiResultModelAsync(() => { return _unitApi.GetPageOnShopWhereQueryCodeOrName(page, limit, _userInfo.ShopId, code, name); });
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var categorieDto = await ExecuteApiResultModelAsync(() => { return _categorieApi.GetByIdAsync(id); });
-            if (categorieDto.Data != null)
+            var UnitDto = await ExecuteApiResultModelAsync(() => { return _unitApi.GetByIdAsync(id); });
+            if (UnitDto.Data != null)
             {
-                var result = await ExecuteApiResultModelAsync(() => { return _categorieApi.DeleteAsync(id); });
+                var result = await ExecuteApiResultModelAsync(() => { return _unitApi.DeleteAsync(id); });
                 return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
             }
             else
             {
-                return Json(new Result() { Success = false, Msg = "查找不到要删除的类别", Status = (int)HttpStatusCode.NotFound });
+                return Json(new Result() { Success = false, Msg = "查找不到要删除的单位", Status = (int)HttpStatusCode.NotFound });
             }
         }
 
@@ -115,12 +114,12 @@ namespace MiniShop.Mvc.Controllers
 
             if (idsIntList.Count > 0)
             {
-                var result = await ExecuteApiResultModelAsync(() => { return _categorieApi.BatchDeleteAsync(idsIntList); });
+                var result = await ExecuteApiResultModelAsync(() => { return _unitApi.BatchDeleteAsync(idsIntList); });
                 return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
             }
             else
             {
-                return Json(new Result() { Success = false, Msg = "查找不到要删除的类别", Status = (int)HttpStatusCode.NotFound });
+                return Json(new Result() { Success = false, Msg = "查找不到要删除的单位", Status = (int)HttpStatusCode.NotFound });
             }
 
         }
