@@ -20,7 +20,7 @@ namespace MiniShop.Api.Controllers
         private readonly Lazy<IUnitService> _unitService;
         private readonly Lazy<ICreateUnitService> _createUnitService;
         private readonly Lazy<IUpdateUnitService> _updateUnitService;
-        public UnitController(ILogger<ControllerAbstract> logger, Lazy<IMapper> mapper,
+        public UnitController(ILogger<UnitController> logger, Lazy<IMapper> mapper,
             Lazy<IUnitService> unitService,
             Lazy<ICreateUnitService> createUnitService,
             Lazy<IUpdateUnitService> updateUnitService) : base(logger, mapper)

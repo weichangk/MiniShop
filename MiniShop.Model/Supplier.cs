@@ -1,5 +1,4 @@
-﻿using MiniShop.Model.Code;
-using MiniShop.Model.Enums;
+﻿using MiniShop.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniShop.Model
@@ -10,6 +9,10 @@ namespace MiniShop.Model
     [Table("Supplier")]
     public class Supplier : EntityBaseNoStoreId<int>
     {
+        /// <summary>
+        /// 供应商编码
+        /// </summary>
+        public int Code { get; set; }
         /// <summary>
         /// 联系人
         /// </summary>
@@ -29,12 +32,5 @@ namespace MiniShop.Model
         /// 状态
         /// </summary>
         public EnumSupplierStatus State { get; set; }
-
-        /// <summary>
-        /// 状态描述
-        /// </summary>
-        [NotMapped]
-        public string StateDes => State.ToDescription();
-
     }
 }

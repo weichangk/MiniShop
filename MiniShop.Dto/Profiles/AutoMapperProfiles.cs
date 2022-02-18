@@ -47,6 +47,14 @@ namespace MiniShop.Dto.Profiles
             CreateMap<UnitDto, UnitCreateDto>();
             CreateMap<UnitDto, UnitUpdateDto>();
 
+            CreateMap<Supplier, SupplierDto>();
+            CreateMap<SupplierCreateDto, Supplier>();
+            CreateMap<SupplierUpdateDto, Supplier>();
+            CreateMap<Supplier, SupplierCreateDto>();
+            CreateMap<Supplier, SupplierUpdateDto>();
+            CreateMap<SupplierDto, SupplierCreateDto>();
+            CreateMap<SupplierDto, SupplierUpdateDto>();
+
             CreateMap<Item, ItemDto>();
 
         }

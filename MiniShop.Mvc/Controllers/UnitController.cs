@@ -15,7 +15,7 @@ namespace MiniShop.Mvc.Controllers
     public class UnitController : BaseController
     {
         private readonly IUnitApi _unitApi;
-        public UnitController(ILogger<BaseController> logger, IMapper mapper, IUserInfo userInfo,
+        public UnitController(ILogger<UnitController> logger, IMapper mapper, IUserInfo userInfo,
             IUnitApi unitApi) : base(logger, mapper, userInfo)
         {
             _unitApi = unitApi;

@@ -20,7 +20,7 @@ namespace MiniShop.Api.Controllers
         private readonly Lazy<ICategorieService> _categorieService;
         private readonly Lazy<ICreateCategorieService> _createCategorieService;
         private readonly Lazy<IUpdateCategorieService> _updateCategorieService;
-        public CategorieController(ILogger<ControllerAbstract> logger, Lazy<IMapper> mapper,
+        public CategorieController(ILogger<CategorieController> logger, Lazy<IMapper> mapper,
             Lazy<ICategorieService> categorieService,
             Lazy<ICreateCategorieService> createCategorieService,
             Lazy<IUpdateCategorieService> updateCategorieService) : base(logger, mapper)

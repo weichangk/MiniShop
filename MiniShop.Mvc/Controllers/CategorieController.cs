@@ -15,7 +15,7 @@ namespace MiniShop.Mvc.Controllers
     public class CategorieController : BaseController
     {
         private readonly ICategorieApi _categorieApi;
-        public CategorieController(ILogger<BaseController> logger, IMapper mapper, IUserInfo userInfo,
+        public CategorieController(ILogger<CategorieController> logger, IMapper mapper, IUserInfo userInfo,
             ICategorieApi categorieApi) : base(logger, mapper, userInfo)
         {
             _categorieApi = categorieApi;

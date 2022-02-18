@@ -16,7 +16,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label" style="width: 20%">类别名称</label>
                     <div class="layui-input-block">
-                        <input type="text" name="Name" value="@Model.Name" lay-verify="nameCheck" autocomplete="off" placeholder="请输入门店名称" class="layui-input">
+                        <input type="text" name="Name" value="@Model.Name" lay-verify="" autocomplete="off" placeholder="请输入单位名称" class="layui-input">
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
             form.verify({
                 nameCheck: function (value) {
                     if (!str_2_32_len(value))
-                        return '请输入正确的类别名称！2到32位！'
+                        return '请输入正确的单位名称！2到32位！'
                 },
             });
 

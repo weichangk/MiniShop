@@ -5,7 +5,7 @@ namespace MiniShop.Dto
 {
     public class UnitCreateDto
     {
-        [Display(Name = "单位ID")]
+        [Display(Name = "商店ID")]
         [Required(ErrorMessage = "{0},不能为空")]
         public Guid ShopId { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace MiniShop.Model.Code
@@ -33,6 +34,69 @@ namespace MiniShop.Model.Code
             }
 
             return desc;
+        }
+
+        public static Dictionary<int, string> ToValueAndDesDictionary<T>()
+        {
+            Dictionary<int, string> dic = new Dictionary<int, string>();
+            string desc = string.Empty;
+            if (!typeof(T).IsEnum)
+            {
+                return dic;
+            }
+            foreach (var item in Enum.GetValues(typeof(T)))
+            {
+                var attrs = item.GetType().GetField(item.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), true);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    DescriptionAttribute descAttr = attrs[0] as DescriptionAttribute;
+                    desc = descAttr.Description;
+                }
+                dic.Add(Convert.ToInt32(item), desc);
+            }
+            return dic;
+        }
+
+        public static Dictionary<string, string> ToNameAndDesDictionary<T>()
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            string desc = string.Empty;
+            if (!typeof(T).IsEnum)
+            {
+                return dic;
+            }
+            foreach (var item in Enum.GetValues(typeof(T)))
+            {
+                var attrs = item.GetType().GetField(item.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), true);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    DescriptionAttribute descAttr = attrs[0] as DescriptionAttribute;
+                    desc = descAttr.Description;
+                }
+                dic.Add(item.ToString(), desc);
+            }
+            return dic;
+        }
+
+        public static List<string> ToDesList<T>()
+        {
+            List<string> list = new List<string>();
+            string desc = string.Empty;
+            if (!typeof(T).IsEnum)
+            {
+                return list;
+            }
+            foreach (var item in Enum.GetValues(typeof(T)))
+            {
+                var attrs = item.GetType().GetField(item.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), true);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    DescriptionAttribute descAttr = attrs[0] as DescriptionAttribute;
+                    desc = descAttr.Description;
+                }
+                list.Add(desc);
+            }
+            return list;
         }
     }
 }

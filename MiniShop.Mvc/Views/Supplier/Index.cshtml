@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>单位管理</title>
+    <title>供应商管理</title>
     <link rel="stylesheet" href="~/component/pear/css/pear.css" />
 </head>
 <body class="pear-container">
@@ -11,19 +11,19 @@
             <form class="layui-form" action="">
                 <div class="layui-form-item">
                     <div class="layui-form-item layui-inline">
-                        <label class="layui-form-label">单位编码</label>
+                        <label class="layui-form-label">编码</label>
                         <div class="layui-input-inline">
                             <input type="text" name="code" placeholder="" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-inline">
-                        <label class="layui-form-label">单位名称</label>
+                        <label class="layui-form-label">名称</label>
                         <div class="layui-input-inline">
                             <input type="text" name="name" placeholder="" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-inline">
-                        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="unit-query">
+                        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="supplier-query">
                             <i class="layui-icon layui-icon-search"></i>
                             查询
                         </button>
@@ -38,11 +38,11 @@
     </div>
     <div class="layui-card">
         <div class="layui-card-body">
-            <table id="unit-table" lay-filter="unit-table"></table>
+            <table id="supplier-table" lay-filter="supplier-table"></table>
         </div>
     </div>
 
-    <script type="text/html" id="unit-toolbar">
+    <script type="text/html" id="supplier-toolbar">
         <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
             <i class="layui-icon layui-icon-add-1"></i>
             新增
@@ -53,12 +53,12 @@
         </button>
     </script>
 
-    <script type="text/html" id="unit-bar">
+    <script type="text/html" id="supplier-bar">
         <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
         <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
     </script>
 
-    <script type="text/html" id="unit-createTime">
+    <script type="text/html" id="supplier-createTime">
         {{layui.util.toDateString(d.createdTime, 'yyyy-MM-dd')}}
     </script>
 
@@ -92,14 +92,34 @@
                         align: 'center'
                     },
                     {
+                        title: '联系人',
+                        field: 'contacts',
+                        align: 'center'
+                    },
+                    {
+                        title: '手机号',
+                        field: 'phone',
+                        align: 'center'
+                    },
+                    {
+                        title: '地址',
+                        field: 'address',
+                        align: 'center'
+                    },
+                    {
+                        title: '状态',
+                        field: 'stateDes',
+                        align: 'center'
+                    },
+                    {
                         title: '创建日期',
                         field: 'createdTime',
                         align: 'center',
-                        templet: '#unit-createTime'
+                        templet: '#supplier-createTime'
                     },
                     {
                         title: '操作',
-                        toolbar: '#unit-bar',
+                        toolbar: '#supplier-bar',
                         align: 'center',
                         width: 130
                     }
@@ -107,12 +127,12 @@
                 ]
 
                 table.render({
-                    elem: '#unit-table',
-                    url: 'GetPageOnShop',
+                    elem: '#supplier-table',
+                    url: 'GetPageByShopId',
                     page: true,//开启分页
                     cols: cols,
                     skin: 'line',
-                    toolbar: '#unit-toolbar',
+                    toolbar: '#supplier-toolbar',
                     defaultToolbar: [{
                         title: '刷新',
                         layEvent: 'refresh',
@@ -120,7 +140,7 @@
                     }, 'filter', 'print', 'exports']
                 });
 
-                table.on('tool(unit-table)', function (obj) {
+                table.on('tool(supplier-table)', function (obj) {
                     if (obj.event === 'remove') {
                         window.remove(obj);
                     } else if (obj.event === 'edit') {
@@ -128,7 +148,7 @@
                     }
                 });
 
-                table.on('toolbar(unit-table)', function (obj) {
+                table.on('toolbar(supplier-table)', function (obj) {
                     if (obj.event === 'add') {
                         window.add();
                     } else if (obj.event === 'refresh') {
@@ -138,9 +158,9 @@
                     }
                 });
 
-                form.on('submit(unit-query)', function (data) {
-                    table.reload('unit-table', {
-                        url: 'GetPageOnShopWhereQueryCodeOrName',
+                form.on('submit(supplier-query)', function (data) {
+                    table.reload('supplier-table', {
+                        url: 'GetPageByShopIdWhereQuery',
                         page: {
                             curr:1,//重新从第一页开始
                         },
@@ -156,7 +176,7 @@
                         title: '新增',
                         shade: 0.1,
                         area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '500px'],
-                        content: '/unit/add',
+                        content: '/supplier/add',
                     });
                 }
 
@@ -166,19 +186,19 @@
                         title: '修改',
                         shade: 0.1,
                         area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '400px'],
-                        content: '/unit/update?id=' + obj.data['id'],
+                        content: '/supplier/update?id=' + obj.data['id'],
                     });
                 }
 
                 window.remove = function (obj) {
-                    layer.confirm('确定要删除该单位', {
+                    layer.confirm('确定要删除该供应商', {
                         icon: 3,
                         title: '提示'
                     }, function (index) {
                         layer.close(index);
                         let loading = layer.load();
                         $.ajax({
-                            url: "/unit/delete/" + obj.data['id'],
+                            url: "/supplier/delete/" + obj.data['id'],
                             dataType: 'json',
                             type: 'delete',
                             success: function (result) {
@@ -189,7 +209,7 @@
                                         time: 1000
                                     }, function () {
                                         //obj.del();
-                                        table.reload('unit-table');
+                                        table.reload('supplier-table');
                                     });
                                 } else {
                                     parent.layer.open({
@@ -217,14 +237,14 @@
                         return false;
                     }
 
-                    layer.confirm('确定要删除这些单位', {
+                    layer.confirm('确定要删除这些供应商', {
                         icon: 3,
                         title: '提示'
                     }, function (index) {
                         layer.close(index);
                         let loading = layer.load();
                         $.ajax({
-                            url: "/unit/batchDelete?ids=" + checkIds,
+                            url: "/supplier/batchDelete?ids=" + checkIds,
                             dataType: 'json',
                             type: 'delete',
                             success: function (result) {
@@ -234,7 +254,7 @@
                                         icon: 1,
                                         time: 1000
                                     }, function () {
-                                            table.reload('unit-table');
+                                            table.reload('supplier-table');
                                     });
                                 } else {
                                     parent.layer.open({
@@ -251,8 +271,8 @@
                 }
 
                 window.refresh = function (param) {
-                    table.reload('unit-table',{
-                        url: 'GetPageOnShop'
+                    table.reload('supplier-table',{
+                        url: 'GetPageByShopId'
                     });
                 }
             })
