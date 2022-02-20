@@ -39,6 +39,10 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> GetStoresByCurrentShopAsync()
         {
             var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetByShopIdAsync(_userInfo.ShopId); });
+            if (!result.Success)
+            {
+                return Json(new Result() { Success = result.Success, Status = result.Status, Msg = result.Msg });
+            }
             if (result.Data != null)
             {
                 List<dynamic> rankSelect = new List<dynamic>();
@@ -187,6 +191,10 @@ namespace MiniShop.Mvc.Controllers
                     result = await ExecuteApiResultModelAsync(() => { return _userApi.GetPageByRankOnStoreAsync(page, limit, _userInfo.ShopId, _userInfo.StoreId, _userInfo.Rank); });
                     break;
             }
+            if (!result.Success)
+            {
+                return Json(new Result() { Success = result.Success, Status = result.Status, Msg = result.Msg });
+            }
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
@@ -211,6 +219,10 @@ namespace MiniShop.Mvc.Controllers
                     break;
                 default:
                     break;
+            }
+            if (!result.Success)
+            {
+                return Json(new Result() { Success = result.Success, Status = result.Status, Msg = result.Msg });
             }
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }

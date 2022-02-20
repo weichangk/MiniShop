@@ -138,17 +138,33 @@
                     dataType: 'json',
                     type: 'get',
                     success: function (result) {
-                        if (result.success) {
+                        if (result.success) 
+						{
                             $(".validate .validatedate").append("有效期至：" + result.data);
 						}
-                        else {
-                            parent.layer.open({
-                                type: 2,
-                                title: '',
-                                shade: 0.1,
-                                area: ['900px', '600px'],
-                                content: '/Error/Error?statusCode=' + result.status + '&errorMsg=' + result.msg,
-                            });
+                        else 
+						{
+							if(result.status == 403)
+							{
+								$(".validate .validatedate").append("商店已过期，请联系 18276743761 续费！");
+								parent.layer.open({
+									type: 2,
+									title: '',
+									shade: 0.1,
+									area: ['900px', '600px'],
+									content: '/Error/Error?statusCode=' + result.status + '&errorMsg=商店已过期，请联系 18276743761 续费！',
+								});
+							}
+							else
+							{
+								parent.layer.open({
+									type: 2,
+									title: '',
+									shade: 0.1,
+									area: ['900px', '600px'],
+									content: '/Error/Error?statusCode=' + result.status + '&errorMsg=' + result.msg,
+								});
+							}
                         }
                     }
 				})

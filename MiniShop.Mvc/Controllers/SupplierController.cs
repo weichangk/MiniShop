@@ -46,8 +46,12 @@ namespace MiniShop.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> AddAsync()
         {
-            var MaxCodeResult = await _supplierApi.GetMaxCodeByShopIdAsync(_userInfo.ShopId);
-            int maxCode = MaxCodeResult.Data == 0 ? 100 : MaxCodeResult.Data;
+            var maxCodeResult = await _supplierApi.GetMaxCodeByShopIdAsync(_userInfo.ShopId);
+            if (!maxCodeResult.Success)
+            {
+                return Json(new Result() { Success = maxCodeResult.Success, Status = maxCodeResult.Status, Msg = maxCodeResult.Msg });
+            }
+            int maxCode = maxCodeResult.Data == 0 ? 100 : maxCodeResult.Data;
             if (maxCode == 999)
             {
                 return Json(new Result() { Success = false, Msg = "该商店拥有的供应商数量已达上限", Status = (int)HttpStatusCode.BadRequest });
@@ -91,6 +95,10 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> GetPageByShopIdAsync(int page, int limit)
         {
             var result = await ExecuteApiResultModelAsync(() => { return _supplierApi.GetPageByShopIdAsync(page, limit, _userInfo.ShopId); });
+            if (!result.Success)
+            {
+                return Json(new Result() { Success = result.Success, Status = result.Status, Msg = result.Msg });
+            }
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
@@ -101,14 +109,22 @@ namespace MiniShop.Mvc.Controllers
             code = System.Web.HttpUtility.UrlEncode(code);
             name = System.Web.HttpUtility.UrlEncode(name);
             var result = await ExecuteApiResultModelAsync(() => { return _supplierApi.GetPageByShopIdWhereQueryAsync(page, limit, _userInfo.ShopId, code, name); });
+            if (!result.Success)
+            {
+                return Json(new Result() { Success = result.Success, Status = result.Status, Msg = result.Msg });
+            }
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var SupplierDto = await ExecuteApiResultModelAsync(() => { return _supplierApi.GetByIdAsync(id); });
-            if (SupplierDto.Data != null)
+            var supplierDto = await ExecuteApiResultModelAsync(() => { return _supplierApi.GetByIdAsync(id); });
+            if (!supplierDto.Success)
+            {
+                return Json(new Result() { Success = supplierDto.Success, Status = supplierDto.Status, Msg = supplierDto.Msg });
+            }
+            if (supplierDto.Data != null)
             {
                 var result = await ExecuteApiResultModelAsync(() => { return _supplierApi.DeleteAsync(id); });
                 return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });

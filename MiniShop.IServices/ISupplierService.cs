@@ -8,6 +8,8 @@ namespace MiniShop.IServices
 {
     public interface ISupplierService : IBaseService<Supplier, SupplierDto, int>
     {
+        Task<IResultModel> GetByCodeOnShopAsync(Guid shopId, int code);
+
         Task<IResultModel> GetMaxCodeByShopIdAsync(Guid shopId);
 
         Task<IResultModel> GetPageByShopIdAsync(int pageIndex, int pageSize, Guid shopId);

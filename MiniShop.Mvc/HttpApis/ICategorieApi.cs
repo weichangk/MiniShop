@@ -19,7 +19,7 @@ namespace MiniShop.Mvc.HttpApis
         ITask<ResultModel<CategorieDto>> GetByIdAsync(int id);
 
         [HttpGet("/api/categorie/GetByCodeOnShop")]
-        ITask<ResultModel<CategorieDto>> GetByCodeOnShop(Guid shopId, string code);
+        ITask<ResultModel<CategorieDto>> GetByCodeOnShop(Guid shopId, int code);
 
         [HttpGet("/api/categorie/GetMaxCodeByLevelOnShop")]
         ITask<ResultModel<int>> GetMaxCodeByLevelOnShop(Guid shopId, int level);

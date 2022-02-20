@@ -55,7 +55,8 @@ namespace MiniShop.Ids
             {
                 ApiSecrets = { new Secret(_configuration["MiniShopApiResourceConfig:Secret"].Sha256()) },
                 Scopes = _configuration["MiniShopApiResourceConfig:Scopes"].Split(" "),
-                UserClaims = new [] { JwtClaimTypes.Role }
+                //UserClaims = new [] { JwtClaimTypes.Role }
+                UserClaims = _configuration["MiniShopApiResourceConfig:UserClaims"].Split(" "),
             },
             new ApiResource(_configuration["MiniShopAdminApiResourceConfig:Name"], _configuration["MiniShopAdminApiResourceConfig:DisplayName"])
             {

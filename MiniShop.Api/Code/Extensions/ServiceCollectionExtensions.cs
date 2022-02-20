@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Builder;
 using MiniShop.Model.Code;
 using MiniShop.Api.Ids;
 using Microsoft.AspNetCore.Identity;
+using MiniShop.Api.Code.Security;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -41,6 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddControllers(options =>
             {
                 options.Filters.Add<ActionFilter>();
+                //options.Filters.Add(typeof(MyAuthorizeFilter));
             }).AddControllersAsServices().AddNewtonsoftJson(options =>
             {
                 //设置日期格式化
@@ -85,6 +88,15 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.ApiSecret = BasicSetting.Setting.AuthenticationMiniShopApiSecret;
                 //options.JwtValidationClockSkew = TimeSpan.FromSeconds(0);//时间偏移
             });
+
+            //身份授权
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("NoOwePolicy", policy => policy.AddRequirements(new NoOweRequirement()));
+                //options.InvokeHandlersAfterFailure = false;
+            });
+            services.AddSingleton<IAuthorizationHandler>(x => new NoOweHandler((MiniShop.IServices.IShopService)services.BuildServiceProvider()
+                    .GetService(typeof(MiniShop.IServices.IShopService))));
 
             //开启模型验证结果格式化
             services.AddValidators();

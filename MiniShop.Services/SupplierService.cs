@@ -21,6 +21,13 @@ namespace MiniShop.Services
 
         }
 
+        public async Task<IResultModel> GetByCodeOnShopAsync(Guid shopId, int code)
+        {
+            var data = _repository.Value.TableNoTracking.Where(s => s.ShopId == shopId && s.Code == code);
+            var dto = await data.ProjectTo<SupplierDto>(_mapper.Value.ConfigurationProvider).FirstOrDefaultAsync();
+            return ResultModel.Success(dto);
+        }
+
         public async Task<IResultModel> GetMaxCodeByShopIdAsync(Guid shopId)
         {
             var data = _repository.Value.TableNoTracking.Where(s => s.ShopId == shopId);

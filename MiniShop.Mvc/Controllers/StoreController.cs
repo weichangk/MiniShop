@@ -71,6 +71,10 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> GetPageOnShopAsync(int page, int limit)
         {
             var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetPageOnShopAsync(page, limit, _userInfo.ShopId); });
+            if (!result.Success)
+            {
+                return Json(new Result() { Success = result.Success, Status = result.Status, Msg = result.Msg });
+            }
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
@@ -87,6 +91,10 @@ namespace MiniShop.Mvc.Controllers
                 name = System.Web.HttpUtility.UrlEncode(name);
             }
             var result = await ExecuteApiResultModelAsync(() => { return _storeApi.GetPageOnShopWhereQueryNameAsync(page, limit, _userInfo.ShopId, name); });
+            if (!result.Success)
+            {
+                return Json(new Result() { Success = result.Success, Status = result.Status, Msg = result.Msg });
+            }
             return Json(new Table() { Data = result.Data.Item, Count = result == null ? 0 : result.Data.Total });
         }
 
@@ -94,6 +102,10 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var storeDto = await ExecuteApiResultModelAsync(() => { return _storeApi.GetByIdAsync(id); });
+            if (!storeDto.Success)
+            {
+                return Json(new Result() { Success = storeDto.Success, Status = storeDto.Status, Msg = storeDto.Msg });
+            }
             if (storeDto.Data != null)
             {
                 if (storeDto.Data.StoreId == _userInfo.ShopId)
@@ -118,6 +130,10 @@ namespace MiniShop.Mvc.Controllers
             foreach (var id in idsStrList)
             {
                 resultModel = await ExecuteApiResultModelAsync(() => { return _storeApi.GetByIdAsync(int.Parse(id)); });
+                if (!resultModel.Success)
+                {
+                    return Json(new Result() { Success = resultModel.Success, Status = resultModel.Status, Msg = resultModel.Msg });
+                }
                 if (resultModel.Data != null)
                 {
                     idsIntList.Add(int.Parse(id));

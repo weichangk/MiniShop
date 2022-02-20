@@ -28,15 +28,15 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> Index()
         {
             var result = await ExecuteApiResultModelAsync(() => { return _shopApi.GetByShopIdAsync(_userInfo.ShopId); });
-            if (result.Success && result.Data != null)
+            if (result.Success)
             {
-                if (result.Data != null)
+                if (result.Data == null)
                 {
-                    return View(result.Data);
+                    return RedirectToAction("Error", "Error", new { statusCode = (int)HttpStatusCode.NotFound, errorMsg = "商店不存在！" });
                 }
-                return Json(new Result() { Success = false, Msg = "商店不存在！", Status = (int)HttpStatusCode.NotFound });
+                return View(result.Data);
             }
-            return Json(new Result() { Success = false, Msg = result.Msg, Status = result.Status });
+            return RedirectToAction("Error", "Error", new { statusCode = result.Status, errorMsg = result.Status });
         }
 
         [HttpPost]
@@ -51,46 +51,57 @@ namespace MiniShop.Mvc.Controllers
         public async Task<IActionResult> GetValidDateAsync()
         {
             var result = await ExecuteApiResultModelAsync(() => { return _shopApi.GetByShopIdAsync(_userInfo.ShopId); });
-            var shop = result.Data;
-            if (shop == null)
+            if (result.Success)
             {
-                return Json(new Result() { Success = false, Msg = "商店不存在！", Status = (int)HttpStatusCode.NotFound });
+                if (result.Data == null)
+                {
+                    return Json(new Result() { Success = false, Msg = "商店不存在！", Status = (int)HttpStatusCode.NotFound });
+                }
+                return Json(new Result() { Success = result.Success, Data = result.Data.ValidDate.Format("yyyy-MM-dd") });
             }
-            return Json(new Result() { Success = result.Success, Data = shop.ValidDate.Format("yyyy-MM-dd") });
+            return Json(new Result() { Success = result.Success, Status = result.Status, Msg = result.Msg });
         }
 
         [HttpGet]
         public async Task<IActionResult> Renew()
         {
             var result = await ExecuteApiResultModelAsync(() => { return _shopApi.GetByShopIdAsync(_userInfo.ShopId); });
-            var shop = result.Data;
-            if (shop == null)
+            if (result.Success)
             {
-                return Json(new Result() { Success = false, Msg = "商店不存在！", Status = (int)HttpStatusCode.NotFound });
+                var shop = result.Data;
+                if (shop == null)
+                {
+                    return Json(new Result() { Success = false, Msg = "商店不存在！", Status = (int)HttpStatusCode.NotFound });
+                }
+                ViewBag.ShopKey = shop.Id;
+                ViewBag.ShopValidDate = shop.ValidDate;
+                return View();
             }
-            ViewBag.ShopKey = shop.Id;
-            ViewBag.ShopValidDate = shop.ValidDate;
-            return View();
+            return RedirectToAction("Error", "Error", new { statusCode = result.Status, errorMsg = result.Status });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetRenews()
         {
             var result = await ExecuteApiResultModelAsync(() => { return _renewPackageApi.GetRenewPackagesAsync(); });
-            List<CardInfo> cards = new List<CardInfo>();
-            foreach (var item in result.Data)
+            if (result.Success)
             {
-                CardInfo card = new CardInfo
+                List<CardInfo> cards = new List<CardInfo>();
+                foreach (var item in result.Data)
                 {
-                    Id = item.Id,
-                    Title = $"￥{item.Price:F2}元 / {item.Name}",
-                    Image = item.Image,
-                    Remark = item.Remark,
-                    Time = $"{item.Price:F2}元 / {item.Months}月",
-                };
-                cards.Add(card);
+                    CardInfo card = new CardInfo
+                    {
+                        Id = item.Id,
+                        Title = $"￥{item.Price:F2}元 / {item.Name}",
+                        Image = item.Image,
+                        Remark = item.Remark,
+                        Time = $"{item.Price:F2}元 / {item.Months}月",
+                    };
+                    cards.Add(card);
+                }
+                return Json(new Card() { Count = cards.Count, Data = cards });
             }
-            return Json(new Card() { Count = cards.Count, Data = cards });
+            return Json(new Result() { Success = result.Success, Status = result.Status, Msg = result.Msg });
         }
 
         [HttpPatch]

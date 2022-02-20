@@ -33,10 +33,13 @@ namespace MiniShop.Model.Code
                 .HasIndex(m => m.Code)
                 .IsUnique();
             modelBuilder.Entity<Categorie>()
-                .HasIndex(m => m.Name)
+                .HasIndex(m => m.Code)
                 .IsUnique();
             modelBuilder.Entity<Unit>()
-                .HasIndex(m => m.Name)
+                .HasIndex(m => m.Code)
+                .IsUnique();
+            modelBuilder.Entity<Supplier>()
+                .HasIndex(m => m.Code)
                 .IsUnique();
 
             //modelBuilder.Seed();

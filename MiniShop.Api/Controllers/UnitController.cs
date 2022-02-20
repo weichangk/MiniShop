@@ -41,6 +41,18 @@ namespace MiniShop.Api.Controllers
             return await _unitService.Value.GetByIdAsync(id);
         }
 
+        [Description("根据单位编码查询单位")]
+        [OperationId("根据单位编码查询单位")]
+        [ResponseCache(Duration = 0)]
+        [Parameters(name = "shopId", param = "商店ID")]
+        [Parameters(name = "code", param = "类别编码")]
+        [HttpGet("GetByCodeOnShop")]
+        public async Task<IResultModel> GetByCodeOnShop([Required] Guid shopId, int code)
+        {
+            _logger.LogDebug($"根据商店ID：{shopId} 单位编码：{code} 查询单位");
+            return await _unitService.Value.GetByCodeOnShopAsync(shopId, code);
+        }
+
         [Description("根据商店ID查询最大单位编码")]
         [OperationId("根据商店ID查询最大单位编码")]
         [ResponseCache(Duration = 0)]

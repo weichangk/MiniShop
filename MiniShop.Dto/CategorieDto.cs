@@ -22,5 +22,8 @@ namespace MiniShop.Dto
 
         [Display(Name = "父类别编码")]
         public int ParentCode { get; set; }
+
+        [Display(Name = "创建时间")]
+        public DateTime CreatedTime { get; set; }
     }
 }
