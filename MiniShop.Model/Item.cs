@@ -42,10 +42,9 @@ namespace MiniShop.Model
         public EnumItemStatus State { get; set; }
 
         /// <summary>
-        /// 商品状态描述
+        /// 商品类型
         /// </summary>
-        [NotMapped]
-        public string StateDes => State.ToDescription();
+        public EnumItemType Type { get; set; }
 
         /// <summary>
         /// 供应商ID
@@ -62,12 +61,6 @@ namespace MiniShop.Model
         /// 计价方式
         /// </summary>
         public EnumPriceType PriceType { get; set; }
-
-        /// <summary>
-        /// 计价方式描述
-        /// </summary>
-        [NotMapped]
-        public string PriceTypeDes => PriceType.ToDescription();
 
         /// <summary>
         /// 商品单位ID

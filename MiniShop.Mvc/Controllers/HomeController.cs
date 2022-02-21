@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MiniShop.Dto;
+using MiniShop.Model.Enums;
 using MiniShop.Mvc.Code;
 using MiniShop.Mvc.HttpApis;
 using MiniShop.Mvc.Models;
@@ -21,18 +22,21 @@ namespace MiniShop.Mvc.Controllers
         private readonly ICategorieApi _categorieApi;
         private readonly IUnitApi _unitApi;
         private readonly ISupplierApi _supplierApi;
+        private readonly IItemApi _itemApi;
         public HomeController(ILogger<HomeController> logger, IMapper mapper, IUserInfo userInfo,
             IShopApi shopApi,
             IStoreApi storeApi,
             ICategorieApi categorieApi,
             IUnitApi unitApi,
-            ISupplierApi supplierApi) : base(logger, mapper, userInfo)
+            ISupplierApi supplierApi,
+            IItemApi itemApi) : base(logger, mapper, userInfo)
         {
             _shopApi = shopApi;
             _storeApi = storeApi;
             _categorieApi = categorieApi;
             _unitApi = unitApi;
             _supplierApi = supplierApi;
+            _itemApi = itemApi;
         }
 
         [HttpGet]
@@ -168,6 +172,39 @@ namespace MiniShop.Mvc.Controllers
                 if (!addSupplier.Success)
                 {
                     return RedirectToAction("Error", "Error", new { statusCode = addSupplier.Status, errorMsg = addSupplier.Msg });
+                }
+            }
+
+            var queryItem = await ExecuteApiResultModelAsync(() => { return _itemApi.GetByCodeOnShop(_userInfo.ShopId, "0000000000000"); });
+            if (queryItem.Data == null)
+            {
+                var systemCategorie = await ExecuteApiResultModelAsync(() => { return _categorieApi.GetByCodeOnShop(_userInfo.ShopId, 0); });
+                var systemUnit = await ExecuteApiResultModelAsync(() => { return _unitApi.GetByCodeOnShop(_userInfo.ShopId, 0); });
+                var systemSupplier = await ExecuteApiResultModelAsync(() => { return _supplierApi.GetByCodeOnShop(_userInfo.ShopId, 0); });
+                if (systemCategorie.Success && systemCategorie .Data !=null 
+                    && systemUnit.Success && systemUnit.Data != null 
+                    && systemSupplier.Success && systemSupplier.Data != null)
+                {
+                    ItemCreateDto itemCreateDto = new ItemCreateDto
+                    {
+                        Code = "0000000000000",
+                        Name = "无码商品",
+                        ShopId = _userInfo.ShopId,
+                        State = EnumItemStatus.Normal,
+                        Type = EnumItemType.Normal,
+                        PriceType = EnumPriceType.General,
+                        CategorieId = systemCategorie.Data.Id,
+                        CategorieName = systemCategorie.Data.Name,
+                        SupplierId = systemSupplier.Data.Id,
+                        SupplierName = systemSupplier.Data.Name,
+                        UnitId = systemUnit.Data.Id,
+                        UnitName = systemUnit.Data.Name,
+                    };
+                    var addItem = await ExecuteApiResultModelAsync(() => { return _itemApi.AddAsync(itemCreateDto); });
+                    if (!addItem.Success)
+                    {
+                        return RedirectToAction("Error", "Error", new { statusCode = addItem.Status, errorMsg = addItem.Msg });
+                    }
                 }
             }
             //}
