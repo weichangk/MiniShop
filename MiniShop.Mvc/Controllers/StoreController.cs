@@ -36,7 +36,6 @@ namespace MiniShop.Mvc.Controllers
             { 
                 ShopId = _userInfo.ShopId,
                 StoreId = Guid.NewGuid(),
-                CreatedTime = DateTime.Now,
             };
             return View(model);
         }
@@ -101,24 +100,8 @@ namespace MiniShop.Mvc.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var storeDto = await ExecuteApiResultModelAsync(() => { return _storeApi.GetByIdAsync(id); });
-            if (!storeDto.Success)
-            {
-                return Json(new Result() { Success = storeDto.Success, Status = storeDto.Status, Msg = storeDto.Msg });
-            }
-            if (storeDto.Data != null)
-            {
-                if (storeDto.Data.StoreId == _userInfo.ShopId)
-                {
-                    return Json(new Result() { Success = false, Msg = $"不能删除总部门店：{storeDto.Data.Name}" });
-                }
-                var result = await ExecuteApiResultModelAsync(() => { return _storeApi.DeleteAsync(id); });
-                return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
-            }
-            else
-            {
-                return Json(new Result() { Success = false, Msg = "查找不到要删除的门店", Status = (int)HttpStatusCode.NotFound });
-            }
+            var result = await ExecuteApiResultModelAsync(() => { return _storeApi.DeleteAsync(id); });
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         [HttpDelete]
@@ -126,22 +109,9 @@ namespace MiniShop.Mvc.Controllers
         {
             List<string> idsStrList = ids.Split(",").ToList();
             List<int> idsIntList = new List<int>();
-            ResultModel<StoreDto> resultModel = new ResultModel<StoreDto>();
             foreach (var id in idsStrList)
             {
-                resultModel = await ExecuteApiResultModelAsync(() => { return _storeApi.GetByIdAsync(int.Parse(id)); });
-                if (!resultModel.Success)
-                {
-                    return Json(new Result() { Success = resultModel.Success, Status = resultModel.Status, Msg = resultModel.Msg });
-                }
-                if (resultModel.Data != null)
-                {
-                    idsIntList.Add(int.Parse(id));
-                    if (resultModel.Data.StoreId == _userInfo.ShopId)
-                    {
-                        return Json(new Result() { Success = false,Msg = $"不能删除总部门店：{resultModel.Data.Name}" });
-                    }
-                }
+                idsIntList.Add(int.Parse(id));
             }
 
             if (idsIntList.Count > 0)

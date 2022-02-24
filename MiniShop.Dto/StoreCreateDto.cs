@@ -27,9 +27,5 @@ namespace MiniShop.Dto
 
         [Display(Name = "地址")]
         public string Address { get; set; }
-
-        [Display(Name = "创建时间")]
-        [Required(ErrorMessage = "{0},不能为空")]
-        public DateTime CreatedTime { get; set; }
     }
 }

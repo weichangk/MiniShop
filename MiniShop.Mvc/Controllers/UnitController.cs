@@ -102,20 +102,8 @@ namespace MiniShop.Mvc.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var unitDto = await ExecuteApiResultModelAsync(() => { return _unitApi.GetByIdAsync(id); });
-            if (!unitDto.Success)
-            {
-                return Json(new Result() { Success = unitDto.Success, Status = unitDto.Status, Msg = unitDto.Msg });
-            }
-            if (unitDto.Data != null)
-            {
-                var result = await ExecuteApiResultModelAsync(() => { return _unitApi.DeleteAsync(id); });
-                return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
-            }
-            else
-            {
-                return Json(new Result() { Success = false, Msg = "查找不到要删除的单位", Status = (int)HttpStatusCode.NotFound });
-            }
+            var result = await ExecuteApiResultModelAsync(() => { return _unitApi.DeleteAsync(id); });
+            return Json(new Result() { Success = result.Success, Msg = result.Msg, Status = result.Status });
         }
 
         [HttpDelete]

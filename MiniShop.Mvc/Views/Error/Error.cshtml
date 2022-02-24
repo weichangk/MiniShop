@@ -25,12 +25,15 @@
             {
                 case "500":
                     <p>抱歉，服务器出错了！</p>
+                    <p>@Model.ErrorMsg</p>
                     break;
                 case "403":
                     <p>抱歉，您无权限访问！</p>
+                    <p>@Model.ErrorMsg</p>
                     break;
                 case "404":
                     <p>抱歉，您访问的页面不存在！</p>
+                    <p>@Model.ErrorMsg</p>
                     break;
                 default:
                     <p>@Model.ErrorMsg</p>

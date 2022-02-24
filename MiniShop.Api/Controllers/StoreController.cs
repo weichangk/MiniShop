@@ -106,17 +106,29 @@ namespace MiniShop.Api.Controllers
         {
             _logger.LogDebug("删除门店");
             var store = (ResultModel<StoreDto>) (await _storeService.Value.GetByIdAsync(id));
-            var users = await _userManager.Value.GetUsersForClaimAsync(new Claim("storeid", store.Data.StoreId.ToString()));
-            foreach (var u in users)
+            if (store == null || store.Data == null)
             {
-                var result = await _userManager.Value.DeleteAsync(u);
-                if (!result.Succeeded)
-                {
-                    _logger.LogError($"用户删除错误：{result.Errors.FirstOrDefault().Description}");
-                    return ResultModel.Failed("用户删除错误：{name} 删除失败", (int)HttpStatusCode.InternalServerError);
-                }
+                _logger.LogError($"门店删除错误：{id} 不存在");
+                return ResultModel.Failed($"用户删除错误：{id} 不存在", (int)HttpStatusCode.NotFound);
             }
-            return await _storeService.Value.RemoveAsync(id);
+            else
+            {
+                if (store.Data.ShopId == store.Data.StoreId)
+                {
+                    return ResultModel.Failed("不能删除系统默认门店", (int)HttpStatusCode.Forbidden);
+                }
+                var users = await _userManager.Value.GetUsersForClaimAsync(new Claim("storeid", store.Data.StoreId.ToString()));
+                foreach (var u in users)
+                {
+                    var result = await _userManager.Value.DeleteAsync(u);
+                    if (!result.Succeeded)
+                    {
+                        _logger.LogError($"用户删除错误：{result.Errors.FirstOrDefault().Description}");
+                        return ResultModel.Failed("用户删除错误：{name} 删除失败", (int)HttpStatusCode.InternalServerError);
+                    }
+                }
+                return await _storeService.Value.RemoveAsync(id);
+            }
         }
 
         [Description("通过指定门店ID集合批量删除门店")]
@@ -127,6 +139,23 @@ namespace MiniShop.Api.Controllers
         public async Task<IResultModel> BatchDelete([FromBody] List<int> ids)
         {
             _logger.LogDebug("批量删除门店");
+            foreach (var id in ids)
+            {
+                var store = (ResultModel<StoreDto>)(await _storeService.Value.GetByIdAsync(id));
+                if (store == null || store.Data == null)
+                {
+                    _logger.LogError($"门店删除错误：{id} 不存在");
+                    return ResultModel.Failed($"用户删除错误：{id} 不存在", (int)HttpStatusCode.NotFound);
+                }
+                else
+                {
+                    if (store.Data.ShopId == store.Data.StoreId)
+                    {
+                        return ResultModel.Failed("不能删除系统默认门店", (int)HttpStatusCode.Forbidden);
+                    }
+                }
+            }
+
             foreach (var id in ids)
             {
                 var store = (ResultModel<StoreDto>)(await _storeService.Value.GetByIdAsync(id));
