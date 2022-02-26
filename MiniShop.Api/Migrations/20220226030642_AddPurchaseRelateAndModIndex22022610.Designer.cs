@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniShop.Model.Code;
 
 namespace MiniShop.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220226030642_AddPurchaseRelateAndModIndex22022610")]
+    partial class AddPurchaseRelateAndModIndex22022610
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +67,7 @@ namespace MiniShop.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime(6)");
@@ -113,9 +115,6 @@ namespace MiniShop.Api.Migrations
                     b.HasIndex("SupplierId");
 
                     b.HasIndex("UnitId");
-
-                    b.HasIndex("ShopId", "Code")
-                        .IsUnique();
 
                     b.ToTable("Item");
                 });
@@ -468,12 +467,15 @@ namespace MiniShop.Api.Migrations
                     b.Property<Guid>("ShopId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime>("ValidDate")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ShopId")
+                    b.HasIndex("ShopId", "StoreId")
                         .IsUnique();
 
                     b.ToTable("Shop");
@@ -518,9 +520,6 @@ namespace MiniShop.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ShopId", "Name")
-                        .IsUnique();
-
-                    b.HasIndex("ShopId", "StoreId")
                         .IsUnique();
 
                     b.ToTable("Store");

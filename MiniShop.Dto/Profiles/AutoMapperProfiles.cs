@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using MiniShop.Model;
+using System.Collections.Generic;
 
 namespace MiniShop.Dto.Profiles
 {
@@ -71,6 +72,29 @@ namespace MiniShop.Dto.Profiles
                 .ForMember(d => d.SupplierName, opt => opt.MapFrom(i => i.Supplier.Name));
             CreateMap<ItemDto, ItemCreateDto>();
             CreateMap<ItemDto, ItemUpdateDto>();
+
+
+            // 目前还找不到集合里的映射处理！！！暂时在获取数据时做处理
+            CreateMap<PurchaseOder, PurchaseOderDto>();
+            CreateMap<PurchaseOderCreateDto, PurchaseOder>();
+            CreateMap<PurchaseOderUpdateDto, PurchaseOder>();
+            CreateMap<PurchaseOder, PurchaseOderCreateDto>();
+            CreateMap<PurchaseOder, PurchaseOderUpdateDto>();
+            CreateMap<PurchaseOderDto, PurchaseOderCreateDto>();
+            CreateMap<PurchaseOderDto, PurchaseOderUpdateDto>();
+
+            CreateMap<PurchaseOderItem, PurchaseOderItemDto>()
+                .ForMember(d => d.ItemId, opt => opt.MapFrom(i => i.Item.Id))
+                .ForMember(d => d.ItemCode, opt => opt.MapFrom(i => i.Item.Code))
+                .ForMember(d => d.ItemName, opt => opt.MapFrom(i => i.Item.Name))
+                .ForMember(d => d.UnitName, opt => opt.MapFrom(i => i.Item.Unit.Name))
+                .ForMember(d => d.PurchasePrice, opt => opt.MapFrom(i => i.Item.PurchasePrice));
+            CreateMap<PurchaseOderItemCreateDto, PurchaseOderItem>();
+            CreateMap<PurchaseOderItemUpdateDto, PurchaseOderItem>();
+            CreateMap<PurchaseOderItem, PurchaseOderItemCreateDto>();
+            CreateMap<PurchaseOderItem, PurchaseOderItemUpdateDto>();
+            CreateMap<PurchaseOderItemDto, PurchaseOderItemCreateDto>();
+            CreateMap<PurchaseOderItemDto, PurchaseOderItemUpdateDto>();
 
         }
     }

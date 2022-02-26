@@ -24,22 +24,37 @@ namespace MiniShop.Model.Code
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Shop>()
-                .HasIndex(m => m.ShopId)
+                .HasIndex(m => new { m.ShopId })
                 .IsUnique();
             modelBuilder.Entity<Store>()
-                .HasIndex(m => m.StoreId)
+                .HasIndex(m => new { m.ShopId, m.StoreId })
+                .IsUnique();
+            modelBuilder.Entity<Store>()
+                .HasIndex(m => new { m.ShopId, m.Name })
                 .IsUnique();
             modelBuilder.Entity<Vip>()
-                .HasIndex(m => m.Code)
+                .HasIndex(m => new { m.ShopId, m.Code })
+                .IsUnique();
+            modelBuilder.Entity<Item>()
+                .HasIndex(m => new { m.ShopId, m.Code })
                 .IsUnique();
             modelBuilder.Entity<Categorie>()
-                .HasIndex(m => m.Code)
+                .HasIndex(m => new { m.ShopId, m.Code })
                 .IsUnique();
             modelBuilder.Entity<Unit>()
-                .HasIndex(m => m.Code)
+                .HasIndex(m => new { m.ShopId, m.Code })
                 .IsUnique();
             modelBuilder.Entity<Supplier>()
-                .HasIndex(m => m.Code)
+                .HasIndex(m => new { m.ShopId, m.Code })
+                .IsUnique();
+            modelBuilder.Entity<PurchaseOder>()
+                .HasIndex(m => new { m.ShopId, m.OderNo })
+                .IsUnique();
+            modelBuilder.Entity<PurchaseReceiveOder>()
+                .HasIndex(m => new { m.ShopId, m.OderNo })
+                .IsUnique();
+            modelBuilder.Entity<PurchaseReturnOder>()
+                .HasIndex(m => new { m.ShopId, m.OderNo })
                 .IsUnique();
 
             //modelBuilder.Seed();
