@@ -46,7 +46,7 @@ namespace MiniShop.Api.Controllers
         [OperationId("根据单位编码查询单位")]
         [ResponseCache(Duration = 0)]
         [Parameters(name = "shopId", param = "商店ID")]
-        [Parameters(name = "code", param = "类别编码")]
+        [Parameters(name = "code", param = "单位编码")]
         [HttpGet("GetByCodeOnShop")]
         public async Task<IResultModel> GetByCodeOnShop([Required] Guid shopId, int code)
         {

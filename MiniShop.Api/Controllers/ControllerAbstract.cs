@@ -13,7 +13,7 @@ namespace MiniShop.Api.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
-    [Authorize(Policy = "NoOwePolicy")]
+    //[Authorize(Policy = "NoOwePolicy")]
     [ValidateResultFormat]
     [ApiController]
     public class ControllerAbstract : ControllerBase
