@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
     {
-        "name": ".NET Core Launch (web mvc)",
+        "name": ".NET Core Launch (MiniShop.Mvc)",
         "type": "coreclr",
         "request": "launch",
         "preLaunchTask": "build",
@@ -65,7 +65,7 @@
         // Use IntelliSense to find out which attributes exist for C# debugging
         // Use hover for the description of the existing attributes
         // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-        "name": ".NET Core Launch (web Ids)",
+        "name": ".NET Core Launch (MiniShop.Ids)",
         "type": "coreclr",
         "request": "launch",
         "preLaunchTask": "build",
@@ -85,11 +85,6 @@
         "sourceFileMap": {
             "/Views": "${workspaceFolder}/Views"
         }
-    },
-    {
-        "name": ".NET Core Attach",
-        "type": "coreclr",
-        "request": "attach"
     }
     ]
 }
