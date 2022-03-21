@@ -15,6 +15,6 @@ namespace IdentityServerHost.Quickstart.UI
         public static bool ShowLogoutPrompt = true;
         public static bool AutomaticRedirectAfterSignOut = true;//true;//登出之后自动跳转回去
 
-        public static string InvalidCredentialsErrorMessage = "Invalid username or password";
+        public static string InvalidCredentialsErrorMessage = "无效的账号或密码";//"Invalid username or password";
     }
 }

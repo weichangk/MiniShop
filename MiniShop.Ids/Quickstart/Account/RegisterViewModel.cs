@@ -5,6 +5,7 @@ namespace IdentityServerHost.Quickstart.UI
     public class RegisterViewModel
     {
         [Display(Name = "用户名")]
+        [Required(ErrorMessage = "{0}，不能为空")]
         [RegularExpression(@"^[a-zA-Z0-9_-]{4,16}$", ErrorMessage = "{0}的格式不正确，4到16位（字母，数字，下划线，减号）")]
         public string Username { get; set; }
 
@@ -18,6 +19,7 @@ namespace IdentityServerHost.Quickstart.UI
 
         [DataType(DataType.Password)]
         [Display(Name = "密码")]
+        [Required(ErrorMessage = "{0}，不能为空")]
         [RegularExpression(@"^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$", ErrorMessage = "{0}的格式不正确，最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符")]
         public string Password { get; set; }
 

@@ -8,9 +8,11 @@ namespace IdentityServerHost.Quickstart.UI
 {
     public class LoginInputModel
     {
-        [Required]
+        [Display(Name = "用户名")]
+        [Required(ErrorMessage = "{0}，不能为空")]
         public string Username { get; set; }
-        [Required]
+        [Display(Name = "密码")]
+        [Required(ErrorMessage = "{0}，不能为空")]
         public string Password { get; set; }
         public bool RememberLogin { get; set; }
         public string ReturnUrl { get; set; }
