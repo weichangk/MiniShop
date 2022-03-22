@@ -50,9 +50,10 @@
 								</div>
 
 								<div class="form-group">
-									<div class="custom-checkbox custom-control">
-										<input type="checkbox" name="agree" id="agree" class="custom-control-input" required="">
-										<label for="agree" class="custom-control-label">本人同意有关<a href="#">条款及协议</a></label>
+									<div class="form-check float-left">
+										<input type="hidden" asp-for="AgreeTermsTrue" />
+										<input class="form-check-input" asp-for="AgreeTerms">
+										本人同意有关<a href="#">条款及协议</a>
 									</div>
 								</div>
 

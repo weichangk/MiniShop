@@ -28,7 +28,12 @@ namespace IdentityServerHost.Quickstart.UI
         [Compare("Password", ErrorMessage = "密码和确认密码不匹配")]
         public string ConfirmPassword { get; set; }
 
-        public bool RegisterSucceeded { get; set; }
+        public bool AgreeTermsTrue => true;
+
+        [Required]
+        [Display(Name = "本人同意有关条款及协议")]
+        [Compare("AgreeTermsTrue", ErrorMessage = "请同意有关条款及协议")]
+        public bool AgreeTerms { get; set; }
 
         public string ReturnUrl { get; set; }
     }

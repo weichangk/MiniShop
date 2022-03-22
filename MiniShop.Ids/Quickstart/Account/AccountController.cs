@@ -270,11 +270,6 @@ namespace IdentityServerHost.Quickstart.UI
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
 
-                if (result.Succeeded)
-                {
-                    model.RegisterSucceeded = true;
-                }
-
             }
 
             return View(model);
