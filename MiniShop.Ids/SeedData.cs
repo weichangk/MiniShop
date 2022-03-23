@@ -134,11 +134,11 @@ namespace MiniShop.Ids
                             throw new Exception(result.Errors.First().Description);
                         }
 
-                        Log.Debug("mini created");
+                        Log.Information("mini created");
                     }
                     else
                     {
-                        Log.Debug("mini already exists");
+                        Log.Information("mini already exists");
                     }
 
                 }
