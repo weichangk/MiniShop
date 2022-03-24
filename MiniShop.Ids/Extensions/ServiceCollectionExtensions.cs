@@ -83,7 +83,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddMigrations(this IServiceCollection services)
         {
-            services.BuildServiceProvider().GetService<ApplicationDbContext>().Database.Migrate();
+            using (var context = services.BuildServiceProvider().GetService<ApplicationDbContext>())
+            {
+                context.Database.Migrate();
+            }
             return services;
         }
 
