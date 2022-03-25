@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  db:
+    image: "mysql:8.0"
+    ports:
+      - 3307:3306
+    volumes:
+      - E:/dockervolumes/minishopidsdata/db:/var/lib/mysql
+    networks:
+      - minishopidsbackend
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      BIND-ADDRESS: 0.0.0.0
+    command:
+      --lower_case_table_names=1
+
+  dbinit:
+    build: 
+      context: .
+      dockerfile: Dockerfile-UseCompose
+    networks:
+      - minishopidsbackend
+    environment:
+      INITDB: true
+      CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
+    depends_on:
+      - db      
+
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:80
+    networks:
+      - minishopidsbackend
+    environment:
+      CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
+    depends_on:
+      - db
+
+networks:
+  minishopidsbackend:

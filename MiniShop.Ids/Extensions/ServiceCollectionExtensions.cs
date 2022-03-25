@@ -16,12 +16,16 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
+            // 使用环境变量配置数据库连接字符串，兼容使用 docker-compose 构建部署
+            var prodconn = System.Environment.GetEnvironmentVariable("CONNECTIONSTRING");
+            if (!string.IsNullOrEmpty(prodconn))
+            {
+                BasicSetting.Setting.ConnectionString = prodconn;
+            }
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(BasicSetting.Setting.ConnectionString));
 
-            services.AddMigrations();
-
-            services.AddSeedData();
+            services.AddInitDB();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -81,20 +85,20 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        public static IServiceCollection AddMigrations(this IServiceCollection services)
+        public static IServiceCollection AddInitDB(this IServiceCollection services)
         {
-            using (var context = services.BuildServiceProvider().GetService<ApplicationDbContext>())
+            var initdb = System.Environment.GetEnvironmentVariable("INITDB");
+            if (!string.IsNullOrEmpty(initdb) && initdb.ToUpper().Equals("TRUE"))
             {
+                Log.Information("Migrate database...");
+                using var context = services.BuildServiceProvider().GetService<ApplicationDbContext>();
                 context.Database.Migrate();
-            }
-            return services;
-        }
+                Log.Information("Done Migrate database.");
 
-        public static IServiceCollection AddSeedData(this IServiceCollection services)
-        {
-            Log.Information("Seeding database...");
-            SeedData.EnsureSeedData(BasicSetting.Setting.ConnectionString);
-            Log.Information("Done seeding database.");
+                Log.Information("Seeding database...");
+                SeedData.EnsureSeedData(BasicSetting.Setting.ConnectionString);
+                Log.Information("Done seeding database.");
+            }
             return services;
         }
     }
