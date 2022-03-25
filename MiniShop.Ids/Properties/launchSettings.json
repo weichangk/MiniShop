@@ -4,6 +4,7 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
+        "INITDB": "true",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5001"

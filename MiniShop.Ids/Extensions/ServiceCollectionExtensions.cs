@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-            // 使用环境变量配置数据库连接字符串，兼容使用 docker-compose 构建部署
+            // 使用环境变量配置数据库连接字符串，兼容在 docker-compose 使用环境变量设置连接字符串构建部署
             var prodconn = System.Environment.GetEnvironmentVariable("CONNECTIONSTRING");
             if (!string.IsNullOrEmpty(prodconn))
             {

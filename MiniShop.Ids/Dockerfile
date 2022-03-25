@@ -21,4 +21,6 @@ RUN dotnet publish "MiniShop.Ids.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
+ENV INITDB=true
 ENTRYPOINT ["dotnet", "MiniShop.Ids.dll"]
