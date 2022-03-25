@@ -9,7 +9,7 @@ using MiniShop.Ids.Data;
 namespace MiniShop.Ids.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220111155818_InitMigration")]
+    [Migration("20220325150629_InitMigration")]
     partial class InitMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

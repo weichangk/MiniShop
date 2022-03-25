@@ -88,7 +88,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddInitDB(this IServiceCollection services)
         {
             var initdb = System.Environment.GetEnvironmentVariable("INITDB");
-            if (!string.IsNullOrEmpty(initdb) && initdb.ToUpper().Equals("TRUE"))
+            if (!string.IsNullOrEmpty(initdb) && initdb.ToUpper().Equals("INITDB"))
             {
                 Log.Information("Migrate database...");
                 using var context = services.BuildServiceProvider().GetService<ApplicationDbContext>();

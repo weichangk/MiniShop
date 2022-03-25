@@ -24,4 +24,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV WAITHOST=db WAITPORT=3306
-ENTRYPOINT ["./wait-for-it.sh ${WAITHOST}:${WAITPORT} --timeout=0 \ && exec dotnet MiniShop.Ids.dll"]
+ENTRYPOINT ./wait-for-it.sh ${WAITHOST}:${WAITPORT} --timeout=0 && exec dotnet MiniShop.Ids.dll
