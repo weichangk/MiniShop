@@ -46,7 +46,7 @@ npm install wait-for-it.sh@1.0.0
 npm install --production
 ```
 
-修改 dockerfile
+修改 dockerfile (Dockerfile-Ids-UseCompose)
 ```shell
 COPY MiniShop.Ids/node_modules/wait-for-it.sh/bin/wait-for-it /app/wait-for-it.sh
 RUN chmod +x /app/wait-for-it.sh
