@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
   db:
@@ -6,7 +6,7 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - D:/dockervolumes/minishopidsdata/db:/var/lib/mysql
+      - D:/dockervolumes/minishopids/db:/var/lib/mysql
     networks:
       - backend
     environment:
@@ -30,7 +30,7 @@ services:
       context: .
       dockerfile: Dockerfile-Ids-UseCompose
     ports:
-      - 8000:80
+      - 5001:80
     networks:
       - backend
     environment:

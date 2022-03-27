@@ -38,19 +38,22 @@ namespace Microsoft.Extensions.Configuration
         /// <param name="pms">配置模型中静态属性对象，多个使用逗号分隔</param>
         public static void OnChange(this IConfiguration configuration, params Object[] pms)
         {
-            //配置更改时重新绑定
-            ChangeToken.OnChange(() => configuration.GetReloadToken(), () =>
+            if(pms != null)
             {
-                foreach (object item in pms)
+                //配置更改时重新绑定
+                ChangeToken.OnChange(() => configuration.GetReloadToken(), () =>
                 {
-                    var pro = item.GetType().GetProperties().FirstOrDefault(p => p.SetMethod.IsStatic);
-                    if (pro != null)
+                    foreach (object item in pms)
                     {
-                        pro.SetValue(pro, configuration.GetSection(pro.Name).Get(item.GetType()));
-                        Console.WriteLine($"To:{JsonHelper.SerializeJSON(pro.GetValue(pro.Name))}");
+                        var pro = item.GetType().GetProperties().FirstOrDefault(p => p.SetMethod.IsStatic);
+                        if (pro != null)
+                        {
+                            pro.SetValue(pro, configuration.GetSection(pro.Name).Get(item.GetType()));
+                            Console.WriteLine($"To:{JsonHelper.SerializeJSON(pro.GetValue(pro.Name))}");
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 }

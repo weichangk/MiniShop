@@ -36,7 +36,8 @@ namespace MiniShop.Ids.Core
                 {
                     webBuilder.UseStartup<TStartup>()
                     .UseLogging()
-                    .UseUrls(BasicSetting.Setting.Urls);
+                    //.UseUrls(BasicSetting.Setting.Urls) // 使用 docker 部署需要屏蔽自宿主端口
+                    ;
                 });
         }
     }
