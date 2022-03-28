@@ -1,7 +1,6 @@
 # IDS
 
 
-
 ## 使用 dockerfile 构建部署
 #### 创建镜像
 
@@ -80,5 +79,12 @@ jenkins 简单构建脚本
 ```shell
 docker-compose -f Docker-Compose-Ids.yml -p minishopids down
 docker-compose -f Docker-Compose-Ids.yml -p minishopids build
-docker-compose -f Docker-Compose-Ids.yml -p minishopids up
+docker-compose -f Docker-Compose-Ids.yml -p minishopids up --detach
+# 不能马上删除数据库迁移服务，导致迁移未完成
+#docker-compose -f Docker-Compose-Ids.yml -p minishopids rm  -f -s  dbinit
 ```
+
+到这里有以下问题
+docker-compose 执行脚本怎么按版本构建，快速退回之前的版本？
+Docker-Compose 暴露生产环境配置隐私，要怎么解决？ https://docs.docker.com/compose/environment-variables/
+
