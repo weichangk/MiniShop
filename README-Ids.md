@@ -37,7 +37,7 @@ docker run -d -p 8000:80 --restart=always -v D:/dockervolumes/minishopids/appset
 #### 健康检查
 为了确保数据库服务启动完成才能执行数据库迁移
 
-安装 wait-for-it，文件存在 node_modules 文件夹中
+使用 npm 安装 wait-for-it，文件存在 node_modules 文件夹中，node_modules文件忽略上传到代码仓库，将核心代码 wait-for-it 拷贝到 minishopids 根目录直接使用
 ```shell
 npm install wait-for-it.sh@1.0.0
 ```

@@ -1,7 +1,7 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM registry.cn-hangzhou.aliyuncs.com/newbe36524/aspnet:3.1-buster-slim AS base
-COPY MiniShop.Ids/node_modules/wait-for-it.sh/bin/wait-for-it /app/wait-for-it.sh
+COPY MiniShop.Ids/wait-for-it /app/wait-for-it.sh
 RUN chmod +x /app/wait-for-it.sh
 WORKDIR /app
 EXPOSE 80
