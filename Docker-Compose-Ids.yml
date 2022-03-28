@@ -6,7 +6,9 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - D:/dockervolumes/minishopids/db:/var/lib/mysql
+      - type: bind
+        source: D:/dockervolumes/minishopids/db
+        target: /var/lib/mysql
     networks:
       - backend
     environment:
@@ -20,7 +22,9 @@ services:
     networks:
       - backend
     volumes:
-      - D:/dockervolumes/minishopids/appsettings.json:/app/appsettings.json
+      - type: bind
+        source: D:/dockervolumes/minishopids/appsettings.json
+        target: /app/appsettings.json
     environment:
       INITDB: initdb
       CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
@@ -36,7 +40,9 @@ services:
     networks:
       - backend
     volumes:
-      - D:/dockervolumes/minishopids/appsettings.json:/app/appsettings.json
+      - type: bind
+        source: D:/dockervolumes/minishopids/appsettings.json
+        target: /app/appsettings.json
     environment:
       CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
     depends_on:
