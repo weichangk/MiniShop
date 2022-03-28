@@ -6,7 +6,7 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - minishopids/db:/var/lib/mysql
+      - data:/var/lib/mysql
     networks:
       - backend
     environment:
@@ -20,7 +20,7 @@ services:
     networks:
       - backend
     volumes:
-      - minishopids/appsettings.json:/app/appsettings.json
+      - /var/minishopids/appsettings.json:/app/appsettings.json
     environment:
       INITDB: initdb
       CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
@@ -36,7 +36,7 @@ services:
     networks:
       - backend
     volumes:
-      - minishopids/appsettings.json:/app/appsettings.json
+      - /var/minishopids/appsettings.json:/app/appsettings.json
     environment:
       CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
     depends_on:
@@ -46,4 +46,4 @@ networks:
   backend:
 
 volumes:
-  minishopids:
+  data:
