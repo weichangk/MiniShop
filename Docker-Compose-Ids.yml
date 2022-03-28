@@ -6,7 +6,7 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - D:/dockervolumes/minishopids/db:/var/lib/mysql
+      - minishopids/db:/var/lib/mysql
     networks:
       - backend
     environment:
@@ -19,6 +19,8 @@ services:
       dockerfile: Dockerfile-Ids-UseCompose
     networks:
       - backend
+    volumes:
+      - minishopids/appsettings.json:/app/appsettings.json
     environment:
       INITDB: initdb
       CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
@@ -33,6 +35,8 @@ services:
       - 5001:80
     networks:
       - backend
+    volumes:
+      - minishopids/appsettings.json:/app/appsettings.json
     environment:
       CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
     depends_on:
@@ -40,3 +44,6 @@ services:
 
 networks:
   backend:
+
+volumes:
+  minishopids:
