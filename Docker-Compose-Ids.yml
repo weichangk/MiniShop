@@ -4,47 +4,32 @@ services:
   db:
     image: "mysql:8.0.0"
     ports:
-      - 3307:3306
+      - ${DB_PORT}:3306
     volumes:
       - type: bind
-        source: D:/dockervolumes/minishopids/db
+        source: ${DB_VOLUME_SOURCE}
         target: /var/lib/mysql
     networks:
       - backend
     environment:
-      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       BIND-ADDRESS: 0.0.0.0
-
-  dbinit:
-    build: 
-      context: .
-      dockerfile: Dockerfile-Ids-UseCompose
-    networks:
-      - backend
-    volumes:
-      - type: bind
-        source: D:/dockervolumes/minishopids/appsettings.json
-        target: /app/appsettings.json
-    environment:
-      INITDB: initdb
-      CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
-    depends_on:
-      - db      
 
   web:
     build: 
       context: .
-      dockerfile: Dockerfile-Ids-UseCompose
+      dockerfile: Dockerfile-Ids
     ports:
-      - 5001:80
+      - ${WEB_PORT}:80
     networks:
       - backend
     volumes:
       - type: bind
-        source: D:/dockervolumes/minishopids/appsettings.json
+        source: ${WEB_VOLUME_APPSETTINGS_SOURCE}
         target: /app/appsettings.json
     environment:
-      CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
+      INITDB: initdb
+      CONNECTIONSTRING: ${WEB_CONNECTIONSTRING}
     depends_on:
       - db
 

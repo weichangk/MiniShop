@@ -46,7 +46,7 @@ npm install wait-for-it.sh@1.0.0
 npm install --production
 ```
 
-修改 dockerfile (Dockerfile-Ids-UseCompose)
+修改 dockerfile (Dockerfile-Ids1)
 ```shell
 COPY MiniShop.Ids/node_modules/wait-for-it.sh/bin/wait-for-it /app/wait-for-it.sh
 RUN chmod +x /app/wait-for-it.sh
@@ -59,32 +59,47 @@ ENTRYPOINT ./wait-for-it.sh ${WAITHOST}:${WAITPORT} --timeout=0 && exec dotnet M
 #### 启动容器
 ```shell
 # 构建
-docker-compose -f Docker-Compose-Ids.yml build 
+docker-compose -f Docker-Compose-Ids1.yml build 
 # 启动
-docker-compose -f Docker-Compose-Ids.yml up 
+docker-compose -f Docker-Compose-Ids1.yml up 
 # 删除
-docker-compose -f Docker-Compose-Ids.yml down 
+docker-compose -f Docker-Compose-Ids1.yml down 
 
 # -p minishopids 指定前缀
-docker-compose -f Docker-Compose-Ids.yml -p minishopids build 
-docker-compose -f Docker-Compose-Ids.yml -p minishopids up
-docker-compose -f Docker-Compose-Ids.yml -p minishopids down
+docker-compose -f Docker-Compose-Ids1.yml -p minishopids build 
+docker-compose -f Docker-Compose-Ids1.yml -p minishopids up
+docker-compose -f Docker-Compose-Ids1.yml -p minishopids down
 
 # 启动、删除某个服务
-docker-compose -f Docker-Compose-Ids.yml -p minishopids up dbinit
-docker-compose -f Docker-Compose-Ids.yml -p minishopids down dbinit
+docker-compose -f Docker-Compose-Ids1.yml -p minishopids up dbinit
+docker-compose -f Docker-Compose-Ids1.yml -p minishopids down dbinit
 ```
 
 jenkins 简单构建脚本
 ```shell
-docker-compose -f Docker-Compose-Ids.yml -p minishopids down
-docker-compose -f Docker-Compose-Ids.yml -p minishopids build
-docker-compose -f Docker-Compose-Ids.yml -p minishopids up --detach
+docker-compose -f Docker-Compose-Ids1.yml -p minishopids down
+docker-compose -f Docker-Compose-Ids1.yml -p minishopids build
+docker-compose -f Docker-Compose-Ids1.yml -p minishopids up --detach
 # 不能马上删除数据库迁移服务，导致迁移未完成
-#docker-compose -f Docker-Compose-Ids.yml -p minishopids rm  -f -s  dbinit
+#docker-compose -f Docker-Compose-Ids1.yml -p minishopids rm  -f -s  dbinit
 ```
 
-到这里有以下问题
-docker-compose 执行脚本怎么按版本构建，快速退回之前的版本？
-Docker-Compose 暴露生产环境配置隐私，要怎么解决？ https://docs.docker.com/compose/environment-variables/
+## 使用 jenkins，使用 docker-compose 结合 .env 环境变量配置进行部署，不单独做数据库迁移服务了（最终方案）
+Docker-Compose 暴露配置隐私到到代码仓库，要怎么解决？ 参考：https://docs.docker.com/compose/environment-variables/
+生产环境部署只要指定生产环境变量配置文件 prod.env 环境变量配置路径即可。防止了生产环境隐私配置上传到代码仓库
+在生产环境服务器中只要将 prod.env 环境变量配置文件放置 jenkins 项目构建任务工作空间目录如：/var/lib/docker/volumes/jenkins_home/_data/workspace/minishopids，
+在启动容器时指定 prod.env 文件如：docker-compose -f docker-compose.yml -p minishopids --env-file prod.env up --detach 即可
 
+
+jenkins docker-compose 脚本
+```shell
+docker-compose -f Docker-Compose-Ids.yml -p minishopids down
+docker-compose -f Docker-Compose-Ids.yml -p minishopids --env-file ids.env up --detach
+#docker-compose -f Docker-Compose-Ids.yml -p minishopids --env-file idsprod.env up --detach
+```
+
+
+
+
+## 待解决问题
+docker-compose 执行脚本怎么按版本构建，快速退回之前的版本？
