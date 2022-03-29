@@ -10,7 +10,7 @@ docker build -t minishopids -f Dockerfile-Ids .
 
 #### 启动容器
 
-执行脚本前需要提前准备宿主机挂载文件(否则构建容器无法启动) `D:/dockervolumes/minishopids/appsettings.json` 宿主机挂载配置文件是生产环境配置
+使用 docker run 指定绝对路径挂载前需要提前准备宿主机挂载文件(否则构建容器无法启动) `D:/dockervolumes/minishopids/appsettings.json` 宿主机挂载配置文件可做生产环境配置用于区别开发配置
 
 ```shell
 docker run -d -p 8000:80 --restart=always -v D:/dockervolumes/minishopids/appsettings.json:/app/appsettings.json -v D:/dockervolumes/minishopids/log:/app/log --name minishopids minishopids

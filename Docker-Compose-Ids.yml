@@ -43,6 +43,9 @@ services:
       - type: bind
         source: D:/dockervolumes/minishopids/appsettings.json
         target: /app/appsettings.json
+      - type: bind
+        source: D:/dockervolumes/minishopids/log
+        target: /app/log
     environment:
       CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=123456;SslMode=None;ConnectionReset=false;connect timeout=3600
     depends_on:
