@@ -27,6 +27,9 @@ services:
       - type: bind
         source: ${WEB_VOLUME_APPSETTINGS_SOURCE}
         target: /app/appsettings.json
+      - type: bind
+        source: D:/dockervolumes/minishopids/log
+        target: /app/log
     environment:
       INITDB: initdb
       CONNECTIONSTRING: ${WEB_CONNECTIONSTRING}
