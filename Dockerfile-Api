@@ -10,7 +10,12 @@ WORKDIR /src
 COPY ["MiniShop.Api/MiniShop.Api.csproj", "MiniShop.Api/"]
 COPY ["CommonTools.Core/CommonTools.Core.csproj", "CommonTools.Core/"]
 COPY ["Logging.Serilog/Logging.Serilog.csproj", "Logging.Serilog/"]
+COPY ["Cache.MemoryCache/Cache.MemoryCache.csproj", "Cache.MemoryCache/"]
 COPY ["MiniShop.Services/MiniShop.Services.csproj", "MiniShop.Services/"]
+COPY ["MiniShop.IServices/MiniShop.IServices.csproj", "MiniShop.IServices/"]
+COPY ["MiniShop.Dto/MiniShop.Dto.csproj", "MiniShop.Dto/"]
+COPY ["MiniShop.Model/MiniShop.Model.csproj", "MiniShop.Model/"]
+COPY ["Orm.Core/Orm.Core.csproj", "Orm.Core/"]
 RUN dotnet restore "MiniShop.Api/MiniShop.Api.csproj"
 COPY . .
 WORKDIR "/src/MiniShop.Api"
