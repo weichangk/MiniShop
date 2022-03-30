@@ -13,7 +13,7 @@ docker build -t minishopids -f Dockerfile-Ids .
 使用 docker run 指定绝对路径挂载前需要提前准备宿主机挂载文件(否则构建容器无法启动) `D:/dockervolumes/minishopids/appsettings.json` 宿主机挂载配置文件可做生产环境配置用于区别开发配置
 
 ```shell
-docker run -d -p 8000:80 --restart=always -v D:/dockervolumes/minishopids/appsettings.json:/app/appsettings.json -v D:/dockervolumes/minishopids/log:/app/log --name minishopids minishopids
+docker run -d -p 5001:80 --restart=always -v D:/dockervolumes/minishopids/appsettings.json:/app/appsettings.json -v D:/dockervolumes/minishopids/log:/app/log --name minishopids minishopids
 ```
 
 #### 数据库迁移，初始化种子数据问题
@@ -93,8 +93,9 @@ Docker-Compose 暴露配置隐私到到代码仓库，要怎么解决？ 参考�
 
 jenkins docker-compose 脚本
 ```shell
-docker-compose -f Docker-Compose-Ids.yml -p minishopids down
+docker-compose -f Docker-Compose-Ids.yml -p minishopids --env-file ids.env  down
 docker-compose -f Docker-Compose-Ids.yml -p minishopids --env-file ids.env up --detach
+#docker-compose -f Docker-Compose-Ids.yml -p minishopids --env-file idsprod.env  down
 #docker-compose -f Docker-Compose-Ids.yml -p minishopids --env-file idsprod.env up --detach
 ```
 

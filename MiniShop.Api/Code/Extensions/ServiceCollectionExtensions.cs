@@ -20,6 +20,7 @@ using MiniShop.Api.Ids;
 using Microsoft.AspNetCore.Identity;
 using MiniShop.Api.Code.Security;
 using Microsoft.AspNetCore.Authorization;
+using Serilog;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -65,6 +66,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             //添加ORM
             services.AddORM(BasicSetting.Setting);
+
+            //数据库迁移
+            services.AddInitDB();
 
             //注册懒加载，与Autofac冲突，使用懒加载禁用Autofac注入方式。
             services.AddTransient(typeof(Lazy<>));
@@ -230,6 +234,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddORM(this IServiceCollection services, BasicSetting setting)
         {
+            // 使用环境变量配置数据库连接字符串，兼容在 docker-compose 使用环境变量设置连接字符串构建部署
+            var prodconn = System.Environment.GetEnvironmentVariable("CONNECTIONSTRING");
+            if (!string.IsNullOrEmpty(prodconn))
+            {
+                setting.ConnectionString = prodconn;
+            }
             if (setting.DbType == Orm.Core.DbType.MYSQL)
             {
                 //UseLazyLoadingProxies 通过延迟加载获取导航属性数据
@@ -269,6 +279,19 @@ namespace Microsoft.Extensions.DependencyInjection
                         .AddErrorDescriber<CustomIdentityErrorDescriber>()
                         .AddEntityFrameworkStores<IdsDbContext>()
                         .AddDefaultTokenProviders();
+            return services;
+        }
+
+        public static IServiceCollection AddInitDB(this IServiceCollection services)
+        {
+            var initdb = System.Environment.GetEnvironmentVariable("INITDB");
+            if (!string.IsNullOrEmpty(initdb) && initdb.ToUpper().Equals("INITDB"))
+            {
+                Log.Information("Migrate database...");
+                using var context = services.BuildServiceProvider().GetService<AppDbContext>();
+                context.Database.Migrate();
+                Log.Information("Done Migrate database.");
+            }
             return services;
         }
     }

@@ -8,6 +8,7 @@
       // "launchUrl": "weatherforecast",
       "applicationUrl": "http://localhost:5002",
       "environmentVariables": {
+        "INITDB": "initdb",
         // 开发环境
         "ASPNETCORE_ENVIRONMENT": "Development"
 
