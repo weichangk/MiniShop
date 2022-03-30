@@ -28,11 +28,11 @@ services:
         source: ${WEB_VOLUME_APPSETTINGS_SOURCE}
         target: /app/appsettings.json
       - type: bind
-        source: D:/dockervolumes/minishopids/log
+        source: ${WEB_VOLUME_LOGS_SOURCE}
         target: /app/log
     environment:
       INITDB: initdb
-      CONNECTIONSTRING: ${WEB_CONNECTIONSTRING}
+      CONNECTIONSTRING: server=db;database=MiniShopIdsDB;uid=root;pwd=${DB_PASSWORD};SslMode=None;ConnectionReset=false;connect timeout=3600
     depends_on:
       - db
 
