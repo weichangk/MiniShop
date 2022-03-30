@@ -7,6 +7,7 @@
       "launchUrl": "api-docs",
       "applicationUrl": "http://localhost:5004",
       "environmentVariables": {
+        "INITDB": "initdb",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }

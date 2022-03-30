@@ -6,7 +6,7 @@
 ```shell
 docker build -t minishopadminapi -f Dockerfile-AdminApi .
 
-docker run -d -p 5002:80 --restart=always -v D:/dockervolumes/minishopadminapi/appsettings.json:/app/appsettings.json -v D:/dockervolumes/minishopadminapi/log:/app/log --name minishopadminapi minishopadminapi
+docker run -d -p 5004:80 --restart=always -v D:/dockervolumes/minishopadminapi/appsettings.json:/app/appsettings.json -v D:/dockervolumes/minishopadminapi/log:/app/log --name minishopadminapi minishopadminapi
 ```
 使用 dockerfile 构建部署数据迁移在容器内运行不成功，要创建网络连接才可以，所以还是使用 docker-compose 管理网络。
 
