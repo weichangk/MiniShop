@@ -16,6 +16,13 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
+            // 配置cookie策略
+            services.Configure<AspNetCore.Builder.CookiePolicyOptions>(options =>
+            {
+                //https://docs.microsoft.com/zh-cn/aspnet/core/security/samesite?view=aspnetcore-3.1&viewFallbackFrom=aspnetcore-3
+                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+            });
+
             // 使用环境变量配置数据库连接字符串，兼容在 docker-compose 使用环境变量设置连接字符串构建部署
             var prodconn = System.Environment.GetEnvironmentVariable("CONNECTIONSTRING");
             if (!string.IsNullOrEmpty(prodconn))

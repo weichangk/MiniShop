@@ -69,6 +69,13 @@ namespace MiniShop.Mvc
 
             services.AddControllersWithViews();
 
+            // 配置cookie策略
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                //https://docs.microsoft.com/zh-cn/aspnet/core/security/samesite?view=aspnetcore-3.1&viewFallbackFrom=aspnetcore-3
+                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+            });
+
             //添加HttpClient相关
             var miniShopApiTypes = typeof(Startup).Assembly.GetTypes()
                         .Where(type => type.IsInterface
@@ -111,7 +118,7 @@ namespace MiniShop.Mvc
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // Add this before any other middleware that might write cookies
-            //app.UseCookiePolicy();
+            app.UseCookiePolicy();
 
             if (env.IsDevelopment())
             {
