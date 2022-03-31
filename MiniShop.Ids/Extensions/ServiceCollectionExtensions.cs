@@ -49,7 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.Lockout.DefaultLockoutTimeSpan = System.TimeSpan.FromMinutes(15);
             });
 
-            services.ConfigureNonBreakingSameSiteCookies();
+            //services.ConfigureNonBreakingSameSiteCookies();
 
             var builder = services.AddIdentityServer(options =>
             {

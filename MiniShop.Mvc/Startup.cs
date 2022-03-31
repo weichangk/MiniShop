@@ -59,7 +59,7 @@ namespace MiniShop.Mvc
                 }
             });
 
-            services.ConfigureNonBreakingSameSiteCookies();
+            //services.ConfigureNonBreakingSameSiteCookies();
             services.Configure<CookiePolicyOptions>(option =>
             {
                 option.CheckConsentNeeded = context => false;
@@ -111,7 +111,7 @@ namespace MiniShop.Mvc
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // Add this before any other middleware that might write cookies
-            app.UseCookiePolicy();
+            //app.UseCookiePolicy();
 
             if (env.IsDevelopment())
             {

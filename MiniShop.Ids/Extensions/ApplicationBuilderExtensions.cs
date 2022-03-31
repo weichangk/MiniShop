@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Builder
         public static IApplicationBuilder UseWebHost(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             // Add this before any other middleware that might write cookies
-            app.UseCookiePolicy();
+            //app.UseCookiePolicy();
 
             if (env.IsDevelopment())
             {
