@@ -18,7 +18,7 @@ namespace MiniShop.Api.Config
         /// <summary>
         /// 自宿主启动IP端口
         /// </summary>
-        public string Urls { get; set; }
+        public string Urls { get; set; } = "http://*:5002";
         /// <summary>
         /// 主程序集名称
         /// </summary>

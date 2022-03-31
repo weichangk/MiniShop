@@ -12,8 +12,8 @@ COPY ["CommonTools.Core/CommonTools.Core.csproj", "CommonTools.Core/"]
 COPY ["Logging.Serilog/Logging.Serilog.csproj", "Logging.Serilog/"]
 COPY ["Cache.MemoryCache/Cache.MemoryCache.csproj", "Cache.MemoryCache/"]
 COPY ["MiniShopAdmin.Dto/MiniShopAdmin.Dto.csproj", "MiniShopAdmin.Dto/"]
-COPY ["MiniShopAdmin.Model/MiniShopAdmin.Model.csproj", "MiniShopAdmin.Model/"]
-COPY ["Orm.Core/Orm.Core.csproj", "Orm.Core/"]
+# COPY ["MiniShopAdmin.Model/MiniShopAdmin.Model.csproj", "MiniShopAdmin.Model/"]
+# COPY ["Orm.Core/Orm.Core.csproj", "Orm.Core/"]
 RUN dotnet restore "MiniShopAdmin.Api/MiniShopAdmin.Api.csproj"
 COPY . .
 WORKDIR "/src/MiniShopAdmin.Api"

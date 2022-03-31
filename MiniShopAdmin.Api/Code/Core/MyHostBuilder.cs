@@ -34,15 +34,16 @@ namespace MiniShopAdmin.Api.Code.Core
                 .Build();
             configuration.GetSection("Setting").Bind(BasicSetting.Setting);
 
-            if (BasicSetting.Setting.Urls.IsNull())
-                BasicSetting.Setting.Urls = "http://*:5002";
+            //if (BasicSetting.Setting.Urls.IsNull())
+            //    BasicSetting.Setting.Urls = "http://*:5004";
 
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<TStartup>()
                     .UseLogging()
-                    .UseUrls(BasicSetting.Setting.Urls);
+                    //.UseUrls(BasicSetting.Setting.Urls) // 使用 docker 部署需要屏蔽自宿主端口
+                    ;
                 });
         }
     }
