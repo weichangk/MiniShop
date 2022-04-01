@@ -1,0 +1,136 @@
+version: '3.8'
+
+services:
+  idsdb:
+    image: "mysql:8.0.0"
+    ports:
+      - ${IDS_DB_PORT}:3306
+    volumes:
+      - type: bind
+        source: ${IDS_DB_VOLUME_SOURCE}
+        target: /var/lib/mysql
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: ${IDS_DB_PASSWORD}
+      BIND-ADDRESS: 0.0.0.0
+
+  apidb:
+    image: "mysql:8.0.0"
+    ports:
+      - ${API_DB_PORT}:3306
+    volumes:
+      - type: bind
+        source: ${API_DB_VOLUME_SOURCE}
+        target: /var/lib/mysql
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: ${API_DB_PASSWORD}
+      BIND-ADDRESS: 0.0.0.0
+
+  adminapidb:
+    image: "mysql:8.0.0"
+    ports:
+      - ${ADMINAPI_DB_PORT}:3306
+    volumes:
+      - type: bind
+        source: ${ADMINAPI_DB_VOLUME_SOURCE}
+        target: /var/lib/mysql
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ADMINAPI_DB_PASSWORD}
+      BIND-ADDRESS: 0.0.0.0
+
+  idsweb:
+    build: 
+      context: .
+      dockerfile: Dockerfile-Ids
+    ports:
+      - ${IDS_WEB_PORT}:80
+    networks:
+      - backend
+    volumes:
+      - type: bind
+        source: ${IDS_WEB_VOLUME_APPSETTINGS_SOURCE}
+        target: /app/appsettings.json
+      - type: bind
+        source: ${IDS_WEB_VOLUME_LOGS_SOURCE}
+        target: /app/log
+    environment:
+      INITDB: initdb
+      CONNECTIONSTRING: server=idsdb;database=MiniShopIdsDB;uid=root;pwd=${IDS_DB_PASSWORD};SslMode=None;ConnectionReset=false;connect timeout=3600
+    depends_on:
+      - idsdb
+
+  apiweb:
+    build: 
+      context: .
+      dockerfile: Dockerfile-Api
+    ports:
+      - ${API_WEB_PORT}:80
+    networks:
+      - backend
+    links:
+      - idsweb
+    volumes:
+      - type: bind
+        source: ${API_WEB_VOLUME_APPSETTINGS_SOURCE}
+        target: /app/appsettings.json
+      - type: bind
+        source: ${API_WEB_VOLUME_LOGS_SOURCE}
+        target: /app/log
+    environment:
+      INITDB: initdb
+      CONNECTIONSTRING: server=apidb;database=MiniShopDB;uid=root;pwd=${API_DB_PASSWORD};SslMode=None;ConnectionReset=false;connect timeout=3600
+    depends_on:
+      - apidb
+
+  adminapiweb:
+    build: 
+      context: .
+      dockerfile: Dockerfile-AdminApi
+    ports:
+      - ${ADMINAPI_WEB_PORT}:80
+    networks:
+      - backend
+    links:
+      - idsweb
+    volumes:
+      - type: bind
+        source: ${ADMINAPI_WEB_VOLUME_APPSETTINGS_SOURCE}
+        target: /app/appsettings.json
+      - type: bind
+        source: ${ADMINAPI_WEB_VOLUME_LOGS_SOURCE}
+        target: /app/log
+    environment:
+      INITDB: initdb
+      CONNECTIONSTRING: server=adminapidb;database=MiniShopAdminDB;uid=root;pwd=${ADMINAPI_DB_PASSWORD};SslMode=None;ConnectionReset=false;connect timeout=3600
+    depends_on:
+      - adminapidb
+
+  mvcweb:
+    build: 
+      context: .
+      dockerfile: Dockerfile-Mvc
+    ports:
+      - ${MVC_WEB_PORT}:80
+    networks:
+      - backend
+    links:
+      - idsweb
+      - apiweb
+      - adminapiweb
+    volumes:
+      - type: bind
+        source: ${MVC_WEB_VOLUME_APPSETTINGS_SOURCE}
+        target: /app/appsettings.json
+    depends_on:
+      - idsweb
+      - apiweb
+      - adminapiweb
+
+networks:
+  backend:
+
