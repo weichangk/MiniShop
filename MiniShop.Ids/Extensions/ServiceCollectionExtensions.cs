@@ -67,6 +67,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                 options.EmitStaticAudienceClaim = true;
+                options.IssuerUri = BasicSetting.Setting.Urls; // 颁发者身份标识
             })
                 .AddInMemoryIdentityResources(IdentityServerConfig.IdentityResources)
                 .AddInMemoryApiScopes(IdentityServerConfig.ApiScopes())
