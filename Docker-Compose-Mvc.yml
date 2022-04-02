@@ -6,16 +6,12 @@ services:
       context: .
       dockerfile: Dockerfile-Mvc
     ports:
-      - ${MVC_WEB_PORT}:80
-    networks:
-      - backend
+      - ${WEB_PORT}:80
     volumes:
       - type: bind
-        source: ${MVC_WEB_VOLUME_APPSETTINGS_SOURCE}
+        source: ${WEB_VOLUME_APPSETTINGS_SOURCE}
         target: /app/appsettings.json
       - type: bind
-        source: ${MVC_WEB_VOLUME_LOGS_SOURCE}
+        source: ${WEB_VOLUME_LOGS_SOURCE}
         target: /app/log
-networks:
-  backend:
 
