@@ -9,7 +9,7 @@
         /// <summary>
         /// 自宿主启动IP端口
         /// </summary>
-        public string Urls { get; set; } = "http://*:5002";
+        public string Urls { get; set; } = "http://*:5001";
         /// <summary>
         /// 主程序集名称
         /// </summary>

@@ -72,8 +72,6 @@ services:
       - ${API_WEB_PORT}:80
     networks:
       - backend
-    links:
-      - idsweb
     volumes:
       - type: bind
         source: ${API_WEB_VOLUME_APPSETTINGS_SOURCE}
@@ -86,6 +84,7 @@ services:
       CONNECTIONSTRING: server=apidb;database=MiniShopDB;uid=root;pwd=${API_DB_PASSWORD};SslMode=None;ConnectionReset=false;connect timeout=3600
     depends_on:
       - apidb
+      - idsweb
 
   adminapiweb:
     build: 
@@ -95,8 +94,6 @@ services:
       - ${ADMINAPI_WEB_PORT}:80
     networks:
       - backend
-    links:
-      - idsweb
     volumes:
       - type: bind
         source: ${ADMINAPI_WEB_VOLUME_APPSETTINGS_SOURCE}
@@ -109,6 +106,7 @@ services:
       CONNECTIONSTRING: server=adminapidb;database=MiniShopAdminDB;uid=root;pwd=${ADMINAPI_DB_PASSWORD};SslMode=None;ConnectionReset=false;connect timeout=3600
     depends_on:
       - adminapidb
+      - idsweb
 
   mvcweb:
     build: 
@@ -116,16 +114,13 @@ services:
       dockerfile: Dockerfile-Mvc
     ports:
       - ${MVC_WEB_PORT}:80
-    networks:
-      - backend
-    links:
-      - idsweb
-      - apiweb
-      - adminapiweb
     volumes:
       - type: bind
         source: ${MVC_WEB_VOLUME_APPSETTINGS_SOURCE}
         target: /app/appsettings.json
+      - type: bind
+        source: ${MVC_WEB_VOLUME_LOGS_SOURCE}
+        target: /app/log
     depends_on:
       - idsweb
       - apiweb
