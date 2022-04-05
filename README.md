@@ -5,8 +5,8 @@
 ```shell
 docker-compose -f Docker-Compose.yml -p minishop --env-file .env  down
 docker-compose -f Docker-Compose.yml -p minishop --env-file .env up --detach
-#docker-compose -f Docker-Compose.yml -p minishop --env-file prod.env  down
-#docker-compose -f Docker-Compose.yml -p minishop --env-file prod.env up --detach
+#docker-compose -f Docker-Compose.yml -p minishop --env-file minishopprod.env  down
+#docker-compose -f Docker-Compose.yml -p minishop --env-file minishopprod.env up --detach
 ```
 
 ## 注意
@@ -20,6 +20,6 @@ docker 容器中的 localhost 是容器自身，容器要访问宿主机的话�
  - https://www.cnblogs.com/stulzq/p/10339024.html
  - https://stackoverflow.com/questions/64809717/azure-net-core-app-with-is4-web-api-call-fails-with-bearer-error-invalid-toke
 
+由于没有使用健康检查，首次构建时由于数据库服务没有完成其他服务进行了数据库迁移失败导致服务启动失败，需要手动 restart。
 
  ## 使用 Ocelot 网关
- 
