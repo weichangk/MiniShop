@@ -1,44 +1,34 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace MiniShopAdmin.Api.Code.Core
 {
-    /// <summary>
-    /// 
-    /// </summary>
+
     public abstract class AbstractStartup
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="env"></param>
-        public AbstractStartup(IWebHostEnvironment env)
+        public AbstractStartup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            Env = env;
+            _configuration = configuration;
+            _env = env;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected readonly IWebHostEnvironment Env;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="services"></param>
+        protected readonly IConfiguration _configuration;
+        protected readonly IWebHostEnvironment _env;
+
+
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            services.AddWebHost(Env);
+            services.AddWebHost(_env);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="app"></param>
-        public virtual void Configure(IApplicationBuilder app)
+
+        public virtual void Configure(IApplicationBuilder app, IHostApplicationLifetime lifetime)
         {
-            app.UseWebHost(Env);
+            app.UseWebHost(_configuration, _env, lifetime);
         }
     }
 }

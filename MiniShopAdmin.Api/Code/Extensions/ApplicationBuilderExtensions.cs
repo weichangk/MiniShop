@@ -12,21 +12,13 @@ using System.IO;
 using System.Linq;
 using CommonTools.Core.Helper;
 using Orm.Core.Result;
+using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.AspNetCore.Builder
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public static class ApplicationBuilderExtensions
     {
-        /// <summary>
-        /// 启用WebHost
-        /// </summary>
-        /// <param name="app"></param>
-        /// <param name="env">环境</param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseWebHost(this IApplicationBuilder app, IWebHostEnvironment env)
+        public static IApplicationBuilder UseWebHost(this IApplicationBuilder app, IConfiguration configuration, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
         {
             //异常处理
             app.UseExceptionHandle();
@@ -75,6 +67,9 @@ namespace Microsoft.AspNetCore.Builder
             {
                 app.UseCustomSwagger();
             }
+
+            //Consul 服务注册
+            app.RegisterConsul(configuration, lifetime);
 
             return app;
         }
