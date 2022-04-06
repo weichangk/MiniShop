@@ -21,4 +21,8 @@ docker-compose -f Docker-Compose-AdminApi.yml -p minishopadminapi --env-file adm
 #docker-compose -f Docker-Compose-AdminApi.yml -p minishopadminapi --env-file adminapiprod.env up --detach
 ```
 
+```shell
+docker-compose -f Docker-Compose-AdminApi.yml -p minishopadminapi --env-file adminapi.env up --detach --scale web=6
+```
+通过 --scale 水平扩展怎么实现 consul 注册绑定指定端口？
 
