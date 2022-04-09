@@ -69,7 +69,7 @@ namespace Microsoft.AspNetCore.Builder
             }
 
             //Consul 服务注册
-            app.RegisterConsul(configuration, lifetime);
+            // app.RegisterConsul(configuration, lifetime);
 
             return app;
         }
